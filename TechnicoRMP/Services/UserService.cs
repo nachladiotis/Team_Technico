@@ -105,8 +105,83 @@ public class UserService(DataStore dataStore) : IUserService
             Console.WriteLine($"ΤΗΛΕΦΩΝΟ: {user.PhoneNumber}");
     }
 
-    public User Create(User user)
+    public  User Create()
     {
-        throw new NotImplementedException();
+        Console.WriteLine("ΕΙΣΑΓΕΤΕ ΤΑ ΣΤΟΙΧΕΙΑ ΤΟΥ ΧΡΗΣΤΗ:");
+
+        Console.Write("ΟΝΟΜΑ: ");
+        string name = Console.ReadLine() ?? string.Empty;
+        if (string.IsNullOrEmpty(name))
+        {
+            Console.WriteLine("ΤΟ ΟΝΟΜΑ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
+            return null!;
+        }
+
+        Console.Write("ΕΠΩΝΥΜΟ: ");
+        string surname = Console.ReadLine() ?? string.Empty;
+        if (string.IsNullOrEmpty(surname))
+        {
+            Console.WriteLine("ΤΟ ΕΠΙΘΕΤΟ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
+            return null!;
+        }
+
+        Console.Write("Α.Φ.Μ.: ");
+        string vatNumber = Console.ReadLine() ?? string.Empty;
+        if (string.IsNullOrEmpty(vatNumber))
+        {
+            Console.WriteLine("ΤΟ ΑΦΜ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
+            return null!;
+        }
+
+        Console.Write("ΔΙΕΥΘΥΝΣΗ (ΠΡΟΑΙΡΕΤΙΚΟ): ");
+        string? address = Console.ReadLine();
+
+        Console.Write("ΑΡΙΘΜΟΣ ΤΗΛΕΦΩΝΟΥ (ΠΡΟΑΙΡΕΤΙΚΟ): ");
+        string? phoneNumber = Console.ReadLine();
+
+        Console.Write("EMAIL: ");
+        string email = Console.ReadLine() ?? string.Empty;
+        if (string.IsNullOrEmpty(email))
+        {
+            Console.WriteLine("ΤΟ EMAIL ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
+            return null!;
+        }
+
+        Console.Write("ΚΩΔΙΚΟΣ: ");
+        string password = Console.ReadLine() ?? string.Empty;
+        if (string.IsNullOrEmpty(password) || password.Length < 8 )
+        {
+            Console.WriteLine("Ο ΚΩΔΙΚΟΣ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟΣ ΚΑΙ ΠΡΕΠΕΙ ΝΑ ΕΙΝΑΙ ΤΟΥΛΑΧΙΣΤΟΝ 8 ΧΑΡΑΚΤΗΡΕΣ");
+            return null!;
+        }
+
+        Console.Write("ΤΥΠΟΣ ΧΡΗΣΤΗ (1 ΓΙΑ ΠΕΛΑΤΗΣ, 2 ΓΙΑ ΕΠΙΣΚΕΥΑΣΤΗΣ): ");
+        var typeofUser = Console.ReadLine();
+        if (typeofUser is not "2" || typeofUser is not "1")
+        {
+            Console.WriteLine("ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ 1 Η 2 ΥΠΟΧΡΕΩΤΙΚΑ");
+            return null!;
+        }
+        EnUserType userType = (Console.ReadLine() == "2") ? EnUserType.Provider : EnUserType.Customer;
+        
+
+        
+        var user = new User
+        {
+            Name = name,
+            Surname = surname,
+            VatNumber = vatNumber,
+            Address = address,
+            PhoneNumber = phoneNumber,
+            Email = email,
+            Password = password,
+            TypeOfUser = userType
+        };
+
+        _dataStore.Add(user);
+        _dataStore.SaveChanges();
+        Console.WriteLine("ΕΠΙΤΥΧΊΑ ΔΗΜΗΟΥΡΓΙΑΣ ΧΡΗΣΤΗ");
+        return user;
     }
+
 }
