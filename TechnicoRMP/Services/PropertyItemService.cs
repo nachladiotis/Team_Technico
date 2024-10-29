@@ -69,6 +69,8 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
                 Console.WriteLine("ΑΚΥΡΗ ΕΠΙΛΟΓΗ. Ο ΤΥΠΟΣ ΑΚΙΝΗΤΟΥ ΘΑ ΟΡΙΣΤΕΙ ΣΕ ΔΙΑΜΕΡΙΣΜΑ.");
                 break;
         }
+    
+        
         var propertyItem = new PropertyItem
         {
             E9Number = e9Number,
