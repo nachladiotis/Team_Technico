@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TechnicoRMP.DataAccess;
 using TechnicoRMP.Models;
+using TechnicoRMP.Responses;
 
 namespace TechnicoRMP.Servicesp;
 
@@ -18,7 +19,6 @@ public class UserService(DataStore dataStore) : IUserService
             .FirstOrDefault(p => p.VatNumber == vatNumber);
         if (user is null)
         {
-            Console.WriteLine("Ο ΧΡΗΣΤΗΣ ΜΕ ΑΥΤΟ ΤΟ ΑΦΜ ΔΕΝ ΥΠΑΡΧΕΙ");
             return;
         }
         DisplayUserDetails(user);
@@ -26,24 +26,35 @@ public class UserService(DataStore dataStore) : IUserService
         DisplayUserRepairHistoryDetails(user);
     }
 
-    public void Update(User user)
+    public Response Update(User user)
     {
+        var response = new Response()
+        {
+            Status = 0,
+            Message = "ΕΠΙΤΥΧΕΣ"
+        };
         if (user is null)
         {
-            return;
+            response.Status = -1;
+            response.Message = "ΔΕΝ ΒΡΕΘΗΚΕ ΧΡΗΣΤΗΣ";
+            return response;
         }
         if (user.VatNumber is null)
         {
-            Console.WriteLine("ΤΟ ΠΕΔΙΟ ΑΦΜ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
+            response.Status = -1;
+            response.Message = "ΤΟ ΠΕΔΙΟ ΑΦΜ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ";
+            return response;
         }
        var storedUser = _dataStore.Users.FirstOrDefault(s => s.VatNumber == user.VatNumber);
         if (storedUser is null)
         {
-            Console.WriteLine("Ο ΧΡΗΣΤΗΣ ΔΕΝ ΒΡΕΘΗΚΕ");
-            return;
+            response.Status = -1;
+            response.Message = "Ο ΧΡΗΣΤΗΣ ΔΕΝ ΒΡΕΘΗΚΕ";
+            return response;
         }
         _dataStore.Users.Update(user);
         _dataStore.SaveChanges();
+        return response;
 
     }
 
@@ -105,32 +116,37 @@ public class UserService(DataStore dataStore) : IUserService
             Console.WriteLine($"ΤΗΛΕΦΩΝΟ: {user.PhoneNumber}");
     }
 
-    public  User Create()
+    public  Response<User> Create()
     {
         Console.WriteLine("ΕΙΣΑΓΕΤΕ ΤΑ ΣΤΟΙΧΕΙΑ ΤΟΥ ΧΡΗΣΤΗ:");
+
+        var failResponse = new Response<User>
+        {
+            Status = -1
+        };
 
         Console.Write("ΟΝΟΜΑ: ");
         string name = Console.ReadLine() ?? string.Empty;
         if (string.IsNullOrEmpty(name))
         {
-            Console.WriteLine("ΤΟ ΟΝΟΜΑ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
-            return null!;
+            failResponse.Message ="ΤΟ ΟΝΟΜΑ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ";          
+            return failResponse;
         }
 
         Console.Write("ΕΠΩΝΥΜΟ: ");
         string surname = Console.ReadLine() ?? string.Empty;
         if (string.IsNullOrEmpty(surname))
         {
-            Console.WriteLine("ΤΟ ΕΠΙΘΕΤΟ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
-            return null!;
+            failResponse.Message = "ΤΟ ΕΠΙΘΕΤΟ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ";
+            return failResponse;
         }
 
         Console.Write("Α.Φ.Μ.: ");
         string vatNumber = Console.ReadLine() ?? string.Empty;
         if (string.IsNullOrEmpty(vatNumber))
         {
-            Console.WriteLine("ΤΟ ΑΦΜ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
-            return null!;
+            failResponse.Message = "ΤΟ ΑΦΜ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ";
+            return failResponse;
         }
 
         Console.Write("ΔΙΕΥΘΥΝΣΗ (ΠΡΟΑΙΡΕΤΙΚΟ): ");
@@ -143,24 +159,24 @@ public class UserService(DataStore dataStore) : IUserService
         string email = Console.ReadLine() ?? string.Empty;
         if (string.IsNullOrEmpty(email))
         {
-            Console.WriteLine("ΤΟ EMAIL ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
-            return null!;
+            failResponse.Message = "ΤΟ EMAIL ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ";
+            return failResponse;
         }
 
         Console.Write("ΚΩΔΙΚΟΣ: ");
         string password = Console.ReadLine() ?? string.Empty;
         if (string.IsNullOrEmpty(password) || password.Length < 8 )
         {
-            Console.WriteLine("Ο ΚΩΔΙΚΟΣ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟΣ ΚΑΙ ΠΡΕΠΕΙ ΝΑ ΕΙΝΑΙ ΤΟΥΛΑΧΙΣΤΟΝ 8 ΧΑΡΑΚΤΗΡΕΣ");
-            return null!;
+            failResponse.Message = "Ο ΚΩΔΙΚΟΣ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟΣ ΚΑΙ ΠΡΕΠΕΙ ΝΑ ΕΙΝΑΙ ΤΟΥΛΑΧΙΣΤΟΝ 8 ΧΑΡΑΚΤΗΡΕΣ";
+            return failResponse;
         }
 
         Console.Write("ΤΥΠΟΣ ΧΡΗΣΤΗ (1 ΓΙΑ ΠΕΛΑΤΗΣ, 2 ΓΙΑ ΕΠΙΣΚΕΥΑΣΤΗΣ): ");
         var typeofUser = Console.ReadLine();
         if (typeofUser is not "2" || typeofUser is not "1")
         {
-            Console.WriteLine("ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ 1 Η 2 ΥΠΟΧΡΕΩΤΙΚΑ");
-            return null!;
+            failResponse.Message = "ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ 1 Η 2 ΥΠΟΧΡΕΩΤΙΚΑ";
+            return failResponse;
         }
         EnUserType userType = (Console.ReadLine() == "2") ? EnUserType.Provider : EnUserType.Customer;
         
@@ -180,8 +196,12 @@ public class UserService(DataStore dataStore) : IUserService
 
         _dataStore.Add(user);
         _dataStore.SaveChanges();
-        Console.WriteLine("ΕΠΙΤΥΧΊΑ ΔΗΜΗΟΥΡΓΙΑΣ ΧΡΗΣΤΗ");
-        return user;
+        return new Response<User>
+        {
+            Status = 0,
+            Message = "ΕΠΙΤΥΧΊΑ ΔΗΜΗΟΥΡΓΙΑΣ ΧΡΗΣΤΗ",
+            Value = user
+        }; ;
     }
 
 }

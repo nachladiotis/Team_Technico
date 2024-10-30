@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechnicoRMP.DataAccess;
 using TechnicoRMP.Models;
+using TechnicoRMP.Responses;
 
 namespace TechnicoRMP.Services;
 
@@ -17,38 +18,43 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
 {
     private readonly DataStore _dataStore = dataStore;
 
-    public PropertyItem Create()
+    public Response<PropertyItem> Create()
     {
+        var response = new Response<PropertyItem>()
+        {
+            Status = -1
+        };
         Console.WriteLine("ΕΙΣΑΓΕΤΕ ΤΑ ΣΤΟΙΧΕΙΑ ΤΟΥ ΑΚΙΝΗΤΟΥ:");
 
         Console.Write("ΑΡΙΘΜΟΣ Ε9: ");
         string e9Number = Console.ReadLine() ?? string.Empty;
         if (e9Number == string.Empty)
         {
-            Console.WriteLine("ΤΟ Ε9 ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
-            return null!;
+            response.Message = "ΤΟ Ε9 ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ";
+            return response;
         }
 
         Console.Write("ΔΙΕΥΘΥΝΣΗ: ");
         string address = Console.ReadLine() ?? string.Empty;
          if (address == string.Empty)
         {
-            Console.WriteLine("Η ΔΙΕΥΘΥΝΣΗ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΗ");
-            return null!;
+            response.Message = "Η ΔΙΕΥΘΥΝΣΗ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΗ";
+            return response;
         }
 
         Console.Write("ΕΤΟΣ ΚΑΤΑΣΚΕΥΗΣ: ");
         string yearOfConstruction = Console.ReadLine() ?? string.Empty;
         if (yearOfConstruction == string.Empty)
         {
-            Console.WriteLine("ΤΟ ΕΤΟΣ ΚΑΤΑΣΚΕΥΗΣ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
-            return null!;
+            response.Message = "ΤΟ ΕΤΟΣ ΚΑΤΑΣΚΕΥΗΣ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ";
+            return response;
         }
 
         bool res = int.TryParse(yearOfConstruction, out int year);
         if(!res || year > DateTime.Now.Year || year < 0)
         {
-            Console.WriteLine("Η ΧΡΟΝΙΑ ΕΙΝΑΙ ΛΑΘΟΣ");
+            response.Message = "Η ΧΡΟΝΙΑ ΕΙΝΑΙ ΛΑΘΟΣ";
+            return response;
         }
        
 
@@ -66,8 +72,9 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
                 propertyType = EnPropertyType.Maisonet;
                 break;
             default:
-                Console.WriteLine("ΑΚΥΡΗ ΕΠΙΛΟΓΗ. Ο ΤΥΠΟΣ ΑΚΙΝΗΤΟΥ ΘΑ ΟΡΙΣΤΕΙ ΣΕ ΔΙΑΜΕΡΙΣΜΑ.");
-                break;
+                response.Message = "ΑΚΥΡΗ ΕΠΙΛΟΓΗ. Ο ΤΥΠΟΣ ΑΚΙΝΗΤΟΥ ΘΑ ΟΡΙΣΤΕΙ ΣΕ ΔΙΑΜΕΡΙΣΜΑ";
+                return response;
+                
         }
     
         
@@ -82,7 +89,10 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
         _dataStore.Add(propertyItem);
         _dataStore.SaveChanges();
         Console.WriteLine("ΤΟ ΔΙΑΜΕΡΙΣΑΜ ΔΗΜΙΟΥΡΓΉΘΗΚΕ");
-        return propertyItem;   
+        response.Message = "ΕΠΙΤΥΧΕΣ";
+        response.Status = 0;
+        response.Value = propertyItem;
+        return response;   
     }
 
 
@@ -153,35 +163,43 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
         Console.WriteLine(isAcrtiveText);
     }
 
-    public void Update(PropertyItem propertyItem)
+    public Response Update(PropertyItem propertyItem)
     {
+        var response = new Response()
+        {
+            Status = -1
+        };
         if (propertyItem is null)
         {
-            Console.WriteLine("ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ ΣΤΟΙΧΕΙΑ ΑΚΙΝΗΤΟΥ");
-            return;
+            response.Message = "ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ ΣΤΟΙΧΕΙΑ ΑΚΙΝΗΤΟΥ";
+            return response;
         }
         if (propertyItem.E9Number is null)
         {
-            Console.WriteLine("ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ ΤΟ Ε9");
-            return;
+            response.Message = "ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ ΤΟ Ε9";
+            return response;
         }
         if (propertyItem.Address is null)
         {
-            Console.WriteLine("ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ ΔΙΕΥΘΥΝΣΗ ");
-            return;
+            response.Message = "ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ ΔΙΕΥΘΥΝΣΗ";
+            return response;
         }
         if (propertyItem.YearOfConstruction < 0 || propertyItem.YearOfConstruction > DateTime.Now.Year)
         {
-            Console.WriteLine("ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ ΣΩΣΤΟ ΕΤΟΣ ΚΑΤΑΣΚΕΥΗΣ ");
-            return;
+            response.Message = "ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ ΣΩΣΤΟ ΕΤΟΣ ΚΑΤΑΣΚΕΥΗΣ";
+            return response;
         }
 
         var propertyItemFromDb = _dataStore.PropertyItems.FirstOrDefault(p => p.E9Number == propertyItem.E9Number);
         if (propertyItemFromDb != null)
         {
-            Console.WriteLine("ΔΕΝ ΒΡΕΘΗΚΕ ΑΚΙΝΗΤΟ ΜΕ ΑΥΤΟ ΤΟ Ε9");
+            response.Message = "ΔΕΝ ΒΡΕΘΗΚΕ ΑΚΙΝΗΤΟ ΜΕ ΑΥΤΟ ΤΟ Ε9";
+            return response;
         }
         _dataStore.Update(propertyItem);
         _dataStore.SaveChanges();
+        response.Status = 0;
+        response.Message = "ΕΠΙΤΥΧΕΣ";
+        return response;
     }
 }
