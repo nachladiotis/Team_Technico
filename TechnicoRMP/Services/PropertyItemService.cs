@@ -8,9 +8,9 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using TechnicoRMP.Common;
 using TechnicoRMP.DataAccess;
 using TechnicoRMP.Models;
-using TechnicoRMP.Responses;
 
 namespace TechnicoRMP.Services;
 
@@ -18,9 +18,9 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
 {
     private readonly DataStore _dataStore = dataStore;
 
-    public Response<PropertyItem> Create()
+    public Result<PropertyItem> Create()
     {
-        var response = new Response<PropertyItem>()
+        var response = new Result<PropertyItem>()
         {
             Status = -1
         };
@@ -114,58 +114,9 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
         return deleted > 0;
     }
 
-    public void Display(string e9Number)
+    public Result Update(PropertyItem propertyItem)
     {
-        if (e9Number == string.Empty)
-        {
-            Console.WriteLine("ΤΟ Ε9 ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
-            return;
-        }
-
-        var propertyItem = _dataStore.PropertyItems
-            .Include(p => p.PropertyOwnerships)
-            .ThenInclude(p => p.PropertyOwner)
-            .FirstOrDefault(s => s.E9Number == e9Number);
-        if (propertyItem is null)
-        {
-            Console.WriteLine("ΤΟ ΑΚΙΝΗΤΟ ΔΕΝ ΒΡΕΘΗΚΕ");
-            return;
-        }
-        Console.WriteLine("ΣΤΟΙΧΕΙΑ ΑΚΙΝΗΤΟΥ:");
-        Console.WriteLine($"ΑΡΙΘΜΟΣ Ε9: {propertyItem.E9Number}");
-        Console.WriteLine($"ΔΙΕΥΘΥΝΣΗ: {propertyItem.Address}");
-        Console.WriteLine($"ΕΤΟΣ ΚΑΤΑΣΚΕΥΗΣ: {propertyItem.YearOfConstruction}");
-        switch (propertyItem.EnPropertyType)
-        {
-            case EnPropertyType.DetachedHouse:
-                Console.WriteLine($"ΤΥΠΟΣ ΑΚΙΝΗΤΟΥ ΜΟΝΟΚΑΤΟΙΚΙΑ"); 
-                break;
-            case EnPropertyType.Apartment:
-                Console.WriteLine($"ΤΥΠΟΣ ΑΚΙΝΗΤΟΥ ΔΙΑΜΕΡΙΣΜΑ");
-                break;
-            case EnPropertyType.Maisonet:
-                Console.WriteLine($"ΤΥΠΟΣ ΑΚΙΝΗΤΟΥ ΜΕΖΟΝΕΤΑ");
-                break;
-            default:
-                break;
-        }
-        foreach ( var propertyOwnership in propertyItem.PropertyOwnerships)
-        {
-            var propertyOwner = propertyOwnership.PropertyOwner;
-            if (propertyOwner is null)
-            {
-                continue;
-            }
-            Console.WriteLine($"TO AKINHTO EXEI ΙΔΙΟΚΤΗΤH: {propertyOwner.Name} {propertyOwner.Surname}");
-        }
-
-        var isAcrtiveText = propertyItem.IsActive is true ? "ΕΝΕΡΓΟ" : "ΑΝΕΝΕΡΓΟ";
-        Console.WriteLine(isAcrtiveText);
-    }
-
-    public Response Update(PropertyItem propertyItem)
-    {
-        var response = new Response()
+        var response = new Result()
         {
             Status = -1
         };

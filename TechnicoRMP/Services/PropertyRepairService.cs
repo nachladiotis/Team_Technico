@@ -6,19 +6,19 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using TechnicoRMP.Common;
 using TechnicoRMP.DataAccess;
 using TechnicoRMP.Models;
-using TechnicoRMP.Responses;
 
 namespace TechnicoRMP.Services;
 
 public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
 {
     private readonly DataStore _dataStore = dataStore;
-    public Response<PropertyRepair> Create()
+    public Result<PropertyRepair> Create()
     {
         Console.WriteLine("ΕΙΣΑΓΕΤΕ ΤΑ ΣΤΟΙΧΕΙΑ ΔΗΛΩΣΗΣ:");
-        var response = new Response<PropertyRepair>()
+        var response = new Result<PropertyRepair>()
         {
            Status = -1
         };
@@ -108,7 +108,7 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
             TypeOfRepair = typeOfRepair,
             RepairStatus = repairStatus,
             Cost = propertyRepairCostDec,
-            CustomerId = customerId,
+            RepairerId = customerId,
             IsActive = true
         };
         _dataStore.Add(propertyRepairToStore);
@@ -144,33 +144,9 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
         return true;
 
     }
-
-    public void Display(long id)
-
+    public Result Update(PropertyRepair propertyRepair)
     {
-        if (id <= 0)
-        {
-            Console.WriteLine("ΤΟ ID ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ ΚΑΙ ΔΕΝ ΔΈΧΕΤΑΙ ΑΡΝΗΤΙΚΆ");
-            return;
-        }
-
-        var propertyRepairFromDb = _dataStore
-               .PropertyRepairs
-               .FirstOrDefault(p => p.Id == id);
-
-
-        if (propertyRepairFromDb == null)
-        {
-            Console.WriteLine("ΔΕΝ ΒΡΕΘΗΚΕ ΤΟ PROPERTYREPAIR ΜΕ ΤΟ ID ΠΟΥ ΕΔΩΣΕΣ");
-            return;
-        }
-        Console.WriteLine($"TO PROPERTYREPAIR ΠΟΥ ΖΗΤΗΣΕΣ ΜΕ ID {id} ΕΙΝΑΙ:");
-        ShowDetailsPropertyRepairFromDb(propertyRepairFromDb);
-    }
-
-    public Response Update(PropertyRepair propertyRepair)
-    {
-        var response = new Response()
+        var response = new Result()
         {
             Status = -1
         };
@@ -197,30 +173,11 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
         _dataStore.Update(propertyRepair);
         _dataStore.SaveChanges();
         
-        ShowDetailsPropertyRepairFromDb(propertyRepair);
         response.Message = "ΕΠΙΤΥΧΕΣ";
         response.Status = 0;
         return response;
 
     }
-    static void FindUserFromDbWithId(User? userFromPropertyRepair)
-    {
-        if (userFromPropertyRepair == null)
-        {
-            Console.WriteLine("ΔΕΝ ΕΧΕΙ ΟΡΙΣΤΕΙ ΧΡΗΣΤΗΣ");
-            return;
-        }
-        Console.WriteLine($"Ο ΧΡΗΣΤΗΣ ΤΟΥ ΕΙΝΑΙ {userFromPropertyRepair.Name} {userFromPropertyRepair.Surname} ΜΕ ΑΦΜ {userFromPropertyRepair.VatNumber}");
-    }
-    void ShowDetailsPropertyRepairFromDb(PropertyRepair propertyRepairFromDb)
-    {
-        Console.WriteLine(propertyRepairFromDb.Date);
-        Console.WriteLine(propertyRepairFromDb.TypeOfRepair);
-        Console.WriteLine(propertyRepairFromDb.Address);
-        Console.WriteLine(propertyRepairFromDb.Cost);
-        Console.WriteLine(propertyRepairFromDb.RepairStatus);
-        Console.WriteLine(propertyRepairFromDb.IsActive ? "ΕΝΕΡΓΗ" : "ΑΝΕΝΕΡΓΗ");
-        var userFromPropertyRepair = _dataStore.Users.FirstOrDefault(p => p.Id == propertyRepairFromDb.Id);
-        FindUserFromDbWithId(userFromPropertyRepair);
-    }
+ 
+
 }

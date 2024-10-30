@@ -1,12 +1,12 @@
-﻿using TechnicoRMP.Models;
-using TechnicoRMP.Responses;
+﻿using TechnicoRMP.Common;
+using TechnicoRMP.Dtos;
+using TechnicoRMP.Models;
 
 namespace TechnicoRMP.Servicesp;
 
 public interface IUserService
 {
-    void Display(string vatNumber);
-    Response Update(User user);
+    Result Update(UpdateUserRequest updateUserRequest);
     bool Delete(string vatNumber);
-    Response<User> Create();
+    Result<CreateUserResponse> Create(CreatUserRequest creatUserDto);
 }

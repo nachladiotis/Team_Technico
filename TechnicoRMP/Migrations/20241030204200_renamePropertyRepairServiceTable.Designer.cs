@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TechnicoRMP.DataAccess;
 
@@ -11,9 +12,11 @@ using TechnicoRMP.DataAccess;
 namespace TechnicoRMP.Migrations
 {
     [DbContext(typeof(DataStore))]
-    partial class DataStoreModelSnapshot : ModelSnapshot
+    [Migration("20241030204200_renamePropertyRepairServiceTable")]
+    partial class renamePropertyRepairServiceTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -179,7 +182,7 @@ namespace TechnicoRMP.Migrations
             modelBuilder.Entity("TechnicoRMP.Models.PropertyRepair", b =>
                 {
                     b.HasOne("TechnicoRMP.Models.User", "Repairer")
-                        .WithMany()
+                        .WithMany("RepairsHistory")
                         .HasForeignKey("RepairerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -195,6 +198,8 @@ namespace TechnicoRMP.Migrations
             modelBuilder.Entity("TechnicoRMP.Models.User", b =>
                 {
                     b.Navigation("PropertyOwnerships");
+
+                    b.Navigation("RepairsHistory");
                 });
 #pragma warning restore 612, 618
         }

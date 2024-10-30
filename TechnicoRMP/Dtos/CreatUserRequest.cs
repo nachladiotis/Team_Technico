@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechnicoRMP.Models;
 
-namespace TechnicoRMP.Models;
+namespace TechnicoRMP.Dtos;
 
-public class User
+public class CreatUserRequest:IDto
 {
-    public long Id { get; set; }
     public required string Name { get; set; }
     public required string VatNumber { get; set; }
     public required string Surname { get; set; }
@@ -17,6 +17,4 @@ public class User
     public required string Email { get; set; }
     public required string Password { get; set; }
     public EnUserType TypeOfUser { get; set; } = EnUserType.Customer;
-    public List<PropertyOwnership> PropertyOwnerships { get; set; } = [];
-
 }

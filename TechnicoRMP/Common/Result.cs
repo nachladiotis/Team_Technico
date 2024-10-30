@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TechnicoRMP.Responses;
+namespace TechnicoRMP.Common;
 
-public class Response
+public class Result
 {
     public int Status { get; set; }
     public string? Message { get; set; }
 }
-public class Response<T>
+public class Result<T>
 {
     public int Status { get; set; }
+
     public string? Message { get; set; }
     public T? Value { get; set; }
 }

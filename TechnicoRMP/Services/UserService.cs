@@ -1,58 +1,39 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TechnicoRMP.Common;
 using TechnicoRMP.DataAccess;
+using TechnicoRMP.Dtos;
 using TechnicoRMP.Models;
-using TechnicoRMP.Responses;
 
 namespace TechnicoRMP.Servicesp;
 
 public class UserService(DataStore dataStore) : IUserService
 {
     private readonly DataStore _dataStore = dataStore;
-
-    public void Display(string vatNumber)
+    public Result Update(UpdateUserRequest updateUserRequest)
     {
-        var user = _dataStore
-            .Users
-            .Include(p => p.RepairsHistory)
-            .Include(p => p.PropertyOwnerships)
-            .ThenInclude(s => s.PropertyItem)
-            .FirstOrDefault(p => p.VatNumber == vatNumber);
-        if (user is null)
-        {
-            return;
-        }
-        DisplayUserDetails(user);
-        DisplayUserPropertyItemsDetails(user);
-        DisplayUserRepairHistoryDetails(user);
-    }
-
-    public Response Update(User user)
-    {
-        var response = new Response()
+        var response = new Result()
         {
             Status = 0,
             Message = "ΕΠΙΤΥΧΕΣ"
         };
-        if (user is null)
-        {
-            response.Status = -1;
-            response.Message = "ΔΕΝ ΒΡΕΘΗΚΕ ΧΡΗΣΤΗΣ";
-            return response;
-        }
-        if (user.VatNumber is null)
-        {
-            response.Status = -1;
-            response.Message = "ΤΟ ΠΕΔΙΟ ΑΦΜ ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ";
-            return response;
-        }
-       var storedUser = _dataStore.Users.FirstOrDefault(s => s.VatNumber == user.VatNumber);
+       
+       var storedUser = _dataStore.Users.FirstOrDefault(s => s.Id == updateUserRequest.Id);
         if (storedUser is null)
         {
             response.Status = -1;
             response.Message = "Ο ΧΡΗΣΤΗΣ ΔΕΝ ΒΡΕΘΗΚΕ";
             return response;
         }
-        _dataStore.Users.Update(user);
+
+        storedUser.Address = updateUserRequest.Address;
+        storedUser.Password = updateUserRequest.Password;
+        storedUser.PhoneNumber = updateUserRequest.PhoneNumber;
+        storedUser.VatNumber = updateUserRequest.VatNumber;
+        storedUser.Email = updateUserRequest.Email;
+        storedUser.Surname = updateUserRequest.Surname;
+        storedUser.TypeOfUser = updateUserRequest.TypeOfUser;
+
+        _dataStore.Users.Update(storedUser);
         _dataStore.SaveChanges();
         return response;
 
@@ -76,55 +57,17 @@ public class UserService(DataStore dataStore) : IUserService
         return deleted > 0;
     }
 
-    private static void DisplayUserRepairHistoryDetails(User user)
-    {
-        foreach (var repairHistory in user.RepairsHistory)
-        {
-            Console.WriteLine("ΛΕΠΤΟΜΕΡΙΕΣ ΕΠΙΣΚΕΥΗΣ:");
-            Console.WriteLine($"ΔΙΕΥΘΥΝΣΗ: {repairHistory.Address}");
-            Console.WriteLine($"ΚΟΣΤΟΣ: {repairHistory.Cost:C}");
-            var isAcrtiveText = repairHistory.IsActive is true ? "ΕΝΕΡΓΟ" : "ΑΝΕΝΕΡΓΟ";
-            Console.WriteLine($"ΚΑΤΑΣΤΑΣΗ:{isAcrtiveText}");
-        }
-    }
-
-    private static void DisplayUserPropertyItemsDetails(User user)
-    {
-        foreach (var ownership in user.PropertyOwnerships)
-        {
-            var propertyItem = ownership.PropertyItem;
-            if (propertyItem is null)
-                continue;
-            Console.WriteLine("ΠΛΗΡΟΦΟΡΙΕΣ ΑΝΤΙΚΕΙΜΕΝΟΥ:");
-            Console.WriteLine($"E9: {propertyItem.E9Number}");
-            Console.WriteLine($"ΔΙΕΥΘΥΝΣΗ: {propertyItem.Address}");
-            Console.WriteLine($"ΕΤΟΣ ΚΑΤΑΣΚΕΥΗΣ: {propertyItem.YearOfConstruction}");
-        }
-    }
-
-    private static void DisplayUserDetails(User user)
-    {
-        Console.WriteLine("ΠΛΗΡΟΦΟΡΙΕΣ ΧΡΗΣΤΗ:");
-        Console.WriteLine($"ΟΝΟΜΑ: {user.Name}");
-        Console.WriteLine($"ΕΠΙΘΕΤΟ: {user.Surname}");
-        Console.WriteLine($"ΑΦΜ: {user.VatNumber}");
-        Console.WriteLine($"Email: {user.Email}");
-
-        if (!string.IsNullOrEmpty(user.Address))
-            Console.WriteLine($"ΔΙΕΥΘΥΝΣΗ: {user.Address}");
-        if (!string.IsNullOrEmpty(user.PhoneNumber))
-            Console.WriteLine($"ΤΗΛΕΦΩΝΟ: {user.PhoneNumber}");
-    }
-
-    public  Response<User> Create()
+   
+    public  Result<CreateUserResponse> Create(CreatUserRequest creatUserDto)
     {
         Console.WriteLine("ΕΙΣΑΓΕΤΕ ΤΑ ΣΤΟΙΧΕΙΑ ΤΟΥ ΧΡΗΣΤΗ:");
 
-        var failResponse = new Response<User>
+        var failResponse = new Result<User>
         {
             Status = -1
         };
 
+        /*
         Console.Write("ΟΝΟΜΑ: ");
         string name = Console.ReadLine() ?? string.Empty;
         if (string.IsNullOrEmpty(name))
@@ -180,27 +123,27 @@ public class UserService(DataStore dataStore) : IUserService
         }
         EnUserType userType = (Console.ReadLine() == "2") ? EnUserType.Provider : EnUserType.Customer;
         
-
+        */
         
         var user = new User
         {
-            Name = name,
-            Surname = surname,
-            VatNumber = vatNumber,
-            Address = address,
-            PhoneNumber = phoneNumber,
-            Email = email,
-            Password = password,
-            TypeOfUser = userType
+            Name = creatUserDto.Name,
+            Surname = creatUserDto.Surname,
+            VatNumber = creatUserDto.VatNumber,
+            Address = creatUserDto.Address,
+            PhoneNumber = creatUserDto.PhoneNumber,
+            Email = creatUserDto.Email,
+            Password = creatUserDto.Password,
+            TypeOfUser = creatUserDto.TypeOfUser
         };
 
         _dataStore.Add(user);
         _dataStore.SaveChanges();
-        return new Response<User>
+        return new Result<CreateUserResponse>
         {
             Status = 0,
             Message = "ΕΠΙΤΥΧΊΑ ΔΗΜΗΟΥΡΓΙΑΣ ΧΡΗΣΤΗ",
-            Value = user
+            Value = CreateUserResponse.CreateFromEntity(user)
         }; ;
     }
 

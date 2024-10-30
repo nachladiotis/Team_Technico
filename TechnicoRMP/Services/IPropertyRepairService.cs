@@ -1,12 +1,11 @@
-﻿using Azure;
+﻿using TechnicoRMP.Common;
 using TechnicoRMP.Models;
 
 namespace TechnicoRMP.Services;
 
 public interface IPropertyRepairService
 {
-    void Display(long id);
-    Response Update(PropertyRepair propertyRepair);
+    Result Update(PropertyRepair propertyRepair);
     bool Delete(long id);
-    Response<PropertyRepair> Create();
+    Result<PropertyRepair> Create();
 }
