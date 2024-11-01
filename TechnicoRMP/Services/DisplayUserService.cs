@@ -57,4 +57,19 @@ public class DisplayUserService(DataStore dataStore) : IDisplayService<string>
             Console.WriteLine($"ΤΗΛΕΦΩΝΟ: {user.PhoneNumber}");
     }
 
+    public void DisplayAll()
+    {
+        var users = _dataStore
+           .Users
+           .Include(p => p.PropertyOwnerships)
+           .ThenInclude(s => s.PropertyItem)
+           .ToList();
+        foreach (var user in users)
+        {
+            DisplayUserDetails(user);
+            DisplayUserPropertyItemsDetails(user);
+        }
+
+
+    }
 }

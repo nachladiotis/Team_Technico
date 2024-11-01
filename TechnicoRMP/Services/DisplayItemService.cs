@@ -12,6 +12,7 @@ namespace TechnicoRMP.Services;
 public class DisplayItemService(DataStore datastore) : IDisplayService<string>
 {
     private readonly DataStore _dataStore = datastore;
+
     public void Display(string e9Number)
     {
         if (e9Number == string.Empty)
@@ -29,6 +30,22 @@ public class DisplayItemService(DataStore datastore) : IDisplayService<string>
             Console.WriteLine("ΤΟ ΑΚΙΝΗΤΟ ΔΕΝ ΒΡΕΘΗΚΕ");
             return;
         }
+        DisplayPropertyItem(propertyItem);
+    }
+    public void DisplayAll()
+    {
+        var propertyItems = _dataStore.PropertyItems
+            .Include(p => p.PropertyOwnerships)
+            .ThenInclude(p => p.PropertyOwner).ToList();
+
+        foreach (var item in propertyItems)
+        {
+            DisplayPropertyItem(item);
+        }
+    }
+
+    private static void DisplayPropertyItem(PropertyItem propertyItem)
+    {
         Console.WriteLine("ΣΤΟΙΧΕΙΑ ΑΚΙΝΗΤΟΥ:");
         Console.WriteLine($"ΑΡΙΘΜΟΣ Ε9: {propertyItem.E9Number}");
         Console.WriteLine($"ΔΙΕΥΘΥΝΣΗ: {propertyItem.Address}");
@@ -60,4 +77,6 @@ public class DisplayItemService(DataStore datastore) : IDisplayService<string>
         var isAcrtiveText = propertyItem.IsActive is true ? "ΕΝΕΡΓΟ" : "ΑΝΕΝΕΡΓΟ";
         Console.WriteLine(isAcrtiveText);
     }
+
+ 
 }

@@ -55,4 +55,17 @@ public class DisplayRepairService(DataStore dataStore) : IDisplayService<long>
         Console.WriteLine($"Ο ΧΡΗΣΤΗΣ ΤΟΥ ΕΙΝΑΙ {userFromPropertyRepair.Name} {userFromPropertyRepair.Surname} ΜΕ ΑΦΜ {userFromPropertyRepair.VatNumber}");
     }
 
+    public void DisplayAll()
+    {
+        var propertyRepairs = _dataStore
+              .PropertyRepairs
+              .ToList();
+
+        foreach (var item in propertyRepairs)
+        {
+            ShowDetailsPropertyRepairFromDb (item);
+        }
+
+
+    }
 }

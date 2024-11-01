@@ -1,11 +1,12 @@
 ﻿using TechnicoRMP.Common;
+using TechnicoRMP.Dtos;
 using TechnicoRMP.Models;
 
 namespace TechnicoRMP.Services;
 
 public interface IPropertyItemService
 {
-    Result Update(PropertyItem propertyItem);
+    Result Update(UpdatePropertyItemRequest updatePropertyItemRequest);
     bool Delete(string e9Number);
-    Result<PropertyItem> Create();
+    Result<CreatePropertyItemResponse> Create(CreatePropertyItemRequest createPropertyItemRequest);
 }
