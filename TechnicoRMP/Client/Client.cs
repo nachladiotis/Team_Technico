@@ -1,9 +1,7 @@
-﻿using Azure;
-using Microsoft.Identity.Client;
-using TechnicoRMP.Dtos;
+﻿
 using TechnicoRMP.Models;
 using TechnicoRMP.Services;
-using TechnicoRMP.Servicesp;
+
 
 namespace TechnicoRMP.Client;
 
@@ -66,7 +64,7 @@ public static class Client
         }
 
         Console.Write("ΤΥΠΟΣ ΧΡΗΣΤΗ (1 ΓΙΑ ΠΕΛΑΤΗΣ, 2 ΓΙΑ ΕΠΙΣΚΕΥΑΣΤΗΣ): ");
-      
+  
         EnUserType userType = (Console.ReadLine() == "2") ? EnUserType.Provider : EnUserType.Customer;
 
         var userService = new UserService(new DataAccess.DataStore());
@@ -86,7 +84,7 @@ public static class Client
         {
             Console.WriteLine("FAIL");
         }
-        
+    
     }
 
     public static void CreateItem()
@@ -123,7 +121,7 @@ public static class Client
             Console.WriteLine("Η ΧΡΟΝΙΑ ΕΙΝΑΙ ΛΑΘΟΣ");
             return;
         }
-       
+   
 
         Console.WriteLine("ΤΥΠΟΣ ΑΚΙΝΗΤΟΥ (1 για ΔΙΑΜΕΡΙΣΜΑ, 2 για ΜΟΝΟΚΑΤΟΙΚΙΑ, 3 για ΜΕΖΟΝΕΤΑ): ");
         EnPropertyType propertyType = EnPropertyType.Apartment; 
@@ -141,7 +139,7 @@ public static class Client
             default:
                 Console.WriteLine("ΑΚΥΡΗ ΕΠΙΛΟΓΗ. Ο ΤΥΠΟΣ ΑΚΙΝΗΤΟΥ ΘΑ ΟΡΙΣΤΕΙ ΣΕ ΔΙΑΜΕΡΙΣΜΑ");
                 return;
-                
+            
         }
         var propertyService = new PropertyItemService(new DataAccess.DataStore());
         var response = propertyService.Create(new Dtos.CreatePropertyItemRequest
@@ -162,5 +160,5 @@ public static class Client
         }
     }
 
-  
+
 }

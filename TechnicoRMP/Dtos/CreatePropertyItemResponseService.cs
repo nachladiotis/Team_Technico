@@ -21,6 +21,6 @@ public class CreatePropertyItemResponseService
            YearOfConstruction = propertyItem.YearOfConstruction,
         };
     }
-  
+
 
 }

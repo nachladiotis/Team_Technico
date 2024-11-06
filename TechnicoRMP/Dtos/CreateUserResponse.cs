@@ -17,5 +17,5 @@ public class CreateUserResponse: IDto
     public string? PhoneNumber { get; set; }
     public required string Email { get; set; }
     public EnUserType TypeOfUser { get; set; } = EnUserType.Customer;
-   
+
 }

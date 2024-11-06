@@ -2,7 +2,7 @@
 using TechnicoRMP.Dtos;
 using TechnicoRMP.Models;
 
-namespace TechnicoRMP.Servicesp;
+namespace TechnicoRMP.Services;
 
 public interface IUserService
 {

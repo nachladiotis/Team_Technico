@@ -26,7 +26,7 @@ public class DisplayUserService(DataStore dataStore) : IDisplayService<string>
         }
         DisplayUserDetails(user);
         DisplayUserPropertyItemsDetails(user);
-        
+    
     }
 
     private static void DisplayUserPropertyItemsDetails(User user)

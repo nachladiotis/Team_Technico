@@ -25,7 +25,7 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
            Status = -1
         };
 
-    
+
 
         var propertyOwner = _dataStore.Users
           .FirstOrDefault(p => p.Id == createPropertyRepairRequest.RepairerId);
@@ -116,9 +116,9 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
         {
             entity.Address = updatePropertyRepair.Address;
         }
-        
+    
         entity.RepairerId = (long)updatePropertyRepair.RepairerId!;
-        
+    
         if (updatePropertyRepair.TypeOfRepair is not null)
         {
             entity.TypeOfRepair = updatePropertyRepair.TypeOfRepair.Value;
@@ -137,12 +137,12 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
         }
 
         _dataStore.SaveChanges();
-        
+    
         response.Message = "ΕΠΙΤΥΧΕΣ";
         response.Status = 0;
         return response;
 
     }
- 
+
 
 }

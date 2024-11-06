@@ -48,7 +48,7 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
         {
             return response;
         }
-       
+   
     }
 
 
@@ -76,7 +76,7 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
         {
             Status = -1
         };
-        
+    
         //if (propertyItem is null)
         //{
         //    response.Message = "ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ ΣΤΟΙΧΕΙΑ ΑΚΙΝΗΤΟΥ";
@@ -116,7 +116,7 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
         {
             propertyItemFromDb!.EnPropertyType = updatePropertyItemRequest.EnPropertyType.Value;
         }
-        
+    
         _dataStore.SaveChanges();
         response.Status = 0;
         response.Message = "ΕΠΙΤΥΧΕΣ";

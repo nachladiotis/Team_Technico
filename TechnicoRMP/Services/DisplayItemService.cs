@@ -78,5 +78,5 @@ public class DisplayItemService(DataStore datastore) : IDisplayService<string>
         Console.WriteLine(isAcrtiveText);
     }
 
- 
+
 }

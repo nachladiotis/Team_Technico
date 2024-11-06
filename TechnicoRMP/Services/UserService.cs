@@ -4,7 +4,7 @@ using TechnicoRMP.DataAccess;
 using TechnicoRMP.Dtos;
 using TechnicoRMP.Models;
 
-namespace TechnicoRMP.Servicesp;
+namespace TechnicoRMP.Services;
 
 public class UserService(DataStore dataStore) : IUserService
 {
@@ -16,8 +16,8 @@ public class UserService(DataStore dataStore) : IUserService
             Status = 0,
             Message = "ΕΠΙΤΥΧΕΣ"
         };
-       
-       var storedUser = _dataStore.Users.FirstOrDefault(s => s.Id == updateUserRequest.Id);
+
+        var storedUser = _dataStore.Users.FirstOrDefault(s => s.Id == updateUserRequest.Id);
         if (storedUser is null)
         {
             response.Status = -1;
@@ -50,9 +50,9 @@ public class UserService(DataStore dataStore) : IUserService
         }
         if (updateUserRequest.TypeOfUser != null)
         {
-            storedUser.TypeOfUser = updateUserRequest.TypeOfUser.Value; 
+            storedUser.TypeOfUser = updateUserRequest.TypeOfUser.Value;
         }
-        
+
 
         _dataStore.Users.Update(storedUser);
         _dataStore.SaveChanges();
@@ -78,8 +78,8 @@ public class UserService(DataStore dataStore) : IUserService
         return deleted > 0;
     }
 
-   
-    public  Result<CreateUserResponse> Create(CreatUserRequest creatUserDto)
+
+    public Result<CreateUserResponse> Create(CreatUserRequest creatUserDto)
     {
         var failResponse = new Result<CreateUserResponse>
         {
@@ -108,11 +108,11 @@ public class UserService(DataStore dataStore) : IUserService
                 Value = CreateUserResponseService.CreateFromEntity(user)
             };
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             return failResponse;
         }
-       
+
     }
 
 }
