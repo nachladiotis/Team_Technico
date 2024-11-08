@@ -17,74 +17,73 @@ public class UserService : IUserService
         _dataStore = context;
     }
 
-    public Result Update(UpdateUserRequest updateUserRequest)
+    public UpdateUserRequest UpdateUser(UpdateUserRequest updateUserRequest)
     {
-        var response = new Result()
-        {
-            Status = 0,
-            Message = "ΕΠΙΤΥΧΕΣ"
-        };
-
         var storedUser = _dataStore.Users.FirstOrDefault(s => s.Id == updateUserRequest.Id);
         if (storedUser is null)
         {
-            response.Status = -1;
-            response.Message = "Ο ΧΡΗΣΤΗΣ ΔΕΝ ΒΡΕΘΗΚΕ";
-            return response;
+            throw new NotFoundException($"Ο χρήστης με Id {updateUserRequest.Id} δεν βρέθηκε.");
         }
-        if (updateUserRequest.Address != null)
-        {
+
+        // Ενημέρωση πεδίων, αν έχουν τιμή στο updateUserRequest
+        if (!string.IsNullOrEmpty(updateUserRequest.Address))
             storedUser.Address = updateUserRequest.Address;
-        }
-        if (updateUserRequest.Password != null)
-        {
+
+        if (!string.IsNullOrEmpty(updateUserRequest.Password))
             storedUser.Password = updateUserRequest.Password;
-        }
-        if (updateUserRequest.PhoneNumber != null)
-        {
+
+        if (!string.IsNullOrEmpty(updateUserRequest.PhoneNumber))
             storedUser.PhoneNumber = updateUserRequest.PhoneNumber;
-        }
-        if (updateUserRequest.VatNumber != null)
-        {
+
+        if (!string.IsNullOrEmpty(updateUserRequest.VatNumber))
             storedUser.VatNumber = updateUserRequest.VatNumber;
-        }
-        if (updateUserRequest.Email != null)
-        {
+
+        if (!string.IsNullOrEmpty(updateUserRequest.Email))
             storedUser.Email = updateUserRequest.Email;
-        }
-        if (updateUserRequest.Surname != null)
-        {
+
+        if (!string.IsNullOrEmpty(updateUserRequest.Surname))
             storedUser.Surname = updateUserRequest.Surname;
-        }
-        if (updateUserRequest.TypeOfUser != null)
-        {
+
+        if (!string.IsNullOrEmpty(updateUserRequest.Name))
+            storedUser.Name = updateUserRequest.Name;
+
+        if (updateUserRequest.TypeOfUser.HasValue)
             storedUser.TypeOfUser = updateUserRequest.TypeOfUser.Value;
-        }
 
-
-        _dataStore.Users.Update(storedUser);
         _dataStore.SaveChanges();
-        return response;
 
+        // Δημιουργία νέου `UpdateUserRequest` με τα ενημερωμένα στοιχεία
+        return new UpdateUserRequest
+        {
+            Id = storedUser.Id,
+            Name = storedUser.Name,
+            Surname = storedUser.Surname,
+            Address = storedUser.Address,
+            PhoneNumber = storedUser.PhoneNumber,
+            Email = storedUser.Email,
+            Password = storedUser.Password,
+            VatNumber = storedUser.VatNumber,
+            TypeOfUser = storedUser.TypeOfUser
+        };
     }
 
-    public bool Delete(string vatNumber)
-    {
 
-        if (string.IsNullOrEmpty(vatNumber))
-        {
-            return false;
-        }
-        var user = _dataStore.Users.FirstOrDefault(s => s.VatNumber == vatNumber);
+    public bool Delete(int id)
+    {
+        var user = _dataStore.Users.FirstOrDefault(s => s.Id == id);
+
         if (user is null)
         {
-            Console.WriteLine("Ο ΧΡΗΣΤΗΣ ΔΕΝ ΒΡΕΘΗΚΕ");
+            Console.WriteLine("User not found");
             return false;
         }
+
         _dataStore.Users.Remove(user);
+
         var deleted = _dataStore.SaveChanges();
         return deleted > 0;
     }
+
 
 
     public Result<CreateUserResponse> Create(CreatUserRequest creatUserDto)
@@ -199,55 +198,21 @@ public class UserService : IUserService
     ////    .ToList();
     ////}
 
-    //public CreateUserResponse ReplaceUser(CreateUserResponse dto)
-    //{
-    //    if (dto.Name == null || dto.Surname == null)
-    //        throw new BadRequestException("Bad Request: The user name and surname must be specified!");
+    public CreateUserResponse ReplaceUser(CreateUserResponse dto)
+    {
+        if (dto.Name == null || dto.Surname == null)
+            throw new BadRequestException("Bad Request: The user name and surname must be specified!");
 
-    //    var user = _dataStore.Users.Find(dto.Id);
+        var user = _dataStore.Users.Find(dto.Id);
 
-    //    if (user == null)
-    //        throw new NotFoundException("Not Found: The user with the given id was not found!");
+        if (user == null)
+            throw new NotFoundException("Not Found: The user with the given id was not found!");
 
-    //    user.Name = dto.Name;
-    //    user.Surname = dto.Surname;
-    //    _dataStore.SaveChangesAsync();
+        user.Name = dto.Name;
+        user.Surname = dto.Surname;
+        _dataStore.SaveChangesAsync();
 
-    //    return user.ConvertUser();
-    //}
-    //public UpdateUserRequest UpdateUser(UpdateUserRequest dto)
-    //{
-    //    bool firstNameNull = (dto.Name == null) ? true : false;
-    //    bool lastNameNull = (dto.Surname == null) ? true : false;
-
-    //    if (firstNameNull && lastNameNull) throw new BadRequestException
-    //            ("Bad Request: Either the user name or surname must be specified");
-
-    //    var user = _dataStore.Users.Find(dto.Id);
-
-    //    if (user == null)
-    //        throw new NotFoundException("Not Found: The user with the given id was not found!");
-
-    //    if (!firstNameNull)
-    //        user.Name = dto.Name!;
-
-    //    if (!lastNameNull)
-    //        user.Surname = dto.Surname!;
-
-    //    _dataStore.SaveChanges();
-
-    //    return dto;
-    //}
-    //public bool DeleteUser(int id)
-    //{
-    //    User? a = _dataStore.Users.Find(id);
-
-    //    if (a == null) { return false; }
-    //    else
-    //    {
-    //        _dataStore.Users.Remove(a);
-    //        _dataStore.SaveChangesAsync();
-    //        return true;
-    //    };
-    //}
+        var response = CreateUserResponseService.CreateFromEntity(user);
+        return response;
+    }
 }

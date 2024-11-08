@@ -6,10 +6,11 @@ namespace Technico.Api.Services;
 
 public interface IUserService
 {
-    Result Update(UpdateUserRequest updateUserRequest);
-    bool Delete(string vatNumber);
+    bool Delete(int id);
     Result<CreateUserResponse> Create(CreatUserRequest creatUserDto);
     List<CreateUserResponse> DisplayAll();
     CreateUserResponse DisplayUser(int id);
+    CreateUserResponse ReplaceUser(CreateUserResponse user);
+    UpdateUserRequest UpdateUser(UpdateUserRequest updateUserRequest);
 
 }
