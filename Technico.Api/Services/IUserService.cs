@@ -9,4 +9,7 @@ public interface IUserService
     Result Update(UpdateUserRequest updateUserRequest);
     bool Delete(string vatNumber);
     Result<CreateUserResponse> Create(CreatUserRequest creatUserDto);
+    List<CreateUserResponse> DisplayAll();
+    CreateUserResponse DisplayUser(int id);
+
 }

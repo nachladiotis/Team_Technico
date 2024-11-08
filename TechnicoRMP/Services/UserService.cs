@@ -115,4 +115,28 @@ public class UserService(DataStore dataStore) : IUserService
 
     }
 
+    public List<UserWithPropertyItemsDTO> GetAllUsersWithPropertyItems()
+    {
+        return _libContext.Users
+            .Include(a => a.Books)
+            .Select(a => a.ConvertUserWithPropertyItems())
+            .ToListAsync();
+    }
+
+    public async Task<AuthorDTO> ReplaceAuthor(AuthorDTO dto)
+    {
+        if (dto.FirstName == null || dto.LastName == null)
+            throw new BadRequestException("Bad Request: The author first and last name must be specified!");
+
+        var author = await _libContext.Authors.FindAsync(dto.Id);
+
+        if (author == null)
+            throw new NotFoundException("Not Found: The author with the given id was not found!");
+
+        author.FirstName = dto.FirstName;
+        author.LastName = dto.LastName;
+        await _libContext.SaveChangesAsync();
+
+        return author.ConvertAuthor();
+    }
 }

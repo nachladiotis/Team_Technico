@@ -1,14 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
+using TechnicoRMP.Shared.Exceptions;
 using TechnicoRMP.Shared.Dtos;
 
 namespace Technico.Api.Services;
 
-public class UserService(DataStore dataStore) : IUserService
+public class UserService : IUserService
 {
-    private readonly DataStore _dataStore = dataStore;
+    private readonly DataStore _dataStore;
+
+    public UserService(DataStore context)
+    {
+        _dataStore = context;
+    }
+
     public Result Update(UpdateUserRequest updateUserRequest)
     {
         var response = new Result()
@@ -115,4 +123,131 @@ public class UserService(DataStore dataStore) : IUserService
 
     }
 
+
+    public CreateUserResponse DisplayUser(int id)
+    {
+        var user = _dataStore
+            .Users
+            .Include(p => p.PropertyOwnerships)
+            .ThenInclude(s => s.PropertyItem)
+            .FirstOrDefault(p => p.Id == id);
+        if (user == null)
+        {
+            throw new NotFoundException($"User with Id {id} not found.");
+        }
+
+        var response = CreateUserResponseService.CreateFromEntity(user);
+        return response;
+
+        //DisplayUserDetails(user);
+        //DisplayUserPropertyItemsDetails(user);
+    }
+
+    private static void DisplayUserPropertyItemsDetails(User user)
+    {
+        foreach (var ownership in user.PropertyOwnerships)
+        {
+            var propertyItem = ownership.PropertyItem;
+            if (propertyItem is null)
+                continue;
+            Console.WriteLine("ΠΛΗΡΟΦΟΡΙΕΣ ΑΝΤΙΚΕΙΜΕΝΟΥ:");
+            Console.WriteLine($"E9: {propertyItem.E9Number}");
+            Console.WriteLine($"ΔΙΕΥΘΥΝΣΗ: {propertyItem.Address}");
+            Console.WriteLine($"ΕΤΟΣ ΚΑΤΑΣΚΕΥΗΣ: {propertyItem.YearOfConstruction}");
+        }
+    }
+
+    private static void DisplayUserDetails(User user)
+    {
+        Console.WriteLine("ΠΛΗΡΟΦΟΡΙΕΣ ΧΡΗΣΤΗ:");
+        Console.WriteLine($"ΟΝΟΜΑ: {user.Name}");
+        Console.WriteLine($"ΕΠΙΘΕΤΟ: {user.Surname}");
+        Console.WriteLine($"ΑΦΜ: {user.VatNumber}");
+        Console.WriteLine($"Email: {user.Email}");
+
+        if (!string.IsNullOrEmpty(user.Address))
+            Console.WriteLine($"ΔΙΕΥΘΥΝΣΗ: {user.Address}");
+        if (!string.IsNullOrEmpty(user.PhoneNumber))
+            Console.WriteLine($"ΤΗΛΕΦΩΝΟ: {user.PhoneNumber}");
+    }
+
+    public List<CreateUserResponse> DisplayAll()
+    {
+        var users = _dataStore
+            .Users
+            .Include(p => p.PropertyOwnerships)
+            .ThenInclude(s => s.PropertyItem)
+            .ToList();
+
+        return users.Select(user => new CreateUserResponse
+        {
+            Id = (int)user.Id,
+            Name = user.Name,
+            Surname = user.Surname,
+            VatNumber = user.VatNumber,
+            Email = user.Email,
+            Address = user.Address,
+            PhoneNumber = user.PhoneNumber,
+        }).ToList();
+    }
+
+    ////public List<UserWithProperyItemsDTO> GetAllUsersWithPropertyItems()
+    ////{
+    ////    return _dataStore.Users
+    ////        .Include(a => a.PropertyItem)
+    ////        .Select(a => a.ConvertUserWithPropertyItems())
+    ////    .ToList();
+    ////}
+
+    //public CreateUserResponse ReplaceUser(CreateUserResponse dto)
+    //{
+    //    if (dto.Name == null || dto.Surname == null)
+    //        throw new BadRequestException("Bad Request: The user name and surname must be specified!");
+
+    //    var user = _dataStore.Users.Find(dto.Id);
+
+    //    if (user == null)
+    //        throw new NotFoundException("Not Found: The user with the given id was not found!");
+
+    //    user.Name = dto.Name;
+    //    user.Surname = dto.Surname;
+    //    _dataStore.SaveChangesAsync();
+
+    //    return user.ConvertUser();
+    //}
+    //public UpdateUserRequest UpdateUser(UpdateUserRequest dto)
+    //{
+    //    bool firstNameNull = (dto.Name == null) ? true : false;
+    //    bool lastNameNull = (dto.Surname == null) ? true : false;
+
+    //    if (firstNameNull && lastNameNull) throw new BadRequestException
+    //            ("Bad Request: Either the user name or surname must be specified");
+
+    //    var user = _dataStore.Users.Find(dto.Id);
+
+    //    if (user == null)
+    //        throw new NotFoundException("Not Found: The user with the given id was not found!");
+
+    //    if (!firstNameNull)
+    //        user.Name = dto.Name!;
+
+    //    if (!lastNameNull)
+    //        user.Surname = dto.Surname!;
+
+    //    _dataStore.SaveChanges();
+
+    //    return dto;
+    //}
+    //public bool DeleteUser(int id)
+    //{
+    //    User? a = _dataStore.Users.Find(id);
+
+    //    if (a == null) { return false; }
+    //    else
+    //    {
+    //        _dataStore.Users.Remove(a);
+    //        _dataStore.SaveChangesAsync();
+    //        return true;
+    //    };
+    //}
 }
