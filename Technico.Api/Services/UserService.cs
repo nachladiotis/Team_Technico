@@ -215,4 +215,16 @@ public class UserService : IUserService
         var response = CreateUserResponseService.CreateFromEntity(user);
         return response;
     }
+
+    public bool SoftDeleteUser(int id)
+    {
+        var user = _dataStore.Users.FirstOrDefault(u => u.Id == id);
+        if (user == null)
+        {
+            throw new NotFoundException($"User with Id {id} not found.");
+        }
+        user.IsActive = false;  
+        _dataStore.SaveChanges();  
+        return true;
+    }
 }

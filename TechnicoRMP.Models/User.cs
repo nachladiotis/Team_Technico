@@ -18,5 +18,6 @@ public class User
     public required string Password { get; set; }
     public EnUserType TypeOfUser { get; set; } = EnUserType.Customer;
     public List<PropertyOwnership> PropertyOwnerships { get; set; } = [];
+    public bool IsActive { get; set; } = true;
 
 }

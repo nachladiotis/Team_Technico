@@ -16,6 +16,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddDbContext<DataStore>(options =>
     options.UseSqlServer("Data Source=(local);Initial Catalog=TechnicoDb;Integrated Security=True;TrustServerCertificate=True"));
 
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

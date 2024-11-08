@@ -12,5 +12,5 @@ public interface IUserService
     CreateUserResponse DisplayUser(int id);
     CreateUserResponse ReplaceUser(CreateUserResponse user);
     UpdateUserRequest UpdateUser(UpdateUserRequest updateUserRequest);
-
+    bool SoftDeleteUser(int id);
 }

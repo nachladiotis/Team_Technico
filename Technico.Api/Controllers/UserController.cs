@@ -79,6 +79,7 @@ namespace Technico.Api.Controllers
             }
         }
 
+        //Hard Delete
         [HttpDelete, Route("{id}")]
         public ActionResult<bool> Delete([FromRoute] int id)
         {
@@ -86,6 +87,24 @@ namespace Technico.Api.Controllers
 
             if (response) return Ok(response);
             else return NotFound(response);
+        }
+
+        //Soft Delete
+        [HttpDelete("SoftDelete/{id}")]
+        public ActionResult<bool> SoftDelete([FromRoute] int id)
+        {
+            try
+            {
+                bool response = _service.SoftDeleteUser(id);
+                if (response)
+                    return Ok(response);  
+                else
+                    return NotFound(response);  
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message }); 
+            }
         }
 
     }
