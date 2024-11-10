@@ -5,12 +5,17 @@ using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Exceptions;
 using TechnicoRMP.Shared.Dtos;
+using Azure;
+using Technico.Api.Validations;
+using System.Runtime.InteropServices;
+using System.Net;
 
 namespace Technico.Api.Services;
 
 public class UserService : IUserService
 {
     private readonly DataStore _dataStore;
+    private static List<User> Users = new List<User>();
 
     public UserService(DataStore context)
     {
@@ -22,21 +27,25 @@ public class UserService : IUserService
         var storedUser = _dataStore.Users.FirstOrDefault(s => s.Id == updateUserRequest.Id);
         if (storedUser is null)
         {
-            throw new NotFoundException($"Ο χρήστης με Id {updateUserRequest.Id} δεν βρέθηκε.");
+            throw new NotFoundException($"User with Id {updateUserRequest.Id} not found.");
         }
-
         // Ενημέρωση πεδίων, αν έχουν τιμή στο updateUserRequest
         if (!string.IsNullOrEmpty(updateUserRequest.Address))
             storedUser.Address = updateUserRequest.Address;
 
         if (!string.IsNullOrEmpty(updateUserRequest.Password))
-            storedUser.Password = updateUserRequest.Password;
+            storedUser.Password = BCrypt.Net.BCrypt.HashPassword(updateUserRequest.Password);
 
         if (!string.IsNullOrEmpty(updateUserRequest.PhoneNumber))
             storedUser.PhoneNumber = updateUserRequest.PhoneNumber;
 
-        if (!string.IsNullOrEmpty(updateUserRequest.VatNumber))
+        if (!string.IsNullOrEmpty(updateUserRequest.VatNumber) && Users.Any(u => u.VatNumber != storedUser.VatNumber))
             storedUser.VatNumber = updateUserRequest.VatNumber;
+
+        if (_dataStore.Users.Any(u => u.VatNumber == updateUserRequest.VatNumber))
+        {
+            throw new UserException("User already exists with the same VAT.");
+        }
 
         if (!string.IsNullOrEmpty(updateUserRequest.Email))
             storedUser.Email = updateUserRequest.Email;
@@ -47,12 +56,16 @@ public class UserService : IUserService
         if (!string.IsNullOrEmpty(updateUserRequest.Name))
             storedUser.Name = updateUserRequest.Name;
 
-        if (updateUserRequest.TypeOfUser.HasValue)
-            storedUser.TypeOfUser = updateUserRequest.TypeOfUser.Value;
-
+        //if (updateUserRequest.TypeOfUser.HasValue)
+        //    storedUser.TypeOfUser = updateUserRequest.TypeOfUser.Value;
+        bool isUpdateValid = UserValidators.ValidateUserForUpdate(storedUser);
+        if (!isUpdateValid)
+        {
+            throw new BadRequestException("User does not have right email, VAT or password");
+        }
+        _dataStore.Users.Update(storedUser);
         _dataStore.SaveChanges();
 
-        // Δημιουργία νέου `UpdateUserRequest` με τα ενημερωμένα στοιχεία
         return new UpdateUserRequest
         {
             Id = storedUser.Id,
@@ -74,7 +87,6 @@ public class UserService : IUserService
 
         if (user is null)
         {
-            Console.WriteLine("User not found");
             return false;
         }
 
@@ -105,7 +117,12 @@ public class UserService : IUserService
                 Password = creatUserDto.Password,
                 TypeOfUser = creatUserDto.TypeOfUser
             };
+            if (user == null)
+            {
+                throw new NotFoundException("User cannot be null.");
+            }
 
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             _dataStore.Add(user);
             _dataStore.SaveChanges();
             return new Result<CreateUserResponse>
@@ -190,31 +207,61 @@ public class UserService : IUserService
         }).ToList();
     }
 
-    ////public List<UserWithProperyItemsDTO> GetAllUsersWithPropertyItems()
-    ////{
-    ////    return _dataStore.Users
-    ////        .Include(a => a.PropertyItem)
-    ////        .Select(a => a.ConvertUserWithPropertyItems())
-    ////    .ToList();
-    ////}
-
-    public CreateUserResponse ReplaceUser(CreateUserResponse dto)
+    
+    public CreateUserResponse ReplaceUser(UpdateUserRequest dto)
     {
-        if (dto.Name == null || dto.Surname == null)
-            throw new BadRequestException("Bad Request: The user name and surname must be specified!");
 
         var user = _dataStore.Users.Find(dto.Id);
 
         if (user == null)
             throw new NotFoundException("Not Found: The user with the given id was not found!");
 
-        user.Name = dto.Name;
-        user.Surname = dto.Surname;
-        _dataStore.SaveChangesAsync();
+        
 
-        var response = CreateUserResponseService.CreateFromEntity(user);
-        return response;
+        if (!string.IsNullOrEmpty(dto.Name) && dto.Name != "string")
+            user.Name = dto.Name;
+
+        if (!string.IsNullOrEmpty(dto.Surname) && dto.Surname != "string")
+            user.Surname = dto.Surname;
+
+        if (!string.IsNullOrEmpty(dto.VatNumber) && dto.VatNumber != "string")
+        {
+            if (Users.Any(u => u.VatNumber == dto.VatNumber && u.Id != user.Id))
+            {
+                throw new BadRequestException("User already exists with the same VAT.");
+            }
+            user.VatNumber = dto.VatNumber;
+        }
+        if (_dataStore.Users.Any(u => u.VatNumber == dto.VatNumber))
+        {
+            throw new UserException("User already exists with the same VAT.");
+        }
+
+        if (!string.IsNullOrEmpty(dto.Email) && dto.Email != "string")
+            user.Email = dto.Email;
+
+        if (!string.IsNullOrEmpty(dto.Address) && dto.Address != "string")
+            user.Address = dto.Address;
+
+        if (!string.IsNullOrEmpty(dto.PhoneNumber) && dto.PhoneNumber != "string")
+            user.PhoneNumber = dto.PhoneNumber;
+
+        if (!string.IsNullOrEmpty(dto.Password) && dto.Password != "string")
+        {
+            user.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+        }
+        bool isValid = UserValidators.ValidateUserForReplace(user);
+        if (!isValid)
+        {
+            throw new BadRequestException("Invalid user data.");
+        }
+        _dataStore.SaveChanges();
+
+        return CreateUserResponseService.CreateFromEntity(user);
     }
+
+
+
 
     public bool SoftDeleteUser(int id)
     {

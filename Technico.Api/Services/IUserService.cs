@@ -10,7 +10,7 @@ public interface IUserService
     Result<CreateUserResponse> Create(CreatUserRequest creatUserDto);
     List<CreateUserResponse> DisplayAll();
     CreateUserResponse DisplayUser(int id);
-    CreateUserResponse ReplaceUser(CreateUserResponse user);
+    CreateUserResponse ReplaceUser(UpdateUserRequest dto);
     UpdateUserRequest UpdateUser(UpdateUserRequest updateUserRequest);
     bool SoftDeleteUser(int id);
 }

@@ -43,7 +43,7 @@ namespace Technico.Api.Controllers
 
         //Partial Update
         [HttpPut]
-        public ActionResult<CreateUserResponse> Put([FromBody] CreateUserResponse userDTO)
+        public ActionResult<CreateUserResponse> Put([FromBody] UpdateUserRequest userDTO)
         {
             try
             {
