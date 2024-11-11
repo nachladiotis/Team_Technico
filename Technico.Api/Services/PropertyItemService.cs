@@ -51,6 +51,11 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
 
     }
 
+    public List<PropertyItem> ReadPropertyItems()
+    {
+        return _dataStore.PropertyItems.ToList();
+    }
+
 
     public bool Delete(string e9Number)
     {
@@ -77,27 +82,6 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
             Status = -1
         };
 
-        //if (propertyItem is null)
-        //{
-        //    response.Message = "ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ ΣΤΟΙΧΕΙΑ ΑΚΙΝΗΤΟΥ";
-        //    return response;
-        //}
-        //if (propertyItem.E9Number is null)
-        //{
-        //    response.Message = "ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ ΤΟ Ε9";
-        //    return response;
-        //}
-        //if (propertyItem.Address is null)
-        //{
-        //    response.Message = "ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ ΔΙΕΥΘΥΝΣΗ";
-        //    return response;
-        //}
-        //if (propertyItem.YearOfConstruction < 0 || propertyItem.YearOfConstruction > DateTime.Now.Year)
-        //{
-        //    response.Message = "ΠΡΕΠΕΙ ΝΑ ΔΩΣΕΙΣ ΣΩΣΤΟ ΕΤΟΣ ΚΑΤΑΣΚΕΥΗΣ";
-        //    return response;
-        //}
-
         var propertyItemFromDb = _dataStore.PropertyItems.FirstOrDefault(p => p.E9Number == updatePropertyItemRequest.E9Number);
         if (propertyItemFromDb is null)
         {
@@ -115,6 +99,10 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
         if (updatePropertyItemRequest.EnPropertyType is not null)
         {
             propertyItemFromDb!.EnPropertyType = updatePropertyItemRequest.EnPropertyType.Value;
+        }
+        if (updatePropertyItemRequest.YearOfConstruction is not null)
+        {
+            propertyItemFromDb!.YearOfConstruction = updatePropertyItemRequest.YearOfConstruction.Value;
         }
 
         _dataStore.SaveChanges();
