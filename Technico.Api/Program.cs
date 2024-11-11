@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Technico.Api.Services;
-using TechnicoRMP.Database.DataAccess;
+using TechnicoRMP.DatabaseNew.DataAccess;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared;
 
@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddDbContext<DataStore>(options =>
-    options.UseSqlServer("Data Source=(local);Initial Catalog=TechnicoDb;Integrated Security=True;TrustServerCertificate=True"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 //builder.Services.AddScoped<>
 
 builder.Services.AddControllers();

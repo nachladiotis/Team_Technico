@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TechnicoRMP.DatabaseNew\TechnicoRMP.DatabaseNew.csproj" />
+    <ProjectReference Include="..\TechnicoRMP.DatabaseNew\TechnicoRMP.Database.csproj" />
     <ProjectReference Include="..\TechnicoRMP.Models\TechnicoRMP.Models.csproj" />
     <ProjectReference Include="..\TechnicoRMP.Shared\TechnicoRMP.Shared.csproj" />
   </ItemGroup>

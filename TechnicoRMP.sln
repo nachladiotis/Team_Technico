@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechnicoRMP.Models", "Techn
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Technico.Api", "Technico.Api\Technico.Api.csproj", "{4B8D6735-7694-4CC4-B1AE-D7773E434783}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnicoRMP.DatabaseNew", "TechnicoRMP.DatabaseNew\TechnicoRMP.DatabaseNew.csproj", "{75B6A5BF-DCA4-41CD-8C21-386ACF832408}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechnicoRMP.Database", "TechnicoRMP.DatabaseNew\TechnicoRMP.Database.csproj", "{75B6A5BF-DCA4-41CD-8C21-386ACF832408}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

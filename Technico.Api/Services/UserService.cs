@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Exceptions;
@@ -10,6 +9,7 @@ using Technico.Api.Validations;
 using System.Runtime.InteropServices;
 using System.Net;
 using Technico.Api.Controllers;
+using TechnicoRMP.DatabaseNew.DataAccess;
 
 namespace Technico.Api.Services;
 
@@ -200,22 +200,32 @@ public class UserService : IUserService
 
     public async Task<List<CreateUserResponse>> DisplayAll()
     {
-        var users = await _dataStore
-            .Users
-            .Include(p => p.PropertyOwnerships)
-            .ThenInclude(s => s.PropertyItem)
-            .ToListAsync();
-
-        return users.Select(user => new CreateUserResponse
+        try
         {
-            Id = (int)user.Id,
-            Name = user.Name,
-            Surname = user.Surname,
-            VatNumber = user.VatNumber,
-            Email = user.Email,
-            Address = user.Address,
-            PhoneNumber = user.PhoneNumber,
-        }).ToList();
+            var users = await _dataStore
+                       .Users
+                       .Include(p => p.PropertyOwnerships)
+                       .ThenInclude(s => s.PropertyItem)
+                       .ToListAsync();
+
+            return users.Select(user => new CreateUserResponse
+            {
+                Id = (int)user.Id,
+                Name = user.Name,
+                Surname = user.Surname,
+                VatNumber = user.VatNumber,
+                Email = user.Email,
+                Address = user.Address,
+                PhoneNumber = user.PhoneNumber,
+            }).ToList();
+        }
+        catch(Exception ex)
+        {
+
+        }
+
+        return new List<CreateUserResponse> ();
+       
     }
 
 

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TechnicoRMP.Database.DataAccess;
+using TechnicoRMP.DatabaseNew.DataAccess;
 using TechnicoRMP.Models;
 
 
