@@ -79,7 +79,7 @@ public class UserService(DataStore dataStore) : IUserService
     }
 
 
-    public Result<CreateUserResponse> Create(CreatUserRequest creatUserDto)
+    public Result<CreateUserResponse> Create(CreateUserRequest creatUserDto)
     {
         var failResponse = new Result<CreateUserResponse>
         {
@@ -108,7 +108,7 @@ public class UserService(DataStore dataStore) : IUserService
                 Value = CreateUserResponseService.CreateFromEntity(user)
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return failResponse;
         }

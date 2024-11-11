@@ -8,5 +8,5 @@ public interface IUserService
 {
     Result Update(UpdateUserRequest updateUserRequest);
     bool Delete(string vatNumber);
-    Result<CreateUserResponse> Create(CreatUserRequest creatUserDto);
+    Result<CreateUserResponse> Create(CreateUserRequest creatUserDto);
 }

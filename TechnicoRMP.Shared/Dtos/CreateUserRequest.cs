@@ -7,7 +7,7 @@ using TechnicoRMP.Models;
 
 namespace TechnicoRMP.Shared.Dtos;
 
-public class CreatUserRequest : IDto
+public class CreateUserRequest : IDto
 {
     public required string Name { get; set; }
     public required string VatNumber { get; set; }
