@@ -1,14 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using TechnicoRMP.DatabaseNew.DataAccess;
+﻿using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
@@ -33,6 +23,7 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
                 Address = createPropertyItemRequest.Address,
                 YearOfConstruction = createPropertyItemRequest.YearOfConstruction,
                 EnPropertyType = createPropertyItemRequest.EnPropertyType,
+                
                 IsActive = true,
             };
 
@@ -53,7 +44,16 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
 
     public List<PropertyItem> ReadPropertyItems()
     {
-        return _dataStore.PropertyItems.ToList();
+        try
+        {
+
+        return [.. _dataStore.PropertyItems];
+        }
+        catch(Exception ex)
+        {
+
+        }
+        return [];
     }
 
 

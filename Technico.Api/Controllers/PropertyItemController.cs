@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Technico.Api.Services;
 using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;

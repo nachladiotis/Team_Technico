@@ -1,14 +1,9 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Exceptions;
 using TechnicoRMP.Shared.Dtos;
-using Azure;
 using Technico.Api.Validations;
-using System.Runtime.InteropServices;
-using System.Net;
-using Technico.Api.Controllers;
 using TechnicoRMP.Database.DataAccess;
 
 namespace Technico.Api.Services;

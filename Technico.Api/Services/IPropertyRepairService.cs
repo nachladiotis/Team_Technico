@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TechnicoRMP.Models;
+﻿using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 
