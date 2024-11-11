@@ -6,7 +6,7 @@ namespace Technico.Api.Services;
 public interface IUserService
 {
     Task<bool> Delete(int id);
-    Result<CreateUserResponse> Create(CreatUserRequest creatUserDto);
+    Result<CreateUserResponse> Create(CreateUserRequest creatUserDto);
     Task<List<CreateUserResponse>> DisplayAll();
     Task<CreateUserResponse> DisplayUser(int id);
     Task<CreateUserResponse> ReplaceUser(UpdateUserRequest dto);

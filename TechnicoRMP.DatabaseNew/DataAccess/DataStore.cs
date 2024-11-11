@@ -13,9 +13,7 @@ public class DataStore : DbContext
     public DbSet<PropertyRepair> PropertyRepairs { get; set; }
     //public DataStore(DbContextOptions<DataStore> options) : base(options) { }
 
-    public DataStore(DbContextOptions<DataStore> options) : base(options)
-    {
-    }
+   
 
     //public void ConfigureServices(IServiceCollection services)
     //{
