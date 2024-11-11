@@ -9,7 +9,7 @@ using Technico.Api.Validations;
 using System.Runtime.InteropServices;
 using System.Net;
 using Technico.Api.Controllers;
-using TechnicoRMP.DatabaseNew.DataAccess;
+using TechnicoRMP.Database.DataAccess;
 
 namespace Technico.Api.Services;
 

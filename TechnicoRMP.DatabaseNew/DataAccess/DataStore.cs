@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using TechnicoRMP.Models;
 
-namespace TechnicoRMP.DatabaseNew.DataAccess;
+namespace TechnicoRMP.Database.DataAccess;
 
 public class DataStore : DbContext
 {

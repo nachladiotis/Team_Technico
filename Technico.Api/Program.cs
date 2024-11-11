@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Technico.Api.Services;
-using TechnicoRMP.DatabaseNew.DataAccess;
+using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared;
 
