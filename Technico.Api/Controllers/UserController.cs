@@ -20,11 +20,12 @@ namespace Technico.Api.Controllers
 
         //Read all users
         [HttpGet]
-        public ActionResult<List<CreateUserResponse>> Get()
+        public async Task<ActionResult<List<CreateUserResponse>>> Get()
         {
-            var response = _service.DisplayAll();
+            var response = await _service.DisplayAll();
             return Ok(response);
         }
+
 
         //[HttpGet, Route("withpropertyitems")]
         //public ActionResult<List<UserWithProperyItemsDTO>> GetWithPropertyItems()
@@ -35,19 +36,20 @@ namespace Technico.Api.Controllers
 
         //Read User with ID
         [HttpGet, Route("{id}")]
-        public ActionResult<CreateUserResponse> GetUserDetails(int id)
+        public async Task<ActionResult<CreateUserResponse>> GetUserDetails(int id)
         {
-            var response = _service.DisplayUser(id);
+            var response = await _service.DisplayUser(id);
             return Ok(response);
         }
 
+
         //Partial Update
         [HttpPut]
-        public ActionResult<CreateUserResponse> Put([FromBody] UpdateUserRequest userDTO)
+        public async Task<ActionResult<CreateUserResponse>> PutAsync([FromBody] UpdateUserRequest userDTO)
         {
             try
             {
-                var response = _service.ReplaceUser(userDTO);
+                var response = await _service.ReplaceUser(userDTO);
                 return Ok(response);
             }
             catch (BadRequestException ex)
@@ -60,13 +62,14 @@ namespace Technico.Api.Controllers
             }
         }
 
+
         //Complete update
         [HttpPatch]
-        public ActionResult<UpdateUserRequest> Patch([FromBody] UpdateUserRequest userDTO)
+        public async Task<ActionResult<UpdateUserRequest>> Patch([FromBody] UpdateUserRequest userDTO)
         {
             try
             {
-                var response = _service.UpdateUser(userDTO);
+                var response = await _service.UpdateUser(userDTO);
                 return Ok(response);
             }
             catch (BadHttpRequestException ex)
@@ -81,9 +84,9 @@ namespace Technico.Api.Controllers
 
         //Hard Delete
         [HttpDelete, Route("{id}")]
-        public ActionResult<bool> Delete([FromRoute] int id)
+        public async Task<ActionResult<bool>> DeleteAsync([FromRoute] int id)
         {
-            bool response = _service.Delete(id);
+            bool response = await _service.Delete(id);
 
             if (response) return Ok(response);
             else return NotFound(response);
@@ -91,22 +94,21 @@ namespace Technico.Api.Controllers
 
         //Soft Delete
         [HttpDelete("SoftDelete/{id}")]
-        public ActionResult<bool> SoftDelete([FromRoute] int id)
+        public async Task<ActionResult<bool>> SoftDeleteAsync([FromRoute] int id)
         {
             try
             {
-                bool response = _service.SoftDeleteUser(id);
+                bool response = await _service.SoftDeleteUser(id);  
                 if (response)
-                    return Ok(response);  
+                    return Ok(response);
                 else
-                    return NotFound(response);  
+                    return NotFound(response);
             }
             catch (NotFoundException ex)
             {
-                return NotFound(new { message = ex.Message }); 
+                return NotFound(new { message = ex.Message });
             }
         }
-
     }
 
 }

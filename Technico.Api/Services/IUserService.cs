@@ -6,11 +6,11 @@ namespace Technico.Api.Services;
 
 public interface IUserService
 {
-    bool Delete(int id);
+    Task<bool> Delete(int id);
     Result<CreateUserResponse> Create(CreatUserRequest creatUserDto);
-    List<CreateUserResponse> DisplayAll();
-    CreateUserResponse DisplayUser(int id);
-    CreateUserResponse ReplaceUser(UpdateUserRequest dto);
-    UpdateUserRequest UpdateUser(UpdateUserRequest updateUserRequest);
-    bool SoftDeleteUser(int id);
+    Task<List<CreateUserResponse>> DisplayAll();
+    Task<CreateUserResponse> DisplayUser(int id);
+    Task<CreateUserResponse> ReplaceUser(UpdateUserRequest dto);
+    Task<UpdateUserRequest> UpdateUser(UpdateUserRequest updateUserRequest);
+    Task<bool> SoftDeleteUser(int id);
 }

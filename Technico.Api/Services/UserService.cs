@@ -9,6 +9,7 @@ using Azure;
 using Technico.Api.Validations;
 using System.Runtime.InteropServices;
 using System.Net;
+using Technico.Api.Controllers;
 
 namespace Technico.Api.Services;
 
@@ -16,20 +17,22 @@ public class UserService : IUserService
 {
     private readonly DataStore _dataStore;
     private static List<User> Users = new List<User>();
+    private readonly ILogger<UserService> _logger;
 
     public UserService(DataStore context)
     {
         _dataStore = context;
     }
 
-    public UpdateUserRequest UpdateUser(UpdateUserRequest updateUserRequest)
+    public async Task<UpdateUserRequest> UpdateUser(UpdateUserRequest updateUserRequest)
     {
-        var storedUser = _dataStore.Users.FirstOrDefault(s => s.Id == updateUserRequest.Id);
+        var storedUser = await _dataStore.Users.FirstOrDefaultAsync(s => s.Id == updateUserRequest.Id);
         if (storedUser is null)
         {
             throw new NotFoundException($"User with Id {updateUserRequest.Id} not found.");
         }
-        // Ενημέρωση πεδίων, αν έχουν τιμή στο updateUserRequest
+
+        // Update fields if they have values in updateUserRequest
         if (!string.IsNullOrEmpty(updateUserRequest.Address))
             storedUser.Address = updateUserRequest.Address;
 
@@ -39,10 +42,13 @@ public class UserService : IUserService
         if (!string.IsNullOrEmpty(updateUserRequest.PhoneNumber))
             storedUser.PhoneNumber = updateUserRequest.PhoneNumber;
 
-        if (!string.IsNullOrEmpty(updateUserRequest.VatNumber) && Users.Any(u => u.VatNumber != storedUser.VatNumber))
+        if (!string.IsNullOrEmpty(updateUserRequest.VatNumber) &&
+            await _dataStore.Users.AnyAsync(u => u.VatNumber != storedUser.VatNumber))
+        {
             storedUser.VatNumber = updateUserRequest.VatNumber;
+        }
 
-        if (_dataStore.Users.Any(u => u.VatNumber == updateUserRequest.VatNumber))
+        if (await _dataStore.Users.AnyAsync(u => u.VatNumber == updateUserRequest.VatNumber))
         {
             throw new UserException("User already exists with the same VAT.");
         }
@@ -56,15 +62,18 @@ public class UserService : IUserService
         if (!string.IsNullOrEmpty(updateUserRequest.Name))
             storedUser.Name = updateUserRequest.Name;
 
-        //if (updateUserRequest.TypeOfUser.HasValue)
-        //    storedUser.TypeOfUser = updateUserRequest.TypeOfUser.Value;
+        // Uncomment if TypeOfUser should be updated only if present in the request
+        // if (updateUserRequest.TypeOfUser.HasValue)
+        //     storedUser.TypeOfUser = updateUserRequest.TypeOfUser.Value;
+
         bool isUpdateValid = UserValidators.ValidateUserForUpdate(storedUser);
         if (!isUpdateValid)
         {
-            throw new BadRequestException("User does not have right email, VAT or password");
+            throw new BadRequestException("User does not have right email, VAT, or password");
         }
+
         _dataStore.Users.Update(storedUser);
-        _dataStore.SaveChanges();
+        await _dataStore.SaveChangesAsync();
 
         return new UpdateUserRequest
         {
@@ -81,9 +90,10 @@ public class UserService : IUserService
     }
 
 
-    public bool Delete(int id)
+
+    public async Task<bool> Delete(int id)
     {
-        var user = _dataStore.Users.FirstOrDefault(s => s.Id == id);
+        var user = await _dataStore.Users.FirstOrDefaultAsync(s => s.Id == id);
 
         if (user is null)
         {
@@ -92,7 +102,7 @@ public class UserService : IUserService
 
         _dataStore.Users.Remove(user);
 
-        var deleted = _dataStore.SaveChanges();
+        var deleted = await _dataStore.SaveChangesAsync();
         return deleted > 0;
     }
 
@@ -140,13 +150,14 @@ public class UserService : IUserService
     }
 
 
-    public CreateUserResponse DisplayUser(int id)
+    public async Task<CreateUserResponse> DisplayUser(int id)
     {
-        var user = _dataStore
+        var user = await _dataStore
             .Users
             .Include(p => p.PropertyOwnerships)
             .ThenInclude(s => s.PropertyItem)
-            .FirstOrDefault(p => p.Id == id);
+            .FirstOrDefaultAsync(p => p.Id == id);
+
         if (user == null)
         {
             throw new NotFoundException($"User with Id {id} not found.");
@@ -155,45 +166,45 @@ public class UserService : IUserService
         var response = CreateUserResponseService.CreateFromEntity(user);
         return response;
 
-        //DisplayUserDetails(user);
-        //DisplayUserPropertyItemsDetails(user);
+    //DisplayUserDetails(user);
+    //DisplayUserPropertyItemsDetails(user);
     }
 
-    private static void DisplayUserPropertyItemsDetails(User user)
-    {
-        foreach (var ownership in user.PropertyOwnerships)
-        {
-            var propertyItem = ownership.PropertyItem;
-            if (propertyItem is null)
-                continue;
-            Console.WriteLine("ΠΛΗΡΟΦΟΡΙΕΣ ΑΝΤΙΚΕΙΜΕΝΟΥ:");
-            Console.WriteLine($"E9: {propertyItem.E9Number}");
-            Console.WriteLine($"ΔΙΕΥΘΥΝΣΗ: {propertyItem.Address}");
-            Console.WriteLine($"ΕΤΟΣ ΚΑΤΑΣΚΕΥΗΣ: {propertyItem.YearOfConstruction}");
-        }
-    }
+    //private static void DisplayUserPropertyItemsDetails(User user)
+    //{
+    //    foreach (var ownership in user.PropertyOwnerships)
+    //    {
+    //        var propertyItem = ownership.PropertyItem;
+    //        if (propertyItem is null)
+    //            continue;
+    //        Console.WriteLine("ΠΛΗΡΟΦΟΡΙΕΣ ΑΝΤΙΚΕΙΜΕΝΟΥ:");
+    //        Console.WriteLine($"E9: {propertyItem.E9Number}");
+    //        Console.WriteLine($"ΔΙΕΥΘΥΝΣΗ: {propertyItem.Address}");
+    //        Console.WriteLine($"ΕΤΟΣ ΚΑΤΑΣΚΕΥΗΣ: {propertyItem.YearOfConstruction}");
+    //    }
+    //}
 
-    private static void DisplayUserDetails(User user)
-    {
-        Console.WriteLine("ΠΛΗΡΟΦΟΡΙΕΣ ΧΡΗΣΤΗ:");
-        Console.WriteLine($"ΟΝΟΜΑ: {user.Name}");
-        Console.WriteLine($"ΕΠΙΘΕΤΟ: {user.Surname}");
-        Console.WriteLine($"ΑΦΜ: {user.VatNumber}");
-        Console.WriteLine($"Email: {user.Email}");
+    //private static void DisplayUserDetails(User user)
+    //{
+    //    Console.WriteLine("ΠΛΗΡΟΦΟΡΙΕΣ ΧΡΗΣΤΗ:");
+    //    Console.WriteLine($"ΟΝΟΜΑ: {user.Name}");
+    //    Console.WriteLine($"ΕΠΙΘΕΤΟ: {user.Surname}");
+    //    Console.WriteLine($"ΑΦΜ: {user.VatNumber}");
+    //    Console.WriteLine($"Email: {user.Email}");
 
-        if (!string.IsNullOrEmpty(user.Address))
-            Console.WriteLine($"ΔΙΕΥΘΥΝΣΗ: {user.Address}");
-        if (!string.IsNullOrEmpty(user.PhoneNumber))
-            Console.WriteLine($"ΤΗΛΕΦΩΝΟ: {user.PhoneNumber}");
-    }
+    //    if (!string.IsNullOrEmpty(user.Address))
+    //        Console.WriteLine($"ΔΙΕΥΘΥΝΣΗ: {user.Address}");
+    //    if (!string.IsNullOrEmpty(user.PhoneNumber))
+    //        Console.WriteLine($"ΤΗΛΕΦΩΝΟ: {user.PhoneNumber}");
+    //}
 
-    public List<CreateUserResponse> DisplayAll()
+    public async Task<List<CreateUserResponse>> DisplayAll()
     {
-        var users = _dataStore
+        var users = await _dataStore
             .Users
             .Include(p => p.PropertyOwnerships)
             .ThenInclude(s => s.PropertyItem)
-            .ToList();
+            .ToListAsync();
 
         return users.Select(user => new CreateUserResponse
         {
@@ -207,16 +218,14 @@ public class UserService : IUserService
         }).ToList();
     }
 
-    
-    public CreateUserResponse ReplaceUser(UpdateUserRequest dto)
-    {
 
-        var user = _dataStore.Users.Find(dto.Id);
+
+    public async Task<CreateUserResponse> ReplaceUser(UpdateUserRequest dto)
+    {
+        var user = await _dataStore.Users.FindAsync(dto.Id);
 
         if (user == null)
             throw new NotFoundException("Not Found: The user with the given id was not found!");
-
-        
 
         if (!string.IsNullOrEmpty(dto.Name) && dto.Name != "string")
             user.Name = dto.Name;
@@ -226,13 +235,14 @@ public class UserService : IUserService
 
         if (!string.IsNullOrEmpty(dto.VatNumber) && dto.VatNumber != "string")
         {
-            if (Users.Any(u => u.VatNumber == dto.VatNumber && u.Id != user.Id))
+            if (await _dataStore.Users.AnyAsync(u => u.VatNumber == dto.VatNumber && u.Id != user.Id))
             {
                 throw new BadRequestException("User already exists with the same VAT.");
             }
             user.VatNumber = dto.VatNumber;
         }
-        if (_dataStore.Users.Any(u => u.VatNumber == dto.VatNumber))
+
+        if (await _dataStore.Users.AnyAsync(u => u.VatNumber == dto.VatNumber && u.Id != user.Id))
         {
             throw new UserException("User already exists with the same VAT.");
         }
@@ -250,28 +260,31 @@ public class UserService : IUserService
         {
             user.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
         }
+
         bool isValid = UserValidators.ValidateUserForReplace(user);
         if (!isValid)
         {
             throw new BadRequestException("Invalid user data.");
         }
-        _dataStore.SaveChanges();
+
+        await _dataStore.SaveChangesAsync();
 
         return CreateUserResponseService.CreateFromEntity(user);
     }
 
 
-
-
-    public bool SoftDeleteUser(int id)
+    public async Task<bool> SoftDeleteUser(int id)
     {
-        var user = _dataStore.Users.FirstOrDefault(u => u.Id == id);
+        var user = await _dataStore.Users.FirstOrDefaultAsync(u => u.Id == id);
         if (user == null)
         {
             throw new NotFoundException($"User with Id {id} not found.");
         }
-        user.IsActive = false;  
-        _dataStore.SaveChanges();  
+
+        user.IsActive = false;
+        await _dataStore.SaveChangesAsync();
+
         return true;
     }
+
 }
