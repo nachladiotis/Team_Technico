@@ -22,8 +22,6 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
             Status = -1
         };
 
-
-
         var propertyOwner = _dataStore.Users
           .FirstOrDefault(p => p.Id == createPropertyRepairRequest.RepairerId);
         if (propertyOwner == null)

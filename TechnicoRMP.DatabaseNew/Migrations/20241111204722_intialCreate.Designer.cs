@@ -7,14 +7,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TechnicoRMP.Database.DataAccess;
 
-
 #nullable disable
 
-namespace TechnicoRMP.Migrations
+namespace TechnicoRMP.Database.Migrations
 {
     [DbContext(typeof(DataStore))]
-    [Migration("20241108191029_isactiveuser")]
-    partial class isactiveuser
+    [Migration("20241111204722_intialCreate")]
+    partial class intialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -91,8 +90,8 @@ namespace TechnicoRMP.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Cost")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Cost")
+                        .HasColumnType("float");
 
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime2");

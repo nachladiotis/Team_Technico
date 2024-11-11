@@ -7,7 +7,7 @@ public class PropertyRepair
     public EnTypeOfRepair TypeOfRepair { get; set; }
     public required string Address { get; set; }
     public EnRepairStatus RepairStatus { get; set; } = EnRepairStatus.Pending;
-    public decimal Cost { get; set; }
+    public double Cost { get; set; }
     public User? Repairer { get; set; }
     public long RepairerId { get; set; } 
     public bool IsActive { get; set; } = true;

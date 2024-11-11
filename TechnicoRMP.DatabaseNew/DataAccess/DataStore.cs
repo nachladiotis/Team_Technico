@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using TechnicoRMP.Models;
 
 namespace TechnicoRMP.Database.DataAccess;
@@ -11,31 +10,21 @@ public class DataStore : DbContext
     public DbSet<PropertyItem> PropertyItems { get; set; }
     public DbSet<PropertyOwnership> PropertyOwnerships { get; set; }
     public DbSet<PropertyRepair> PropertyRepairs { get; set; }
-    //public DataStore(DbContextOptions<DataStore> options) : base(options) { }
-
-   
-
-    //public void ConfigureServices(IServiceCollection services)
-    //{
-    //    services.AddDbContext<DataStore>(options =>
-    //        options.UseSqlServer("Data Source=(local);Initial Catalog=TechnicoDb;Integrated Security=True;TrustServerCertificate=True;"));
-    //}
-
-
+  
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
-        // modelBuilder.Entity<User>().HasData(
-        //    new User()
-        //    {
-        //        Id = 1,
-        //        Email = "abcd@gmail.com",
-        //        Name = "Ant",
-        //        Password = "12",  // ΠΡΟΣΟΧΗ: Κρυπτογράφησε τον κωδικό στην πραγματική εφαρμογή
-        //        Surname = "pl",
-        //        VatNumber = "122431234"
-        //    }
-        //);
+       // modelBuilder.Entity<User>().HasData(
+       //    new User()
+       //    {
+       //        Id=1,
+       //        Email = "admin@admin.com",
+       //        Name = "Admin",
+       //        Password = "admin",  // ΠΡΟΣΟΧΗ: Κρυπτογράφησε τον κωδικό στην πραγματική εφαρμογή
+       //        Surname = "admin",
+       //        VatNumber = "122431234"
+       //    }
+       //);
 
         modelBuilder
             .Entity<User>()
@@ -55,7 +44,7 @@ public class DataStore : DbContext
         //        TypeOfUser = EnUserType.Customer
         //    }
         //);
-        //modelBuilder.Entity<Property>().HasData(
+        //modelBuilder.Entity<PropertyItem>().HasData(
         //    new PropertyItem
         //    {
         //        E9Number = "E912345678",
@@ -77,11 +66,11 @@ public class DataStore : DbContext
         //    new PropertyRepair
         //    {
         //        Date = new DateTime(2023, 10, 5),
-        //        TypeOfRepair = EnTypeOfRepair.Plumbing,  
+        //        TypeOfRepair = EnTypeOfRepair.Plumbing,
         //        Address = "123 Main Street",
         //        RepairStatus = EnRepairStatus.Inprogress,
         //        Cost = 150.00m,
-        //        RepairerId = 1,  
+        //        RepairerId = 1,
         //        IsActive = true
         //    },
         //    new PropertyRepair
