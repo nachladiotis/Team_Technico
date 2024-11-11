@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using TechnicoRMP.Models;
 
 namespace TechnicoRMP.Database.DataAccess;
@@ -12,11 +13,16 @@ public class DataStore : DbContext
     public DbSet<PropertyRepair> PropertyRepairs { get; set; }
     //public DataStore(DbContextOptions<DataStore> options) : base(options) { }
 
-    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public DataStore(DbContextOptions<DataStore> options) : base(options)
+    {
+    }
+
+    //public void ConfigureServices(IServiceCollection services)
     //{
-    //   string connectionString = "Data Source=(local);Initial Catalog=TechnicoDb; Integrated Security = True;TrustServerCertificate=True;";
-    //   optionsBuilder.UseSqlServer(connectionString);
+    //    services.AddDbContext<DataStore>(options =>
+    //        options.UseSqlServer("Data Source=(local);Initial Catalog=TechnicoDb;Integrated Security=True;TrustServerCertificate=True;"));
     //}
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

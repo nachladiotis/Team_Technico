@@ -1,7 +1,10 @@
 ﻿namespace TechnicoRMP.Models;
 
+
 public class User
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; set; }
     public required string Name { get; set; }
     public required string VatNumber { get; set; }
