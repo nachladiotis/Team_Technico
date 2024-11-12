@@ -27,7 +27,6 @@ public class UserService : IUserService
             throw new NotFoundException($"User with Id {updateUserRequest.Id} not found.");
         }
 
-        // Update fields if they have values in updateUserRequest
         if (!string.IsNullOrEmpty(updateUserRequest.Address))
             storedUser.Address = updateUserRequest.Address;
 
@@ -56,10 +55,6 @@ public class UserService : IUserService
 
         if (!string.IsNullOrEmpty(updateUserRequest.Name))
             storedUser.Name = updateUserRequest.Name;
-
-        // Uncomment if TypeOfUser should be updated only if present in the request
-        // if (updateUserRequest.TypeOfUser.HasValue)
-        //     storedUser.TypeOfUser = updateUserRequest.TypeOfUser.Value;
 
         bool isUpdateValid = UserValidators.ValidateUserForUpdate(storedUser);
         if (!isUpdateValid)
