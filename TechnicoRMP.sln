@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Technico.Api", "Technico.Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechnicoRMP.Database", "TechnicoRMP.DatabaseNew\TechnicoRMP.Database.csproj", "{75B6A5BF-DCA4-41CD-8C21-386ACF832408}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnicoMVCApp", "TechnicoMVCApp\TechnicoMVCApp.csproj", "{D7368448-9FC6-4300-9A59-6FFADAE07907}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{75B6A5BF-DCA4-41CD-8C21-386ACF832408}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75B6A5BF-DCA4-41CD-8C21-386ACF832408}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75B6A5BF-DCA4-41CD-8C21-386ACF832408}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7368448-9FC6-4300-9A59-6FFADAE07907}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7368448-9FC6-4300-9A59-6FFADAE07907}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7368448-9FC6-4300-9A59-6FFADAE07907}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7368448-9FC6-4300-9A59-6FFADAE07907}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

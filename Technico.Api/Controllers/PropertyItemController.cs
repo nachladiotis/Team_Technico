@@ -42,7 +42,7 @@ namespace Technico.Api.Controllers
         }
 
 
-        [HttpGet("items")]
+        [HttpGet]
         public List<PropertyItem> GetPropertyItems()
         {
             return _propertyItemService.ReadPropertyItems();
