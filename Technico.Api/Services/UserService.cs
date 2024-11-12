@@ -118,8 +118,7 @@ public class UserService : IUserService
                 Address = creatUserDto.Address,
                 PhoneNumber = creatUserDto.PhoneNumber,
                 Email = creatUserDto.Email,
-                Password = creatUserDto.Password,
-                TypeOfUser = creatUserDto.TypeOfUser
+                Password = creatUserDto.Password
             };
             if (user == null)
             {

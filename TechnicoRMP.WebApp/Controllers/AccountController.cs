@@ -1,15 +1,50 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net.Http;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.WebApp.Models;
 
-public class AccountController : Controller
+public class AccountController(IHttpClientFactory httpClientFactory) : Controller
 {
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
-    public AccountController(IHttpClientFactory httpClientFactory)
+    [HttpGet]
+    public IActionResult Register()
     {
-        _httpClientFactory = httpClientFactory;
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Register(RegisterModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var client = _httpClientFactory.CreateClient("ApiClient");
+        var uri = new Uri($"{client.BaseAddress}/Auth/register");
+        var dto = new CreateUserRequest
+         { Email = model.Email,
+          Name = model.Name,
+          Password = model.Password,
+          Surname = model.Surname,
+          VatNumber = model.VatNumber,
+          Address = model.Address,
+          PhoneNumber = model.PhoneNumber,
+         };
+
+        var response = await client.PostAsJsonAsync(uri, dto);
+
+        if (response.IsSuccessStatusCode)
+        {
+            return RedirectToAction("Login", "Account"); // Redirect to login or a success page
+        }
+        else
+        {
+            ModelState.AddModelError(string.Empty, "Registration failed. Please try again.");
+            return View(model);
+        }
     }
 
     [HttpGet]

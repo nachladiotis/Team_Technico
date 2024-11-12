@@ -12,7 +12,6 @@ public class RegisterService:IDto
             VatNumber = createUserRequest.VatNumber,
             Surname = createUserRequest.Surname,
             Email = createUserRequest.Email,
-            TypeOfUser = createUserRequest.TypeOfUser,
             Address = createUserRequest.Address,
             PhoneNumber = createUserRequest.PhoneNumber, 
             Password = createUserRequest.Password,
