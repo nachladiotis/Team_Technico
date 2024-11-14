@@ -7,7 +7,7 @@ using TechnicoRMP.Shared.Exceptions;
 namespace Technico.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
         private static List<User> users = new List<User>();

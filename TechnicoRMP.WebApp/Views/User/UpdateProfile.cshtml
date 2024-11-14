@@ -1,1 +1,21 @@
-﻿@model TechnicoRMP.WebApp.Models.UserProfileModel
+﻿@model TechnicoRMP.WebApp.Models.UserProfileViewModel
+
+@{
+    var userId = ViewData["UpdateProfile"];
+}
+
+<form asp-action="UpdateProfile" method="put">
+    <input asp-for="Id" type="hidden" />
+    <div>
+        <label asp-for="Name"></label>
+        <input asp-for="Name" />
+    </div>
+    <div>
+        <label asp-for="Surname"></label>
+        <input asp-for="Surname" />
+    </div>
+    <div>
+        <label asp-for="Email"></label>
+        <input asp-for="Email" />
+    </div>
+</form>

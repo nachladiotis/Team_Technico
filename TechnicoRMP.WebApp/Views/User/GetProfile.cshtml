@@ -1,2 +1,48 @@
-﻿@model TechnicoRMP.WebApp.Models.UserProfileModel
+﻿@model TechnicoRMP.WebApp.Models.UserProfileViewModel
 
+@{
+    var userId = ViewData["GetProfile"];
+}
+
+<h1>GetProfile</h1>
+
+<div>
+    <p><strong>Name:</strong> @Model.Name</p>
+    <p><strong>Surname:</strong> @Model.Surname</p>
+    <p><strong>VatNumber:</strong> @Model.VatNumber</p>
+    <p><strong>Address:</strong> @Model.Address</p>
+    <p><strong>PhoneNumber:</strong> @Model.PhoneNumber</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+</div>
+
+<form asp-action="UpdateProfile" method="put">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-primary">Update Profile</button>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        const userId = '@userId'; 
+
+        $('#viewProfileButton').on('click', function () {
+            $.ajax({
+                url: `/User/GetProfileJson/${userId}`, 
+                type: 'GET',
+                success: function (data) {
+                    $('#profileDetails').html(`
+                        <p><strong>Name:</strong> ${data.Name || 'N/A'}</p>
+                        <p><strong>Surname:</strong> ${data.Surname || 'N/A'}</p>
+                        <p><strong>VatNumber:</strong> ${data.VatNumber || 'N/A'}</p>
+                        <p><strong>Address:</strong> ${data.Address || 'N/A'}</p>
+                        <p><strong>PhoneNumber:</strong> ${data.PhoneNumber || 'N/A'}</p>
+                        <p><strong>Email:</strong> ${data.Email || 'N/A'}</p>
+                    `);
+                },
+                error: function () {
+                    $('#profileDetails').html('<p style="color: red;">Unable to load profile data.</p>');
+                }
+            });
+        });
+    });
+</script>
