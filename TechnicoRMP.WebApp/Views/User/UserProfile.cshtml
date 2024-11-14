@@ -1,0 +1,30 @@
+﻿@model TechnicoRMP.WebApp.Models.UserProfileModel
+
+@{
+    ViewData["Title"] = "UserProfile";
+}
+
+<form asp-action="UpdateProfile" method="put">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>
+
+</br>
+
+<form asp-action="GetProfile" method="get">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-primary">View Profile</button>
+</form>
+
+</br>
+
+<form asp-action="SoftDeleteProfile" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete Profile</button>
+</form>
+
+</br>
+
+<form asp-action="" asp-controller="Home" asp-action="Index">
+    <button type="submit" class="btn btn-secondary">Cancel</button>
+</form>
