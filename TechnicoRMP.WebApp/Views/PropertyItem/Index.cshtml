@@ -7,14 +7,11 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Index</a>
+    <a asp-action="Create">Create new Item</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.E9Number)
             </th>
@@ -36,9 +33,6 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.E9Number)
             </td>

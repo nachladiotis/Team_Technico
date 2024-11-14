@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
+using TechnicoRMP.Shared.Common;
+using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.WebApp.Models;
 
 namespace TechnicoRMP.WebApp.Controllers
@@ -16,10 +18,10 @@ namespace TechnicoRMP.WebApp.Controllers
             _client.BaseAddress = baseAdsress;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             List<PropertyItemViewModel> ItemList = new List<PropertyItemViewModel>();
-            HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/propertyItem/GetPropertyItems").Result;
+            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/propertyItem/GetPropertyItems");
 
             if (response.IsSuccessStatusCode)
             {
@@ -37,13 +39,13 @@ namespace TechnicoRMP.WebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(PropertyItemViewModel model)
+        public async Task<IActionResult> Create(PropertyItemViewModel model)
         {
             try
             {
                 string data = JsonConvert.SerializeObject(model);
                 StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = _client.PostAsync(_client.BaseAddress + "/propertyItem/Create", content).Result;
+                HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress + "/propertyItem/Create", content);
                 if (response.IsSuccessStatusCode)
                 {
                     TempData["successMessage"] = "Item Created.";
@@ -58,32 +60,45 @@ namespace TechnicoRMP.WebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                PropertyItemViewModel item = new PropertyItemViewModel();
                 HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/PropertyItem/GetPropertyItemById/" + id).Result;
                 if (response.IsSuccessStatusCode)
                 {
-                    string data = response.Content.ReadAsStringAsync().Result;
-                    item = JsonConvert.DeserializeObject<PropertyItemViewModel>(data);
+                    string data = await response.Content.ReadAsStringAsync();
+                    var item = JsonConvert.DeserializeObject<Result<CreatePropertyItemResponse>>(data);
+                    var viewmodel = new PropertyItemViewModel
+                    {
+                        Id = item.Value.Id,
+                        Address = item.Value.Address,
+                        E9Number = item.Value.E9Number,
+                        EnPropertyType = item.Value.EnPropertyType,
+                        IsActive = item.Value.IsActive,
+                        YearOfConstruction = item.Value.YearOfConstruction
+                    };
+                    return View(viewmodel);
+
                 }
-                return View(item);
+                return View(new PropertyItemViewModel
+                {
+                    Id = id
+                });
             }
             catch (Exception)
             {
                 return View();
             }
-
         }
 
+
         [HttpPost]
-        public IActionResult Edit(PropertyItemViewModel model)
+        public async Task<IActionResult> Edit(PropertyItemViewModel model)
         {
             string data = JsonConvert.SerializeObject(model);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = _client.PutAsync(_client.BaseAddress + "/propertyItem/Update", content).Result;
+            HttpResponseMessage response = await _client.PutAsync(_client.BaseAddress + "/propertyItem/Update", content);
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
@@ -92,18 +107,30 @@ namespace TechnicoRMP.WebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                PropertyItemViewModel item = new PropertyItemViewModel();
                 HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/propertyItem/GetPropertyItemById/" + id).Result;
                 if (response.IsSuccessStatusCode)
                 {
-                    string data = response.Content.ReadAsStringAsync().Result;
-                    item = JsonConvert.DeserializeObject<PropertyItemViewModel>(data);
+                    string data = await response.Content.ReadAsStringAsync();
+                    var item = JsonConvert.DeserializeObject<Result<CreatePropertyItemResponse>>(data);
+                    var viewmodel = new PropertyItemViewModel
+                    {
+                        Id = item.Value.Id,
+                        Address = item.Value.Address,
+                        E9Number = item.Value.E9Number,
+                        EnPropertyType = item.Value.EnPropertyType,
+                        IsActive = item.Value.IsActive,
+                        YearOfConstruction = item.Value.YearOfConstruction
+                    };
+                    return View(viewmodel);
                 }
-                return View(item);
+                return View(new PropertyItemViewModel
+                {
+                    Id = id
+                });
             }
             catch (Exception ex)
             {

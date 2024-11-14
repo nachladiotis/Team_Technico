@@ -126,6 +126,10 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
             response.Message = "ΔΕΝ ΒΡΕΘΗΚΕ ΑΚΙΝΗΤΟ ΜΕ ΑΥΤΟ ΤΟ Ε9";
             return response;
         }
+        if (updatePropertyItemRequest.E9Number is not null)
+        {
+            propertyItemFromDb!.E9Number = updatePropertyItemRequest.E9Number;
+        }
         if (updatePropertyItemRequest.Address is not null)
         {
             propertyItemFromDb!.Address = updatePropertyItemRequest.Address;
