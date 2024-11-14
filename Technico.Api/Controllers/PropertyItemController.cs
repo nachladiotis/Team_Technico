@@ -7,7 +7,7 @@ using TechnicoRMP.Shared.Dtos;
 
 namespace Technico.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class PropertyItemController : ControllerBase
     {
@@ -21,7 +21,7 @@ namespace Technico.Api.Controllers
             _propertyItemService = propertyItemService;
         }
 
-        [HttpPost("propertyItem")]
+        [HttpPost]
         public async Task<Result> Create(CreatePropertyItemRequest createPropertyItemRequest)
         {
             var response =  _propertyItemService.Create(createPropertyItemRequest);
@@ -48,7 +48,7 @@ namespace Technico.Api.Controllers
             return _propertyItemService.ReadPropertyItems();
         }
 
-        [HttpPatch("propertyItem")]
+        [HttpPut]
         public async Task<Result> Update(UpdatePropertyItemRequest updatePropertyItemRequest)
         {
 
@@ -71,7 +71,7 @@ namespace Technico.Api.Controllers
         }
 
         [HttpDelete, Route("{id}")] //api/item/1
-        public async Task<Result> Delete(string id)
+        public async Task<Result> Delete(int id)
         {
 
             //var response = await _propertyItemService.CreateAsync(createPropertyItemRequest);
@@ -94,7 +94,40 @@ namespace Technico.Api.Controllers
         }
 
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Result<CreatePropertyItemResponse>>> GetPropertyItemById(int id)
+        {
+            try
+            {
+                var repairsResult = await _propertyItemService.GetById(id);
 
+                if (repairsResult.Status != 0)
+                {
+                    if (repairsResult.Status == -1)
+                    {
+                        return NotFound(new Result<CreatePropertyItemResponse>
+                        {
+                            Status = repairsResult.Status,
+                            Message = repairsResult.Message = $"Item not found with ID {id}"
+                        });
+                    }
+                    return StatusCode(500, new Result<CreatePropertyItemResponse>
+                    {
+                        Status = repairsResult.Status,
+                        Message = repairsResult.Message = "An unexpected error occurred."
+                    });
+                }
 
+                return Ok(repairsResult);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Result<CreatePropertyItemResponse>
+                {
+                    Status = 500,
+                    Message = $"Internal server error: {ex.Message}"
+                });
+            }
+        }
     }
 }

@@ -6,9 +6,9 @@ namespace Technico.Api.Services;
 
 public interface IPropertyItemService
 {
-    Result Update(UpdatePropertyItemRequest updatePropertyItemRequest);
-    bool Delete(string e9Number);
     Result<CreatePropertyItemResponse> Create(CreatePropertyItemRequest createPropertyItemRequest);
-   
     List<PropertyItem> ReadPropertyItems();
+    Result Update(UpdatePropertyItemRequest updatePropertyItemRequest);
+    bool Delete(int id);
+    public Task<Result<CreatePropertyItemResponse>> GetById(int id);
 }
