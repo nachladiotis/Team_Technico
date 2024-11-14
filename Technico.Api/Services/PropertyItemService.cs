@@ -1,4 +1,5 @@
-﻿using TechnicoRMP.Database.DataAccess;
+﻿using Microsoft.EntityFrameworkCore;
+using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
@@ -23,13 +24,11 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
                 Address = createPropertyItemRequest.Address,
                 YearOfConstruction = createPropertyItemRequest.YearOfConstruction,
                 EnPropertyType = createPropertyItemRequest.EnPropertyType,
-                
+
                 IsActive = true,
             };
-
             _dataStore.Add(propertyItem);
             _dataStore.SaveChanges();
-
             response.Message = "ΕΠΙΤΥΧΕΣ";
             response.Status = 0;
             response.Value = CreatePropertyItemResponseService.CreateFromEntity(propertyItem);
@@ -47,24 +46,63 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
         try
         {
 
-        return [.. _dataStore.PropertyItems];
+            return [.. _dataStore.PropertyItems];
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
 
         }
         return [];
     }
 
-
-    public bool Delete(string e9Number)
+    public async Task<Result<CreatePropertyItemResponse>> GetById(int id)
     {
-        if (e9Number == string.Empty)
+        var result = new Result<CreatePropertyItemResponse>
+        {
+            Status = -1,
+            Message = "An error occurred while retrieving the item."
+        };
+
+        try
+        {
+            if (id <= 0)
+            {
+                result.Message = "Invalid ID provided.";
+                return result;
+            }
+
+
+            var propertyItem = await _dataStore.PropertyItems
+                .FirstOrDefaultAsync(r => r.Id == id && r.IsActive);
+
+            if (propertyItem == null)
+            {
+                result.Message = "Item not found.";
+                return result;
+            }
+
+            result.Status = 0;
+            result.Message = "Item found successfully.";
+            result.Value = CreatePropertyItemResponseService.CreateFromEntity(propertyItem);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            result.Status = -1;
+            result.Message = $"An error occurred: {ex.Message}";
+            return result;
+        }
+    }
+
+    public bool Delete(int id)
+    {
+        if (id == 0)
         {
             Console.WriteLine("ΤΟ Ε9 ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
             return false;
         }
-        var propertyItem = _dataStore.PropertyItems.FirstOrDefault(s => s.E9Number == e9Number);
+        var propertyItem = _dataStore.PropertyItems.FirstOrDefault(s => s.Id == id);
         if (propertyItem is null)
         {
             Console.WriteLine("ΤΟ ΑΚΙΝΗΤΟ ΔΕΝ ΒΡΕΘΗΚΕ");
@@ -82,7 +120,7 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
             Status = -1
         };
 
-        var propertyItemFromDb = _dataStore.PropertyItems.FirstOrDefault(p => p.E9Number == updatePropertyItemRequest.E9Number);
+        var propertyItemFromDb = _dataStore.PropertyItems.FirstOrDefault(p => p.Id == updatePropertyItemRequest.Id);
         if (propertyItemFromDb is null)
         {
             response.Message = "ΔΕΝ ΒΡΕΘΗΚΕ ΑΚΙΝΗΤΟ ΜΕ ΑΥΤΟ ΤΟ Ε9";
