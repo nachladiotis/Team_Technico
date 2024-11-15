@@ -46,7 +46,7 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
 
         if (response.IsSuccessStatusCode)
         {
-            return RedirectToAction("Login", "Account"); // Redirect to login or a success page
+            return RedirectToAction("Login", "Account"); 
         }
         else
         {
