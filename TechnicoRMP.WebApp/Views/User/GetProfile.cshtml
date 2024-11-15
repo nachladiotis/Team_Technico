@@ -4,7 +4,7 @@
     var userId = ViewData["GetProfile"];
 }
 
-<h1>GetProfile</h1>
+<h1>Profile Details</h1>
 
 <div>
     <p><strong>Name:</strong> @Model.Name</p>
@@ -15,10 +15,13 @@
     <p><strong>Email:</strong> @Model.Email</p>
 </div>
 
-<form asp-action="UpdateProfile" method="put">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-primary">Update Profile</button>
+<a href="@Url.Action("Edit", "User", new { id = Model.Id })" class="btn btn-primary">Edit Profile</a>
+
+<form asp-action="SoftDelete" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
 </form>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -46,3 +49,4 @@
         });
     });
 </script>
+

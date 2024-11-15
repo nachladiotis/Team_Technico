@@ -44,8 +44,8 @@ namespace Technico.Api.Controllers
 
 
         //Partial Update
-        [HttpPut]
-        public async Task<ActionResult<CreateUserResponse>> PutAsync([FromBody] UpdateUserRequest userDTO)
+        [HttpPut, Route("{id}")]
+        public async Task<ActionResult<CreateUserResponse>> PutAsync(UpdateUserRequest userDTO)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace Technico.Api.Controllers
         }
 
         //Soft Delete
-        [HttpDelete("SoftDelete/{id}")]
+        [HttpPost, Route("SoftDelete/{id}")]
         public async Task<ActionResult<bool>> SoftDeleteAsync([FromRoute] int id)
         {
             try
@@ -110,5 +110,4 @@ namespace Technico.Api.Controllers
             }
         }
     }
-
 }

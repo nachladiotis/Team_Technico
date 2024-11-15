@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
@@ -30,6 +31,7 @@ public class UserController : Controller
             string data = await response.Content.ReadAsStringAsync();
             Content(data, "application/json");
             user = JsonConvert.DeserializeObject<UserProfileViewModel>(data);
+
         }
         else
         {
@@ -38,65 +40,80 @@ public class UserController : Controller
         return View(user);
     }
 
-    [HttpPut("User/UpdateProfile/{id}")]
-    public async Task<IActionResult> UpdateProfile(UserProfileViewModel updatedUser)
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
     {
-        if (!ModelState.IsValid)
+        try
         {
-            return View(updatedUser);
+            HttpResponseMessage response = await _client.GetAsync($"{_client.BaseAddress}/User/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                var user = JsonConvert.DeserializeObject<CreateUserRequest>(data);
+                if (user != null)
+                {
+                    var viewmodel = new UserProfileViewModelUpdate
+                    {
+                        Id = user.Id,
+                        Name = user.Name,
+                        Surname = user.Surname,
+                        VatNumber = user.VatNumber,
+                        Address = user.Address,
+                        PhoneNumber = user.PhoneNumber,
+                        Email = user.Email,
+                        //TypeOfUser = user.TypeOfUser,
+                        Password = user.Password 
+                    };
+                    return View(viewmodel);
+                }
+            }
+            return View(new UserProfileViewModelUpdate
+            {
+                Id = id
+            });
         }
-
-        var content = new StringContent(JsonConvert.SerializeObject(updatedUser), Encoding.UTF8, "application/json");
-        HttpResponseMessage response = await _client.PutAsync($"{_client.BaseAddress}/User/{updatedUser.Id}", content);
-
-        if (response.IsSuccessStatusCode)
+        catch (Exception)
         {
-            return RedirectToAction("GetProfile", new { id = updatedUser.Id }); 
-        }
-        else
-        {
-            ModelState.AddModelError("", "Error updating profile. Please try again.");
-            return View(updatedUser); 
+            return View();
         }
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Edit(UserProfileViewModelUpdate updatedUser)
+    {
+        string data = JsonConvert.SerializeObject(updatedUser);
+        StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await _client.PutAsync(_client.BaseAddress + "/User/PutAsync", content);
+        if (response.IsSuccessStatusCode)
+        {
+            return RedirectToAction("GetProfile", new { updatedUser.Id });
+        }
+        return View(new UserProfileViewModelUpdate());
+    }
 
-    //    //UpdateProfile
-    //    [HttpPost]
-    //[ValidateAntiForgeryToken]
-    //public async Task<IActionResult> UpdateProfile(UpdateUserRequest userProfile)
-    //{
-    //    var client = _httpClientFactory.CreateClient("ApiClient");
-    //    var uri = new Uri($"{client.BaseAddress}/Auth/update");
-    //    var response = await client.PutAsJsonAsync(uri, userProfile);
-    //    if (response.IsSuccessStatusCode)
-    //    {
-    //        return RedirectToAction("UpdateProfile", new { id = userProfile.Id });
-    //    }
-    //    else
-    //    {
-    //        ModelState.AddModelError(string.Empty, "Update Failed");
-    //        return View(userProfile);
-    //    }
-    //}
+    //Soft Delete
+    [HttpPost]
+    public async Task<IActionResult> SoftDelete([FromRoute] int id)
+    {
+        try
+        {
+            HttpResponseMessage response = await _client.PostAsync($"User/SoftDelete/{id}", null);
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Index"); 
+            }
+            else
+            {
+                string errorDetails = await response.Content.ReadAsStringAsync();
+                ModelState.AddModelError("", "Error deleting user. Please try again.");
+            }
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", "An unexpected error occurred.");
+        }
 
-    ////Soft Delete
-    //[HttpPost]
-    //public async Task<IActionResult> SoftDeleteProfile(int id)
-    //{
-    //    var client = _httpClientFactory.CreateClient("ApiClient");
-    //    var uri = new Uri($"{client.BaseAddress}/Auth/softdelete/{id}");
+        return RedirectToAction("GetProfile", new { id });
+    }
 
-    //    var response = await client.DeleteAsync(uri);
-
-    //    if (response.IsSuccessStatusCode)
-    //    {
-    //        return RedirectToAction("Index", "Home");
-    //    }
-    //    else
-    //    {
-    //        ModelState.AddModelError(string.Empty, "Soft Delete failed");
-    //        return RedirectToAction("EditProfile", new { id = id });
-    //    }
-    //}
 }

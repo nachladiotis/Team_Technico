@@ -4,7 +4,9 @@
     var userId = ViewData["UpdateProfile"];
 }
 
-<form asp-action="UpdateProfile" method="put">
+<h1>Edit Profile</h1>
+
+<form asp-action="UpdateProfile" id="updateForm" method="post">
     <input asp-for="Id" type="hidden" />
     <div>
         <label asp-for="Name"></label>
@@ -17,5 +19,26 @@
     <div>
         <label asp-for="Email"></label>
         <input asp-for="Email" />
-    </div>
+    </div>    
+    <button type="submit">Save Changes</button>
 </form>
+@* 
+
+<script>
+    $('#updateForm').on('submit', function(event) {
+        event.preventDefault();
+        const formData = $(this).serialize();
+        
+        $.ajax({
+            url: '/User/UpdateProfile/' + userId,
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                window.location.href = '/User/GetProfile/' + userId;
+            },
+            error: function(error) {
+                alert('An error occurred while updating.');
+            }
+        });
+    });
+</script> *@
