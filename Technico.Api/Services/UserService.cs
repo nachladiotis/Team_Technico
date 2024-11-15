@@ -97,9 +97,9 @@ public class UserService : IUserService
     }
 
 
-    public Result<CreateUserResponse> Create(CreateUserRequest creatUserDto)
+    public Result<UserDto> Create(CreateUserRequest creatUserDto)
     {
-        var failResponse = new Result<CreateUserResponse>
+        var failResponse = new Result<UserDto>
         {
             Status = -1
         };
@@ -114,16 +114,12 @@ public class UserService : IUserService
                 PhoneNumber = creatUserDto.PhoneNumber,
                 Email = creatUserDto.Email,
                 Password = creatUserDto.Password
-            };
-            if (user == null)
-            {
-                throw new NotFoundException("User cannot be null.");
-            }
+            } ?? throw new NotFoundException("User cannot be null.");
 
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             _dataStore.Add(user);
             _dataStore.SaveChanges();
-            return new Result<CreateUserResponse>
+            return new Result<UserDto>
             {
                 Status = 0,
                 Message = "ΕΠΙΤΥΧΊΑ ΔΗΜΗΟΥΡΓΙΑΣ ΧΡΗΣΤΗ",
@@ -138,7 +134,7 @@ public class UserService : IUserService
     }
 
 
-    public async Task<CreateUserResponse> DisplayUser(int id)
+    public async Task<UserDto> DisplayUser(int id)
     {
         var user = await _dataStore
             .Users
@@ -154,39 +150,11 @@ public class UserService : IUserService
         var response = CreateUserResponseService.CreateFromEntity(user);
         return response;
 
-    //DisplayUserDetails(user);
-    //DisplayUserPropertyItemsDetails(user);
+   
     }
 
-    //private static void DisplayUserPropertyItemsDetails(User user)
-    //{
-    //    foreach (var ownership in user.PropertyOwnerships)
-    //    {
-    //        var propertyItem = ownership.PropertyItem;
-    //        if (propertyItem is null)
-    //            continue;
-    //        Console.WriteLine("ΠΛΗΡΟΦΟΡΙΕΣ ΑΝΤΙΚΕΙΜΕΝΟΥ:");
-    //        Console.WriteLine($"E9: {propertyItem.E9Number}");
-    //        Console.WriteLine($"ΔΙΕΥΘΥΝΣΗ: {propertyItem.Address}");
-    //        Console.WriteLine($"ΕΤΟΣ ΚΑΤΑΣΚΕΥΗΣ: {propertyItem.YearOfConstruction}");
-    //    }
-    //}
 
-    //private static void DisplayUserDetails(User user)
-    //{
-    //    Console.WriteLine("ΠΛΗΡΟΦΟΡΙΕΣ ΧΡΗΣΤΗ:");
-    //    Console.WriteLine($"ΟΝΟΜΑ: {user.Name}");
-    //    Console.WriteLine($"ΕΠΙΘΕΤΟ: {user.Surname}");
-    //    Console.WriteLine($"ΑΦΜ: {user.VatNumber}");
-    //    Console.WriteLine($"Email: {user.Email}");
-
-    //    if (!string.IsNullOrEmpty(user.Address))
-    //        Console.WriteLine($"ΔΙΕΥΘΥΝΣΗ: {user.Address}");
-    //    if (!string.IsNullOrEmpty(user.PhoneNumber))
-    //        Console.WriteLine($"ΤΗΛΕΦΩΝΟ: {user.PhoneNumber}");
-    //}
-
-    public async Task<List<CreateUserResponse>> DisplayAll()
+    public async Task<List<UserDto>> DisplayAll()
     {
         try
         {
@@ -196,7 +164,7 @@ public class UserService : IUserService
                        .ThenInclude(s => s.PropertyItem)
                        .ToListAsync();
 
-            return users.Select(user => new CreateUserResponse
+            return users.Select(user => new UserDto
             {
                 Id = (int)user.Id,
                 Name = user.Name,
@@ -212,19 +180,15 @@ public class UserService : IUserService
 
         }
 
-        return new List<CreateUserResponse> ();
+        return [];
        
     }
 
-
-
-    public async Task<CreateUserResponse> ReplaceUser(UpdateUserRequest dto)
+    public async Task<UserDto> ReplaceUser(UpdateUserRequest dto)
     {
-        var user = await _dataStore.Users.FindAsync(dto.Id);
-
-        if (user == null)
-            throw new NotFoundException("Not Found: The user with the given id was not found!");
-
+        var user = await _dataStore.Users.FindAsync(dto.Id)
+            ?? throw new NotFoundException("Not Found: The user with the given id was not found!");
+        
         if (!string.IsNullOrEmpty(dto.Name) && dto.Name != "string")
             user.Name = dto.Name;
 
@@ -273,11 +237,8 @@ public class UserService : IUserService
 
     public async Task<bool> SoftDeleteUser(int id)
     {
-        var user = await _dataStore.Users.FirstOrDefaultAsync(u => u.Id == id);
-        if (user == null)
-        {
-            throw new NotFoundException($"User with Id {id} not found.");
-        }
+        var user = await _dataStore.Users.FirstOrDefaultAsync(u => u.Id == id)
+            ?? throw new NotFoundException($"User with Id {id} not found.");
 
         user.IsActive = false;
         await _dataStore.SaveChangesAsync();

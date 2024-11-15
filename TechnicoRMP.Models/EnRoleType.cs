@@ -3,5 +3,6 @@
 public enum EnRoleType
 {
     User,
-    Admin
+    Admin,
+    None
 }
