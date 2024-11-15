@@ -29,7 +29,7 @@ namespace Technico.Api.Controllers
         {
             var response = await _authService.LoginAsync(loginDto);
 
-            return Ok(new Result<CreateUserResponse>
+            return Ok(new Result<UserDto>
             {
                 Status = response.Status,
                 Message = response.Message,

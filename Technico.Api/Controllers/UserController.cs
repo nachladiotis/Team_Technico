@@ -20,7 +20,7 @@ namespace Technico.Api.Controllers
 
         //Read all users
         [HttpGet]
-        public async Task<ActionResult<List<CreateUserResponse>>> Get()
+        public async Task<ActionResult<List<UserDto>>> Get()
         {
             var response = await _service.DisplayAll();
             return Ok(response);
@@ -36,7 +36,7 @@ namespace Technico.Api.Controllers
 
         //Read User with ID
         [HttpGet, Route("{id}")]
-        public async Task<ActionResult<CreateUserResponse>> GetUserDetails(int id)
+        public async Task<ActionResult<UserDto>> GetUserDetails(int id)
         {
             var response = await _service.DisplayUser(id);
             return Ok(response);
@@ -45,7 +45,7 @@ namespace Technico.Api.Controllers
 
         //Partial Update
         [HttpPut]
-        public async Task<ActionResult<CreateUserResponse>> PutAsync([FromBody] UpdateUserRequest userDTO)
+        public async Task<ActionResult<UserDto>> PutAsync([FromBody] UpdateUserRequest userDTO)
         {
             try
             {

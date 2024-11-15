@@ -15,6 +15,6 @@ public class RegisterService:IDto
             Address = createUserRequest.Address,
             PhoneNumber = createUserRequest.PhoneNumber, 
             Password = createUserRequest.Password,
-        };
+            };
     }
 }

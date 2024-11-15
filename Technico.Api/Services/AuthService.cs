@@ -2,61 +2,77 @@
 using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
-
+using BCrypt.Net;
 
 namespace Technico.Api.Services
 {
-    public class AuthService : IAuthService
+    public class AuthService(DataStore datastore) : IAuthService
     {
-        private readonly DataStore _datastore;
+        private readonly DataStore _datastore = datastore;
 
-
-        public AuthService(DataStore datastore)
-        {
-            _datastore = datastore;
-        }
-
-        public async Task<Result<CreateUserResponse>> RegisterAsync(CreateUserRequest createUserRequest)
+        public async Task<Result<UserDto>> RegisterAsync(CreateUserRequest createUserRequest)
         {
             var user = _datastore.Users.FirstOrDefault(u => u.Email == createUserRequest.Email);
             if (user != null)
             {
-                return new Result<CreateUserResponse>
+                return new Result<UserDto>
                 {
                     Status = 0,
                     Message = "Already exist user with this Email"
                 };
             }
 
+            HashPassword(createUserRequest);
+
             var newUser = RegisterService.CreateRegisterUserFromDto(createUserRequest);
 
             _datastore.Users.Add(newUser);
             await _datastore.SaveChangesAsync();
 
-            return new Result<CreateUserResponse>
+            return new Result<UserDto>
             {
-                Status = 0,
+                Status = 1,
                 Message = "User success registered",
                 Value = CreateUserResponseService.CreateFromEntity(newUser)
             };
         }
 
-        public async Task<Result<CreateUserResponse>> LoginAsync(LoginDto loginDto)
+        private static void HashPassword(CreateUserRequest createUserRequest)
+        {
+            var hasedPassword = BCrypt.Net.BCrypt.HashPassword(createUserRequest.Password);
+            createUserRequest.Password = hasedPassword;
+        }
+
+        public async Task<Result<UserDto>> LoginAsync(LoginDto loginDto)
         {
             var user = await _datastore.Users
-                  .FirstOrDefaultAsync(u => u.Email == loginDto.Email && u.Password == loginDto.Password);
+                .FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+
+            var errorMesage = "Invalid username or password. Please try again.";
+
             if (user == null)
             {
-                return new Result<CreateUserResponse>
+                return new Result<UserDto>
                 {
                     Status = 0,
-                    Message = "Not user found",
-                    Value = null
+                    Message = errorMesage,
+                   
                 };
             }
 
+
+            bool passwordMatch = BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password);
+
+            if (!passwordMatch)
+            {
+                return new Result<UserDto>
+                {
+                    Status = 0,
+                    Message = errorMesage,
+                };
+            }
           
-            return new Result<CreateUserResponse>
+            return new Result<UserDto>
             {
                 Status = 1,
                 Message = "User loggin is success",

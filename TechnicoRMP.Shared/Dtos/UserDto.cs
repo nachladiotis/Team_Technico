@@ -2,7 +2,7 @@
 
 namespace TechnicoRMP.Shared.Dtos;
 
-public class CreateUserResponse : IDto
+public class UserDto : IDto
 {
     public long Id { get; set; }
     public required string Name { get; set; }

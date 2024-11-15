@@ -2,6 +2,7 @@
 using System.Net.Http;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
+using TechnicoRMP.WebApp;
 using TechnicoRMP.WebApp.Models;
 
 public class AccountController(IHttpClientFactory httpClientFactory) : Controller
@@ -12,6 +13,13 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
     public IActionResult Register()
     {
         return View();
+    }
+
+    [HttpGet]
+    public IActionResult Logout()
+    {
+        ActiveUser.SetUser(null);
+        return RedirectToAction("Index", "Home");
     }
 
     [HttpPost]
@@ -50,33 +58,49 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
     [HttpGet]
     public IActionResult Login()
     {
-        return View(); // This will render Views/Account/Login.cshtml
+        if(ActiveUser.User is null)
+            return View();
+        //Dumyyyyyyyyyyyyy
+        return null!;
+        // This will render Views/Account/Login.cshtml
     }
 
     [HttpPost]
     public async Task<IActionResult> Login(LoginViewModel loginViewModel)
     {
+
+        if (!ModelState.IsValid)
+        {
+            return View(loginViewModel);
+        }
+
         var client = _httpClientFactory.CreateClient("ApiClient");
 
-        // Prepare the login data to be sent to your API
         var dto = new LoginDto { Email = loginViewModel.Email, Password = loginViewModel.Password };
-
         var uri = new Uri($"{client.BaseAddress}/Auth/login");
 
-        var response = await client.PostAsJsonAsync(uri,dto);
-
-       // var response = await client.PostAsJsonAsync("/Auth/login",string.Empty );
+        var response = await client.PostAsJsonAsync(uri, dto);
 
         if (response.IsSuccessStatusCode)
         {
-            var result = await response.Content.ReadFromJsonAsync<Result<CreateUserResponse>>();
-            // Handle a successful login
+            var result = await response.Content.ReadFromJsonAsync<Result<UserDto>>();
+
+            if (result != null && result.Status > 0)  
+            {
+                ActiveUser.SetUser(result.Value);
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = result?.Message ?? "Σφάλμα κατά την είσοδο.";
+            }
         }
         else
         {
-            // Handle login failure
+            ViewData["ErrorMessage"] = "Internal Server error";
         }
 
-        return View();
+        return View(loginViewModel);
     }
+
 }

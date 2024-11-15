@@ -7,9 +7,9 @@ namespace TechnicoRMP.Shared.Dtos;
 public class CreateUserResponseService
 {
 
-    public static CreateUserResponse CreateFromEntity(User user)
+    public static UserDto CreateFromEntity(User user)
     {
-        return new CreateUserResponse
+        return new UserDto
         {
             Id = user.Id,
             Name = user.Name,
