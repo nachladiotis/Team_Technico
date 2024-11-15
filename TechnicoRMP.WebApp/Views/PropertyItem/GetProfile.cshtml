@@ -1,0 +1,54 @@
+﻿@model TechnicoRMP.WebApp.Models.PropertyItemViewModel
+
+@{
+    ViewData["Title"] = "GetProfile";
+}
+
+<h1>GetProfile</h1>
+
+<div>
+    <h4>PropertyItemViewModel</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.E9Number)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.E9Number)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.YearOfConstruction)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.YearOfConstruction)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EnPropertyType)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EnPropertyType)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IsActive)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IsActive)
+        </dd>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new {  id = Model.Id }) |
+    <a asp-action="Index">Back to List</a>
+</div>

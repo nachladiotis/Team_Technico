@@ -18,8 +18,9 @@ namespace TechnicoRMP.WebApp.Controllers
             _client.BaseAddress = baseAdsress;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
+            
             List<PropertyItemViewModel> ItemList = new List<PropertyItemViewModel>();
             HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/propertyItem/GetPropertyItems");
 
@@ -27,8 +28,51 @@ namespace TechnicoRMP.WebApp.Controllers
             {
                 string data = response.Content.ReadAsStringAsync().Result;
                 ItemList = JsonConvert.DeserializeObject<List<PropertyItemViewModel>>(data);
+                // Filter down if necessary
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    ItemList = ItemList.Where(p => p.E9Number == searchString).ToList(); 
+                }
+                // Pass your list out to your view
+                return View(ItemList.ToList());
             }
+
+
             return View(ItemList);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetProfile(int id) //PropertyItem/GetProfile/4
+        {
+            try
+            {
+                HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/PropertyItem/GetPropertyItemById/" + id).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    var item = JsonConvert.DeserializeObject<Result<CreatePropertyItemResponse>>(data);
+                    var viewmodel = new PropertyItemViewModel
+                    {
+                        Id = item.Value.Id,
+                        Address = item.Value.Address,
+                        E9Number = item.Value.E9Number,
+                        EnPropertyType = item.Value.EnPropertyType,
+                        IsActive = item.Value.IsActive,
+                        YearOfConstruction = item.Value.YearOfConstruction
+                    };
+                    return View(viewmodel);
+
+                }
+                return View(new PropertyItemViewModel
+                {
+                    Id = id
+                });
+            }
+            catch (Exception)
+            {
+                return View();
+            }
         }
 
 
@@ -79,7 +123,6 @@ namespace TechnicoRMP.WebApp.Controllers
                         YearOfConstruction = item.Value.YearOfConstruction
                     };
                     return View(viewmodel);
-
                 }
                 return View(new PropertyItemViewModel
                 {
