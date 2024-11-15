@@ -92,28 +92,62 @@ public class UserController : Controller
     }
 
     //Soft Delete
-    [HttpPost]
-    public async Task<IActionResult> SoftDelete([FromRoute] int id)
+
+    [HttpGet]
+    public async Task<IActionResult> Delete(int id)
     {
         try
         {
-            HttpResponseMessage response = await _client.PostAsync($"User/SoftDelete/{id}", null);
+            HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/User/" + id).Result;
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("Index"); 
+                string data = await response.Content.ReadAsStringAsync();
+                var user = JsonConvert.DeserializeObject<IsActiveRequest>(data);
+                var viewmodel = new IsActiveViewModel
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Surname = user.Surname,
+                    IsActive = user.IsActive
+                };
+                return View(viewmodel);
+            }
+            return View(new IsActiveViewModel
+            {
+                Id = id
+            });
+        }
+        catch (Exception ex)
+        {
+            return View();
+        }
+    }
+
+    [HttpPost, ActionName("Delete")]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        try
+        {
+            HttpResponseMessage response = await _client.PostAsync(
+                $"{_client.BaseAddress}/User/SoftDelete/{id}",  
+                null);  
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "User was successfully deactivated.";
+                return RedirectToAction("Index");
             }
             else
             {
                 string errorDetails = await response.Content.ReadAsStringAsync();
-                ModelState.AddModelError("", "Error deleting user. Please try again.");
+                TempData["ErrorMessage"] = $"Failed to deactivate the user: {errorDetails}";
             }
         }
         catch (Exception ex)
         {
-            ModelState.AddModelError("", "An unexpected error occurred.");
+            TempData["ErrorMessage"] = "An unexpected error occurred while deactivating the user.";
         }
-
-        return RedirectToAction("GetProfile", new { id });
+        return RedirectToAction("Index");
     }
 
 }
