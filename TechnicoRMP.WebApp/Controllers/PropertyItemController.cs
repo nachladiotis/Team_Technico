@@ -9,7 +9,7 @@ namespace TechnicoRMP.WebApp.Controllers
 {
     public class PropertyItemController : Controller
     {
-        Uri baseAdsress = new Uri("https://localhost:7038/api");
+        Uri baseAdsress = new Uri("https://localhost:44322/api");
         private readonly HttpClient _client;
 
         public PropertyItemController()

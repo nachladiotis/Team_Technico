@@ -61,7 +61,7 @@
                         @if(user is not null)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Property Items Page </a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="PropertyItem" asp-action="Index">Property Items</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Repairs Page</a>
@@ -78,14 +78,12 @@
                                 </a>
                             </li>
                             <li class="nav-item d-flex align-items-center">
-                                <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="form-inline mb-0">
+                                <form asp-area="" asp-controller="Account" asp-action="Logout" method="get" class="form-inline mb-0">
                                     <button type="submit" class="btn btn-link p-0" style="border: none; background: none; cursor: pointer;">
-                                        <!-- Logout Image as a Button -->
                                         <img src="~/assets/img/logoutIcon.png" alt="Logout Icon" class="rounded-circle" style="width: 28px; height: 28px; object-fit: cover;">
                                     </button>
                                 </form>
                             </li>
-                            
 
                         }
                     </ul>
