@@ -1,4 +1,22 @@
-﻿<!DOCTYPE html>
+﻿@using TechnicoRMP.Models
+@{
+    var user = ActiveUser.User;
+
+    var loginVisiblity = true;
+    var registerVisiblity = true;
+
+    var userType = EnRoleType.None;
+
+    if (user is not null)
+    {
+        loginVisiblity = false;
+        registerVisiblity = false;
+
+        userType = user.TypeOfUser;
+    }
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -15,11 +33,6 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-@*                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TechnicoRMP.WebApp</a>
- *@                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
                 <a href="/" data-headlessui-state="">
                     <div class="logo-container">
                         <img src="@Url.Content("~/assets/img/technico.png")" alt="Technico Logo">
@@ -30,20 +43,57 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
-                        </li>
+                         @if (loginVisiblity)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                            </li>
+                        }
+                        @if (registerVisiblity)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        @if(user is not null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Property Items Page </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Repairs Page</a>
+                            </li>
+                        }
+                    </ul>
+                    <ul class="navbar-nav ms-auto">
+                       
+                        @if (user is not null)
+                        {
+                            <li class="nav-item d-flex align-items-center">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Profile">
+                                    <img src="~/assets/img/userIcon.png" alt="User Avatar" class="rounded-circle" style="width: 28px; height: 28px;">
+                                </a>
+                            </li>
+                            <li class="nav-item d-flex align-items-center">
+                                <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="form-inline mb-0">
+                                    <button type="submit" class="btn btn-link p-0" style="border: none; background: none; cursor: pointer;">
+                                        <!-- Logout Image as a Button -->
+                                        <img src="~/assets/img/logoutIcon.png" alt="Logout Icon" class="rounded-circle" style="width: 28px; height: 28px; object-fit: cover;">
+                                    </button>
+                                </form>
+                            </li>
+                            
+
+                        }
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -55,8 +105,8 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-
 </html>
+
 @section Scripts {
     <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.5.1.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
