@@ -2,10 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Technico.Api.Services;
 using TechnicoRMP.Database.DataAccess;
-using TechnicoRMP.WebApp.Data;
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<TechnicoRMPWebAppContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("TechnicoRMPWebAppContext") ?? throw new InvalidOperationException("Connection string 'TechnicoRMPWebAppContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

@@ -15,7 +15,6 @@ using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
-using TechnicoRMP.WebApp.Data;
 using TechnicoRMP.WebApp.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -115,23 +114,22 @@ namespace TechnicoRMP.WebApp.Controllers
 
         // POST: PropertyRepairs/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PropertyRepairViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 var client = _httpClientFactory.CreateClient("ApiClient");
-                var uri = new Uri($"{client.BaseAddress}/Repair/Create");
+                var uri = new Uri($"{client.BaseAddress}/Repair");
 
-                var Userid = 1;
                 var propertyRepair = new CreatePropertyRepairRequest
                 {
                     Date = viewModel.Date,
                     TypeOfRepair = viewModel.TypeOfRepair,
                     Address = viewModel.Address,
-                    RepairStatus = viewModel.RepairStatus,
-                    Cost = viewModel.Cost,
-                    UserId = Userid
+                    RepairStatus = EnRepairStatus.Pending,
+                    Cost = 0,
+                    UserId = ActiveUser.User.Id
                 };
 
                 var response = await client.PostAsJsonAsync(uri, propertyRepair);
@@ -156,7 +154,6 @@ namespace TechnicoRMP.WebApp.Controllers
                     ModelState.AddModelError("", $"API Error: {errorContent}");
                 }
             }
-
             return View(viewModel);
         }
 
@@ -191,12 +188,11 @@ namespace TechnicoRMP.WebApp.Controllers
                         Cost = item.Value.Cost,
                         RepairStatus = item.Value.RepairStatus,
                         IsActive = item.Value.IsActive,
-                        UserId = 1
+                        UserId = ActiveUser.User.Id
                     };
 
                     return View(viewModel);
                 }
-
                 return View(new PropertyRepairViewModel
                 {
                     Id = id
@@ -204,7 +200,6 @@ namespace TechnicoRMP.WebApp.Controllers
             }
             catch (Exception)
             {
-                // If an error occurs, return an empty view
                 return View();
             }
         }
@@ -245,13 +240,12 @@ namespace TechnicoRMP.WebApp.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                TempData["successMessage"] = "Repair deactivated successfully.";
+                TempData["successMessage"] = "Repair deleted successfully.";
             }
             else
             {
-                TempData["errorMessage"] = "Error deactivating repair.";
+                TempData["errorMessage"] = "Error deleting repair.";
             }
-
             return RedirectToAction("GetAll");
         }
 

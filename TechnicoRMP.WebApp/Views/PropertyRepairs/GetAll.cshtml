@@ -5,8 +5,14 @@
     ViewData["Title"] = "Property Repairs List";
 }
 
+<p>
+    <a asp-action="Create" class="btn btn-primary btn-lg">
+        <i class="bi bi-plus-circle"></i> Create New Repair
+    </a>
+</p>
+
 <div class="container mt-4">
-    <h2 class="text-center mb-4">List of all Property Repairs</h2>
+    <h2 class="text-center mb-6">List of all Property Repairs</h2>
 
     @if (Model != null && Model.Any())
     {
@@ -45,10 +51,6 @@
                 </tbody>
             </table>
         </div>
-    }
-    else
-    {
-        <p class="text-center">No property repairs found.</p>
     }
 </div>
 
