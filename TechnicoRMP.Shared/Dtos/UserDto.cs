@@ -16,3 +16,10 @@ public class UserDto : IDto
     public EnRoleType TypeOfUser { get; set; } = EnRoleType.User;
 
 }
+
+/// <summary>
+/// 
+/// </summary>
+/// <param name=""></param>
+/// <param name="SesionExpirationInDays">The days should a cookie expire</param>
+public sealed record UserLoginResponse(UserDto UserDto,int SesionExpirationInDays) : IDto;

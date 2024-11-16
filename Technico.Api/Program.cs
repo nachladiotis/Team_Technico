@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Technico.Api.Logger;
 using Technico.Api.Services;
 using TechnicoRMP.Database.DataAccess;
 
@@ -14,8 +15,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPropertyItemService, PropertyItemService>();
 builder.Services.AddScoped<IPropertyRepairService, PropertyRepairService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddSingleton(typeof(DbLogger<>));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

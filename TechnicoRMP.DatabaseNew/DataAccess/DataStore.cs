@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TechnicoRMP.Models;
+using TechnicoRMP.Models.Logs;
 
 namespace TechnicoRMP.Database.DataAccess;
 
@@ -10,6 +11,7 @@ public class DataStore : DbContext
     public DbSet<PropertyItem> PropertyItems { get; set; }
     public DbSet<PropertyOwnership> PropertyOwnerships { get; set; }
     public DbSet<PropertyRepair> PropertyRepairs { get; set; }
+    public DbSet<LogEntry> LogEntries { get; set; }
   
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

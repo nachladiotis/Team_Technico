@@ -10,6 +10,8 @@ namespace Technico.Api.Services
     {
         private readonly DataStore _datastore = datastore;
 
+        private const int LogginUSerSesionInDays = 7;
+
         public async Task<Result<UserDto>> RegisterAsync(CreateUserRequest createUserRequest)
         {
             var user = _datastore.Users.FirstOrDefault(u => u.Email == createUserRequest.Email);
@@ -43,7 +45,7 @@ namespace Technico.Api.Services
             createUserRequest.Password = hasedPassword;
         }
 
-        public async Task<Result<UserDto>> LoginAsync(LoginDto loginDto)
+        public async Task<Result<UserLoginResponse>> LoginAsync(LoginDto loginDto)
         {
             var user = await _datastore.Users
                 .FirstOrDefaultAsync(u => u.Email == loginDto.Email);
@@ -52,31 +54,31 @@ namespace Technico.Api.Services
 
             if (user == null)
             {
-                return new Result<UserDto>
+                return new Result<UserLoginResponse>
                 {
                     Status = 0,
                     Message = errorMesage,
-                   
                 };
             }
-
 
             bool passwordMatch = BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password);
 
             if (!passwordMatch)
             {
-                return new Result<UserDto>
+                return new Result<UserLoginResponse>
                 {
                     Status = 0,
                     Message = errorMesage,
                 };
             }
+
+            var logginResponse = new UserLoginResponse(CreateUserResponseService.CreateFromEntity(user), LogginUSerSesionInDays);
           
-            return new Result<UserDto>
+            return new Result<UserLoginResponse>
             {
                 Status = 1,
                 Message = "User loggin is success",
-                Value = CreateUserResponseService.CreateFromEntity(user)
+                Value = logginResponse
             };   
         }
     }

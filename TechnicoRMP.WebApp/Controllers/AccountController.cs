@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.WebApp;
@@ -19,6 +21,8 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
     public IActionResult Logout()
     {
         ActiveUser.SetUser(null);
+        var cookie = Request.Cookies.Keys.FirstOrDefault(s=> s.Contains("LoggedInUser"));
+        Response.Cookies.Delete(cookie!);
         return RedirectToAction("Index", "Home");
     }
 
@@ -60,9 +64,8 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
     {
         if(ActiveUser.User is null)
             return View();
-        //Dumyyyyyyyyyyyyy
+     
         return null!;
-        // This will render Views/Account/Login.cshtml
     }
 
     [HttpPost]
@@ -83,11 +86,22 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
 
         if (response.IsSuccessStatusCode)
         {
-            var result = await response.Content.ReadFromJsonAsync<Result<UserDto>>();
+            var result = await response.Content.ReadFromJsonAsync<Result<UserLoginResponse>>();
 
             if (result != null && result.Status > 0)  
             {
-                ActiveUser.SetUser(result.Value);
+                var options = new CookieOptions
+                {
+                    Expires = DateTime.Now.AddSeconds(result.Value!.SesionExpirationInDays),
+                    HttpOnly = true,
+                    Secure = true
+                };
+
+                var loggedInUser = JsonSerializer.Serialize<UserDto>(result.Value!.UserDto);
+
+                Response.Cookies.Append("LoggedInUser", loggedInUser, options);
+
+                ActiveUser.SetUser(result.Value!.UserDto);
                 return RedirectToAction("Index", "Home");
             }
             else
