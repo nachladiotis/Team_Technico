@@ -95,5 +95,7 @@ namespace Technico.Api.Controllers
                 return NotFound(new { message = ex.Message });
             }
         }
+
+        
     }
 }

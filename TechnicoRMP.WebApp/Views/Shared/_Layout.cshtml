@@ -67,6 +67,15 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Repairs Page</a>
                             </li>
                         }
+                        @if(userType is EnRoleType.Admin)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="UsersManagment">Users Managment</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Logs History</a>
+                            </li>
+                        }
                     </ul>
                     <ul class="navbar-nav ms-auto">
                        

@@ -1,0 +1,45 @@
+﻿@model List<UserViewmodel>
+
+@{
+    ViewData["Title"] = "Users List";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">Users List</h1>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>VAT Number</th>
+                <th>Address</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.Name</td>
+                    <td>@user.Surname</td>
+                    <td>@user.VatNumber</td>
+                    <td>@(user.Address ?? "N/A")</td>
+                    <td>@(user.PhoneNumber ?? "N/A")</td>
+                    <td>@user.Email</td>
+                    <td>@(user.IsActive ? "Yes" : "No")</td>
+                    <td>
+                        <a href="@Url.Action("PropertyItems", "Users", new { userId = user.Id })"
+                           class="btn btn-primary btn-sm">View Properties</a>
+                        <a href="@Url.Action("RepairHistory", "Users", new { userId = user.Id })"
+                           class="btn btn-secondary btn-sm">View Repairs</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
