@@ -73,7 +73,7 @@
                         @if (user is not null)
                         {
                             <li class="nav-item d-flex align-items-center">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="GetProfile">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="GetProfile" asp-route-id="@ActiveUser.User!.Id">
                                     <img src="~/assets/img/userIcon.png" alt="User Avatar" class="rounded-circle" style="width: 28px; height: 28px;">
                                 </a>
                             </li>
