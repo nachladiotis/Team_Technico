@@ -33,6 +33,11 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
         {
             return View(model);
         }
+        if (!IsValidPassword(model.Password))
+        {
+            ModelState.AddModelError("Password", "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number.");
+            return View(model);
+        }
 
         var client = _httpClientFactory.CreateClient("ApiClient");
         var uri = new Uri($"{client.BaseAddress}/Auth/register");
@@ -90,25 +95,25 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
         {
             var result = await response.Content.ReadFromJsonAsync<Result<UserLoginResponse>>();
 
-            if (result != null && result.Status > 0)  
+            if (result != null && result.Status > 0)
             {
                 var options = new CookieOptions
-                {
-                    Expires = DateTime.Now.AddSeconds(result.Value!.SesionExpirationInDays),
-                    HttpOnly = true,
-                    Secure = true
-                };
+                    {
+                        Expires = DateTime.Now.AddSeconds(result.Value!.SesionExpirationInDays),
+                        HttpOnly = true,
+                        Secure = true
+                    };
 
-                var loggedInUser = JsonSerializer.Serialize<UserDto>(result.Value!.UserDto);
+                    var loggedInUser = JsonSerializer.Serialize<UserDto>(result.Value!.UserDto);
 
-                Response.Cookies.Append("LoggedInUser", loggedInUser, options);
+                    Response.Cookies.Append("LoggedInUser", loggedInUser, options);
 
-                ActiveUser.SetUser(result.Value!.UserDto);
-                return RedirectToAction("Index", "Home");
+                    ActiveUser.SetUser(result.Value!.UserDto);
+                    return RedirectToAction("Index", "Home");
             }
             else
             {
-                ViewData["ErrorMessage"] = result?.Message ?? "Σφάλμα κατά την είσοδο.";
+                ViewData["ErrorMessage"] = result?.Message ?? "Error while login";
             }
         }
         else
@@ -119,4 +124,24 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
         return View(loginViewModel);
     }
 
+    private bool IsValidPassword(string password)
+    {
+        if (password.Length < 8)
+        {
+            return false;
+        }
+        if (!password.Any(char.IsUpper))
+        {
+            return false;
+        }
+        if (!password.Any(char.IsLower))
+        {
+            return false;
+        }
+        if (!password.Any(char.IsDigit))
+        {
+            return false;
+        }
+        return true;
+    }
 }

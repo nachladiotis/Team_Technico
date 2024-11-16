@@ -94,12 +94,20 @@ public class AuthService(DataStore datastore, ILogger<AuthService> logger) : IAu
             };
         }
 
+        if (!user.IsActive)
+        {
+            return new Result<UserLoginResponse> {
+                Status = 0,
+                Message = "User is deactivated",
+            };
+        }
+
         var logginResponse = new UserLoginResponse(CreateUserResponseService.CreateFromEntity(user), LogginUSerSesionInDays);
       
         return new Result<UserLoginResponse>
         {
             Status = 1,
-            Message = "User loggin is success",
+            Message = "User login is success",
             Value = logginResponse
         };   
     }

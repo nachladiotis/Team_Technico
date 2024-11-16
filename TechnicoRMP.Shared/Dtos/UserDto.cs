@@ -14,6 +14,7 @@ public class UserDto : IDto
 
     //public string? Password { get; set; }
     public EnRoleType TypeOfUser { get; set; } = EnRoleType.User;
+    public bool IsActive { get; set; } 
 
 }
 

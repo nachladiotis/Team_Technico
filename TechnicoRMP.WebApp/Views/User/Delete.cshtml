@@ -36,7 +36,9 @@
     
     <form asp-action="Delete">
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a href="@Url.Action("GetProfile", "User", new { id = Model.Id })" class="btn btn-primary">
+            Bact to Profile
+        </a>
     </form>
 </div>
 
