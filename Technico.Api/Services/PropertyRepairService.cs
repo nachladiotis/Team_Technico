@@ -10,16 +10,16 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
 {
     private readonly DataStore _dataStore = dataStore;
 
-    public async Task<Result<CreatePropertyRepairResponse>> AddRepair(CreatePropertyRepairRequest createPropertyRepairRequest)
+    public async Task<Result<PropertyRepairResponseDTO>> AddRepair(CreatePropertyRepairRequest createPropertyRepairRequest)
     {
-        var response = new Result<CreatePropertyRepairResponse>()
+        var response = new Result<PropertyRepairResponseDTO>()
         {
             Status = -1
         };
 
         try
         {
-            if (createPropertyRepairRequest.RepairerId <= 0)
+            if (createPropertyRepairRequest.UserId <= 0)
             {
                 response.Message = "Repairer ID is required and must be greater than 0.";
                 return response;
@@ -31,8 +31,14 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
                 return response;
             }
 
+            if (createPropertyRepairRequest.Date <= DateTime.UtcNow)
+            {
+                response.Message = "The repair date must be in the future.";
+                return response;
+            }
+
             var propertyOwner = await _dataStore.Users
-                .FirstOrDefaultAsync(p => p.Id == createPropertyRepairRequest.RepairerId);
+                .FirstOrDefaultAsync(p => p.Id == createPropertyRepairRequest.UserId);
 
             if (propertyOwner == null)
             {
@@ -40,13 +46,15 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
                 return response;
             }
 
+           
+
             var propertyRepairToStore = new PropertyRepair
             {
                 Date = DateTime.UtcNow,
                 Address = createPropertyRepairRequest.Address,
                 TypeOfRepair = createPropertyRepairRequest.TypeOfRepair,
                 Cost = createPropertyRepairRequest.Cost,
-                RepairerId = createPropertyRepairRequest.RepairerId,
+                UserId = createPropertyRepairRequest.UserId,
                 IsActive = true
             };
 
@@ -64,46 +72,18 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
         }
         return response;
     }
-
-    public async Task<Result<List<CreatePropertyRepairResponse>>> GetAll()
+    public async Task<List<PropertyRepairResponseDTO>> GetAll()
     {
-        var response = new Result<List<CreatePropertyRepairResponse>>
-        {
-            Status = -1,
-            Message = "No active repairs found."
-        };
-
-        try
-        {
-
-            var repairs = await _dataStore.PropertyRepairs
+       var repairs = await _dataStore.PropertyRepairs
                 .Where(r => r.IsActive)
                 .Select(r => CreatePropertyRepairResponseService.CreateFromEntity(r))
                 .ToListAsync();
 
-
-            if (repairs == null)
-            {
-                return response;
-            }
-
-
-            response.Status = 0;
-            response.Message = "Repairs found successfully.";
-            response.Value = repairs;
-        }
-        catch (Exception ex)
-        {
-            response.Status = -1;
-            response.Message = $"An error occurred while retrieving repairs: {ex.Message}";
-        }
-
-        return response;
+        return repairs;
     }
-
-    public async Task<Result<CreatePropertyRepairResponse>> GetById(int id)
+    public async Task<Result<PropertyRepairResponseDTO>> GetById(long id)
     {
-        var result = new Result<CreatePropertyRepairResponse>
+        var result = new Result<PropertyRepairResponseDTO>
         {
             Status = -1,
             Message = "An error occurred while retrieving the repair."
@@ -140,7 +120,6 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
             return result;
         }
     }
-
     public async Task<Result<PropertyRepair>> SoftDeleteRepairForUser(int userId, int repairId)
     {
         var result = new Result<PropertyRepair>
@@ -157,7 +136,7 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
             }
 
             var repair = await _dataStore.PropertyRepairs
-                .FirstOrDefaultAsync(p => p.Id == repairId && p.IsActive && p.RepairerId == userId);
+                .FirstOrDefaultAsync(p => p.Id == repairId && p.IsActive && p.UserId == userId);
 
             if (repair == null)
             {
@@ -214,7 +193,7 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
                 return response;
             }
 
-            if (updatePropertyRepair.RepairerId.HasValue && updatePropertyRepair.RepairerId.Value != repair.RepairerId)
+            if (updatePropertyRepair.RepairerId.HasValue && updatePropertyRepair.RepairerId.Value != repair.UserId)
             {
                 response.Message = "Repairer ID cannot be updated.";
                 return response;

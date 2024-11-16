@@ -1,0 +1,105 @@
+﻿@using TechnicoRMP.Models
+@model PropertyRepairViewModel
+
+<h1>Edit Repair</h1>
+<hr />
+
+<!-- Display error or success messages -->
+@{
+    var errorMessage = TempData["errorMessage"] as string;
+    var successMessage = TempData["successMessage"] as string;
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">
+        @errorMessage
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success">
+        @successMessage
+    </div>
+}
+
+<form asp-action="Edit" method="post">
+    <div class="row">
+        <!-- Left Side of the Form -->
+        <div class="col-md-6">
+            <!-- Date -->
+            <div class="form-group">
+                <label asp-for="Date" class="control-label">Repair Date</label>
+                <input asp-for="Date" class="form-control" type="date" required />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <!-- Type of Repair -->
+            <div class="form-group">
+                <label asp-for="TypeOfRepair" class="control-label">Type of Repair</label>
+                <select asp-for="TypeOfRepair" class="form-control">
+                    <option value="">Select Repair Type</option>
+                    @foreach (var repairType in Enum.GetValues(typeof(EnTypeOfRepair)))
+                    {
+                        <option value="@repairType">@repairType.ToString()</option>
+                    }
+                </select>
+                <span asp-validation-for="TypeOfRepair" class="text-danger"></span>
+            </div>
+            <!-- Address -->
+            <div class="form-group">
+                <label asp-for="Address" class="control-label">Address</label>
+                <input asp-for="Address" class="form-control" required />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- Right Side of the Form -->
+        <div class="col-md-6">
+            <!-- Cost -->
+            <div class="form-group">
+                <label asp-for="Cost" class="control-label">Cost</label>
+                <input asp-for="Cost" class="form-control" required />
+                <span asp-validation-for="Cost" class="text-danger"></span>
+            </div>
+
+            <!-- Repair Status -->
+            <div class="form-group">
+                <label asp-for="RepairStatus" class="control-label">Repair Status</label>
+                <select asp-for="RepairStatus" class="form-control">
+                    <option value="">Select Repair Status</option>
+                    @foreach (var repairStatus in Enum.GetValues(typeof(EnRepairStatus)))
+                    {
+                        <option value="@repairStatus">@repairStatus.ToString()</option>
+                    }
+                </select>
+                <span asp-validation-for="RepairStatus" class="text-danger"></span>
+            </div>
+
+            <!-- Is Active Checkbox -->
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsActive" />
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </label>
+            </div>
+
+            <!-- Hidden UserId -->
+            <input asp-for="UserId" type="hidden" />
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="GetAll" class="btn btn-secondary">Back to List</a>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
