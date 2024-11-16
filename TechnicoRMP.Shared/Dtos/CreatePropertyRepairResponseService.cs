@@ -4,9 +4,9 @@ namespace TechnicoRMP.Shared.Dtos;
 
 public class CreatePropertyRepairResponseService
 {
-    public static CreatePropertyRepairResponse CreateFromEntity(PropertyRepair propertyRepair)
+    public static PropertyRepairResponseDTO CreateFromEntity(PropertyRepair propertyRepair)
     {
-        return new CreatePropertyRepairResponse
+        return new PropertyRepairResponseDTO
         {
             RepairStatus = propertyRepair.RepairStatus,
             Address = propertyRepair.Address,
@@ -14,7 +14,7 @@ public class CreatePropertyRepairResponseService
             Date = propertyRepair.Date,
             Id = propertyRepair.Id,
             IsActive = propertyRepair.IsActive,
-            RepairerId = propertyRepair.RepairerId,
+            UserId = propertyRepair.UserId,
             TypeOfRepair = propertyRepair.TypeOfRepair,
         };
     }

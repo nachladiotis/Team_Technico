@@ -5,11 +5,22 @@
 }
 
 <h1>Index</h1>
+<div class="container-fluid">
+    <div class="col">
+        <form asp-controller="PropertyItem" asp-action="Index" method="get">
+            <div class="row">
+                <div class="col-sm-3"> <input type="text" name="searchString" class="form-control" /> </div>
+                <div class="col-sm-1"> <input type="submit" value="Search" class="btn btn-primary" /> </div>
+            </div>
+        </form>
+        <br>
+    </div>
+</div>
 
 <p>
     <a asp-action="Create">Create new Item</a>
 </p>
-<table class="table">
+<table class="table" name="myForm">
     <thead>
         <tr>
             <th>

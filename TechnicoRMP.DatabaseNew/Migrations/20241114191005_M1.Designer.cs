@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TechnicoRMP.Database.DataAccess;
 
@@ -11,9 +12,11 @@ using TechnicoRMP.Database.DataAccess;
 namespace TechnicoRMP.Database.Migrations
 {
     [DbContext(typeof(DataStore))]
-    partial class DataStoreModelSnapshot : ModelSnapshot
+    [Migration("20241114191005_M1")]
+    partial class M1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,37 +24,6 @@ namespace TechnicoRMP.Database.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("TechnicoRMP.Models.Logs.LogEntry", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ExceptionName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("LogDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LogLevel")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ServiceName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StackTrace")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LogEntries");
-                });
 
             modelBuilder.Entity("TechnicoRMP.Models.PropertyItem", b =>
                 {
@@ -79,9 +51,6 @@ namespace TechnicoRMP.Database.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("E9Number")
-                        .IsUnique();
 
                     b.ToTable("PropertyItems");
                 });

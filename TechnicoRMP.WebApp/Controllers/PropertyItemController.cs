@@ -18,8 +18,9 @@ namespace TechnicoRMP.WebApp.Controllers
             _client.BaseAddress = baseAdsress;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
+
             List<PropertyItemViewModel> ItemList = new List<PropertyItemViewModel>();
             HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/propertyItem/GetPropertyItems");
 
@@ -27,6 +28,13 @@ namespace TechnicoRMP.WebApp.Controllers
             {
                 string data = response.Content.ReadAsStringAsync().Result;
                 ItemList = JsonConvert.DeserializeObject<List<PropertyItemViewModel>>(data);
+                // Filter down if necessary
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    ItemList = ItemList.Where(p => p.E9Number == searchString).ToList();
+                }
+                // Pass your list out to your view
+                return View(ItemList.ToList());
             }
             return View(ItemList);
         }

@@ -1,0 +1,63 @@
+﻿@using TechnicoRMP.Models
+@model List<PropertyRepairViewModel>
+
+@{
+    ViewData["Title"] = "Property Repairs";
+}
+
+<div class="repair-container">
+    <h2 class="text-center mb-4">Property Repair</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="repair-list">
+            @foreach (var repair in Model)
+            {
+                <div class="repair-card">
+                    <h3>Repair ID: @repair.Id</h3>
+                    <p><strong>Date:</strong> @(repair.Date)</p>
+                    <p><strong>Type of Repair:</strong> @repair.TypeOfRepair</p>
+                    <p><strong>Address:</strong> @repair.Address</p>
+                    <p><strong>Status:</strong> @repair.RepairStatus</p>
+                    <p><strong>Cost:</strong> @repair.Cost</p>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-center">No property repairs found.</p>
+    }
+</div>
+
+<style>
+    .repair-container {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .repair-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .repair-card {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .repair-card h3 {
+            margin: 0 0 10px;
+            color: #007bff;
+        }
+
+        .repair-card p {
+            margin: 5px 0;
+            color: #555;
+        }
+</style>
