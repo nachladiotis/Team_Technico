@@ -48,7 +48,9 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
 
         var response = await client.PostAsJsonAsync(uri, dto);
 
-        if (response.IsSuccessStatusCode)
+        var result = await response.Content.ReadFromJsonAsync<Result>();
+
+        if (response.IsSuccessStatusCode && result?.Status == 1)
         {
             return RedirectToAction("Login", "Account"); 
         }

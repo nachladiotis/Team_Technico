@@ -14,12 +14,12 @@ namespace Technico.Api.Services
 
         private const int LogginUSerSesionInDays = 7;
 
-        public async Task<Result<UserDto>> RegisterAsync(CreateUserRequest createUserRequest)
+        public async Task<Result> RegisterAsync(CreateUserRequest createUserRequest)
         {
             var user = _datastore.Users.FirstOrDefault(u => u.Email == createUserRequest.Email);
             if (user != null)
             {
-                return new Result<UserDto>
+                return new Result
                 {
                     Status = 0,
                     Message = "Already exist user with this Email"
@@ -28,7 +28,7 @@ namespace Technico.Api.Services
             user = _datastore.Users.FirstOrDefault(u => u.VatNumber == createUserRequest.VatNumber);
             if (user != null)
             {
-                return new Result<UserDto>
+                return new Result
                 {
                     Status = 0,
                     Message = "Already exist user with this VatNumber"
@@ -46,13 +46,18 @@ namespace Technico.Api.Services
             }catch(Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
+                return new Result
+                {
+                    Status = 0,
+                    Message = "Problem with the registration"
+                };
             }
 
-            return new Result<UserDto>
+            return new Result
             {
                 Status = 1,
                 Message = "User success registered",
-                Value = CreateUserResponseService.CreateFromEntity(newUser)
+               
             };
         }
 

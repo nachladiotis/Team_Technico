@@ -18,10 +18,8 @@ namespace Technico.Api.Controllers
         {
             var response = await _authService.RegisterAsync(createUserRequest);
 
-            //Toodoo add validation
-
             return Ok(new Result
-            {
+            {   
                 Status = response.Status,
                 Message = response.Message
             });
@@ -31,10 +29,6 @@ namespace Technico.Api.Controllers
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
             var response = await _authService.LoginAsync(loginDto);
-
-            
-            //TodoAddValidation
-            
 
             return Ok(new Result<UserLoginResponse>
             {
