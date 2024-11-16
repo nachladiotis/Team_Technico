@@ -1,9 +1,10 @@
 ﻿using TechnicoRMP.Models;
+using TechnicoRMP.Shared.Dtos;
 
 namespace Technico.Api.Validations
 {
     public interface IPropertyItemValidation
     {
-        bool PropertyItemValidator(PropertyItem propertyItem);
+        bool PropertyItemValidator(CreatePropertyItemRequest createPropertyItemRequest);
     }
 }
