@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TechnicoRMP.Database.DataAccess;
 
@@ -11,9 +12,11 @@ using TechnicoRMP.Database.DataAccess;
 namespace TechnicoRMP.Database.Migrations
 {
     [DbContext(typeof(DataStore))]
-    partial class DataStoreModelSnapshot : ModelSnapshot
+    [Migration("20241116132436_E9Number_unique")]
+    partial class E9Number_unique
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,7 +70,7 @@ namespace TechnicoRMP.Database.Migrations
 
                     b.Property<string>("E9Number")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("EnPropertyType")
                         .HasColumnType("int");
@@ -124,7 +127,7 @@ namespace TechnicoRMP.Database.Migrations
                     b.Property<double>("Cost")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime?>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
@@ -133,15 +136,15 @@ namespace TechnicoRMP.Database.Migrations
                     b.Property<int>("RepairStatus")
                         .HasColumnType("int");
 
+                    b.Property<long>("RepairerId")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("TypeOfRepair")
                         .HasColumnType("int");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("RepairerId");
 
                     b.ToTable("PropertyRepairs");
                 });
@@ -215,13 +218,13 @@ namespace TechnicoRMP.Database.Migrations
 
             modelBuilder.Entity("TechnicoRMP.Models.PropertyRepair", b =>
                 {
-                    b.HasOne("TechnicoRMP.Models.User", "User")
+                    b.HasOne("TechnicoRMP.Models.User", "Repairer")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("RepairerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Repairer");
                 });
 
             modelBuilder.Entity("TechnicoRMP.Models.PropertyItem", b =>

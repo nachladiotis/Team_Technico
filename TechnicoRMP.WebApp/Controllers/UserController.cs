@@ -9,29 +9,22 @@ using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.WebApp.Models;
 
-public class UserController : Controller
+public class UserController(IHttpClientFactory httpClientFactory) : Controller
 {
-    Uri baseAdsress = new Uri("https://localhost:7038/api");
-    private readonly HttpClient _client;
-
-    public UserController()
-    {
-        _client = new HttpClient();
-        _client.BaseAddress = baseAdsress;
-    }
-
+    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
     [HttpGet("User/GetProfile/{id}")]
     public async Task<IActionResult> GetProfile(int id)
     {
         UserProfileViewModel user = new UserProfileViewModel();
-        HttpResponseMessage response = await _client.GetAsync($"{_client.BaseAddress}/User/{id}");
+        var client = _httpClientFactory.CreateClient("ApiClient");
+        var uri = new Uri($"{client.BaseAddress}/User/{id}");
+        HttpResponseMessage response = await client.GetAsync(uri);
         if (response.IsSuccessStatusCode)
         {
             string data = await response.Content.ReadAsStringAsync();
             Content(data, "application/json");
-            user = JsonConvert.DeserializeObject<UserProfileViewModel>(data);
-
+            user = JsonConvert.DeserializeObject<UserProfileViewModel>(data)!;
         }
         else
         {
@@ -45,7 +38,8 @@ public class UserController : Controller
     {
         try
         {
-            HttpResponseMessage response = await _client.GetAsync($"{_client.BaseAddress}/User/{id}");
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            HttpResponseMessage response = await client.GetAsync($"{client.BaseAddress}/User/{id}");
             if (response.IsSuccessStatusCode)
             {
                 string data = await response.Content.ReadAsStringAsync();
@@ -82,8 +76,9 @@ public class UserController : Controller
     public async Task<IActionResult> Edit(UserProfileViewModelUpdate updatedUser)
     {
         string data = JsonConvert.SerializeObject(updatedUser);
+        var client = _httpClientFactory.CreateClient("ApiClient");
         StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-        HttpResponseMessage response = await _client.PutAsync(_client.BaseAddress + "/User/PutAsync", content);
+        HttpResponseMessage response = await client.PutAsync(client.BaseAddress + "/User/PutAsync", content);
         if (response.IsSuccessStatusCode)
         {
             return RedirectToAction("GetProfile", new { updatedUser.Id });
@@ -98,7 +93,8 @@ public class UserController : Controller
     {
         try
         {
-            HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/User/" + id).Result;
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            HttpResponseMessage response = client.GetAsync(client.BaseAddress + "/User/" + id).Result;
             if (response.IsSuccessStatusCode)
             {
                 string data = await response.Content.ReadAsStringAsync();
@@ -128,8 +124,9 @@ public class UserController : Controller
     {
         try
         {
-            HttpResponseMessage response = await _client.PostAsync(
-                $"{_client.BaseAddress}/User/SoftDelete/{id}",  
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            HttpResponseMessage response = await client.PostAsync(
+                $"{client.BaseAddress}/User/SoftDelete/{id}",  
                 null);  
 
             if (response.IsSuccessStatusCode)

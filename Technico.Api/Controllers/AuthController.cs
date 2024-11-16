@@ -10,12 +10,15 @@ namespace Technico.Api.Controllers
     [ApiController]
     public class AuthController(IAuthService authService) : ControllerBase
     {
-        private IAuthService _authService = authService;
+        private readonly IAuthService _authService = authService;
 
+       
         [HttpPost("register")]
         public async Task<IActionResult> Register(CreateUserRequest createUserRequest)
         {
             var response = await _authService.RegisterAsync(createUserRequest);
+
+            //Toodoo add validation
 
             return Ok(new Result
             {
@@ -29,7 +32,11 @@ namespace Technico.Api.Controllers
         {
             var response = await _authService.LoginAsync(loginDto);
 
-            return Ok(new Result<UserDto>
+            
+            //TodoAddValidation
+            
+
+            return Ok(new Result<UserLoginResponse>
             {
                 Status = response.Status,
                 Message = response.Message,

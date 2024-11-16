@@ -6,6 +6,6 @@ namespace Technico.Api.Services;
 public interface IAuthService
 {
     Task<Result<UserDto>> RegisterAsync(CreateUserRequest createUserRequest);
-    Task<Result<UserDto>> LoginAsync(LoginDto dto);
+    Task<Result<UserLoginResponse>> LoginAsync(LoginDto dto);
 
 } 
