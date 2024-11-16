@@ -4,6 +4,7 @@ using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
+using Technico.Api;
 
 namespace Technico.Api.Controllers;
 
@@ -22,7 +23,7 @@ public class RepairController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CreatePropertyRepairResponse>> Post([FromBody] CreatePropertyRepairRequest createPropertyRepairRequest)
+    public async Task<ActionResult<PropertyRepairResponseDTO>> Create([FromBody] CreatePropertyRepairRequest createPropertyRepairRequest)
     {
         try
         {
@@ -37,7 +38,7 @@ public class RepairController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new Result<CreatePropertyRepairResponse>
+            return StatusCode(500, new Result<PropertyRepairResponseDTO>
             {
                 Status = 500,
                 Message = $"An error occurred: {ex.Message}"
@@ -47,41 +48,14 @@ public class RepairController : ControllerBase
 
 
     [HttpGet]
-    public async Task<ActionResult<Result<List<CreatePropertyRepairResponse>>>> GetAllRepairs()
+    public async Task<ActionResult<List<PropertyRepairResponseDTO>>> GetAllRepairs()
     {
-        try
-        {
-            var repairsResult = await _propertyRepairService.GetAll();
-
-            if (repairsResult.Status != 0)
-            {
-                return StatusCode(500, repairsResult);
-            }
-
-            if (repairsResult.Value == null || repairsResult.Value.Count == 0)
-            {
-                return NotFound(new Result<List<CreatePropertyRepairResponse>>()
-                {
-                    Status = -1,
-                    Message = "No repairs found"
-                });
-            }
-
-            return Ok(repairsResult);
-        }
-        catch (Exception ex)
-        {
-            var result = new Result<List<CreatePropertyRepairResponse>>()
-            {
-                Status = 500,
-                Message = $"Internal server error: {ex.Message}"
-            };
-            return StatusCode(500, result);
-        }
+        var repairsResult = await _propertyRepairService.GetAll();
+        return Ok(repairsResult);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Result<CreatePropertyRepairResponse>>> GetRepairById(int id)
+    public async Task<ActionResult<Result<PropertyRepairResponseDTO>>> GetRepairById([FromRoute]int id)
     {
         try
         {
@@ -91,13 +65,13 @@ public class RepairController : ControllerBase
             {
                 if (repairsResult.Status == -1)
                 {
-                    return NotFound(new Result<CreatePropertyRepairResponse>
+                    return NotFound(new Result<PropertyRepairResponseDTO>
                     {
                         Status = repairsResult.Status,
                         Message = repairsResult.Message = $"Repair not found with ID {id}"
                     });
                 }
-                return StatusCode(500, new Result<CreatePropertyRepairResponse>
+                return StatusCode(500, new Result<PropertyRepairResponseDTO>
                 {
                     Status = repairsResult.Status,
                     Message = repairsResult.Message = "An unexpected error occurred."
@@ -108,7 +82,7 @@ public class RepairController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new Result<CreatePropertyRepairResponse>
+            return StatusCode(500, new Result<PropertyRepairResponseDTO>
             {
                 Status = 500,
                 Message = $"Internal server error: {ex.Message}"
@@ -116,7 +90,7 @@ public class RepairController : ControllerBase
         }
     }
 
-    [HttpPut("{id}")]
+    [HttpPatch("{id}")]
     public async Task<ActionResult<Result>> Update(int id, [FromBody] UpdatePropertyRepair updatePropertyRepair)
     {
         try
@@ -125,15 +99,12 @@ public class RepairController : ControllerBase
             {
                 return BadRequest("The ID in the URL does not match the ID in the body.");
             }
-
             var result = await _propertyRepairService.Update(updatePropertyRepair);
-
 
             if (result.Status == 0)
             {
                 return Ok(result);
             }
-
             return BadRequest(result);
         }
         catch (Exception ex)
@@ -146,7 +117,7 @@ public class RepairController : ControllerBase
         }
     }
 
-    [HttpPut("{repairId}/deactivate")]
+    [HttpPut("deactivate/{repairId}")]
     public async Task<ActionResult<Result<PropertyRepair>>> SoftDeleteRepairForUser(int userId, int repairId)
     {
         try
@@ -155,10 +126,10 @@ public class RepairController : ControllerBase
 
             if (result.Status == 0)
             {
-                return Ok(result);
+                return NoContent();
             }
 
-            return BadRequest(result);
+            return NotFound(result);
         }
         catch (Exception ex)
         {

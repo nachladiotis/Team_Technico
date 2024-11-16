@@ -7,6 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Technico.Api\Technico.Api.csproj" />
+    <ProjectReference Include="..\TechnicoRMP.DatabaseNew\TechnicoRMP.Database.csproj" />
+    <ProjectReference Include="..\TechnicoRMP.Models\TechnicoRMP.Models.csproj" />
     <ProjectReference Include="..\TechnicoRMP.Shared\TechnicoRMP.Shared.csproj" />
   </ItemGroup>
 

@@ -35,13 +35,12 @@ public class AccountController : Controller
         if (response.IsSuccessStatusCode)
         {
             var result = await response.Content.ReadFromJsonAsync<Result<CreateUserResponse>>();
-            // Handle a successful login
+            
         }
         else
         {
             // Handle login failure
         }
-
         return View();
     }
 }

@@ -1,0 +1,93 @@
+﻿@using TechnicoRMP.Models
+@model List<PropertyRepairViewModel>
+
+@{
+    ViewData["Title"] = "Property Repairs List";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">List of all Property Repairs</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th style="width: 10%;">Actions</th>
+                        <th>Repair ID</th>
+                        <th>Date</th>
+                        <th>Type of Repair</th>
+                        <th>Address</th>
+                        <th>Status</th>
+                        <th>Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var repair in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Edit" asp-route-id="@repair.Id" class="btn btn-primary btn-sm">Edit</a>
+                                    <!-- Add Delete Button -->
+                                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal" data-id="@repair.Id" data-repair="@repair.TypeOfRepair">Delete</button>
+                                </div>
+                            </td>
+                            <td>@repair.Id</td>
+                            <td>@repair.Date</td>
+                            <td>@repair.TypeOfRepair</td>
+                            <td>@repair.Address</td>
+                            <td>@repair.RepairStatus</td>
+                            <td>@repair.Cost</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="text-center">No property repairs found.</p>
+    }
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this repair?</p>
+                <p id="repairType"></p>
+            </div>
+            <div class="modal-footer">
+                <form asp-action="SoftDelete" method="post">
+                    <input type="hidden" id="repairId" name="id" />
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // This script will be used to update the modal with the appropriate repair information.
+        $('#deleteModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var repairId = button.data('id'); // Extract info from data-* attributes
+            var repairType = button.data('repair');
+
+            var modal = $(this);
+            modal.find('.modal-body #repairType').text('Repair Type: ' + repairType);
+            modal.find('.modal-footer #repairId').val(repairId);
+        });
+    </script>
+}
