@@ -94,7 +94,7 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
             {
                 var options = new CookieOptions
                 {
-                    Expires = DateTime.Now.AddSeconds(result.Value!.SesionExpirationInDays),
+                    Expires = DateTime.Now.AddDays(result.Value!.SesionExpirationInDays),
                     HttpOnly = true,
                     Secure = true
                 };
