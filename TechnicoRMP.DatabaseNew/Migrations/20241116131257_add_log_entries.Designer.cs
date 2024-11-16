@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TechnicoRMP.Database.DataAccess;
 
@@ -11,9 +12,11 @@ using TechnicoRMP.Database.DataAccess;
 namespace TechnicoRMP.Database.Migrations
 {
     [DbContext(typeof(DataStore))]
-    partial class DataStoreModelSnapshot : ModelSnapshot
+    [Migration("20241116131257_add_log_entries")]
+    partial class add_log_entries
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,7 +70,7 @@ namespace TechnicoRMP.Database.Migrations
 
                     b.Property<string>("E9Number")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("EnPropertyType")
                         .HasColumnType("int");
@@ -79,9 +82,6 @@ namespace TechnicoRMP.Database.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("E9Number")
-                        .IsUnique();
 
                     b.ToTable("PropertyItems");
                 });

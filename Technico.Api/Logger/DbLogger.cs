@@ -6,7 +6,7 @@ namespace Technico.Api.Logger;
 public class DbLogger<T>(DataStore dbContext) : ILogger where T : class
 {
     private readonly DataStore _dbContext = dbContext;
-    private readonly string _categoryName = typeof(T).FullName ?? string.Empty;
+    private readonly string _categoryName = typeof(T).Name ?? string.Empty;
 
     public IDisposable? BeginScope<TState>(TState state) where TState : notnull => default;
 

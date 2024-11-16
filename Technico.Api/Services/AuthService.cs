@@ -6,9 +6,11 @@ using BCrypt.Net;
 
 namespace Technico.Api.Services
 {
-    public class AuthService(DataStore datastore) : IAuthService
+    public class AuthService(DataStore datastore, ILogger<AuthService> logger) : IAuthService
     {
         private readonly DataStore _datastore = datastore;
+
+        private readonly ILogger<AuthService> _logger = logger;
 
         private const int LogginUSerSesionInDays = 7;
 
@@ -23,13 +25,28 @@ namespace Technico.Api.Services
                     Message = "Already exist user with this Email"
                 };
             }
+            user = _datastore.Users.FirstOrDefault(u => u.VatNumber == createUserRequest.VatNumber);
+            if (user != null)
+            {
+                return new Result<UserDto>
+                {
+                    Status = 0,
+                    Message = "Already exist user with this VatNumber"
+                };
+            }
 
             HashPassword(createUserRequest);
 
             var newUser = RegisterService.CreateRegisterUserFromDto(createUserRequest);
 
-            _datastore.Users.Add(newUser);
-            await _datastore.SaveChangesAsync();
+            try
+            {
+                _datastore.Users.Add(newUser);
+                await _datastore.SaveChangesAsync();
+            }catch(Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
 
             return new Result<UserDto>
             {

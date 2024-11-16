@@ -11,8 +11,11 @@ namespace Technico.Api.Controllers
     public class UserController : ControllerBase
     {
         private static List<User> users = new List<User>();
+
         private readonly ILogger<UserController> _logger;
+
         private IUserService _service;
+
         public UserController(IUserService service)
         {
             _service = service;

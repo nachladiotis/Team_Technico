@@ -33,6 +33,11 @@ public class DataStore : DbContext
             .HasIndex(p => p.VatNumber)
             .IsUnique();
 
+        modelBuilder
+            .Entity<PropertyItem>()
+            .HasIndex(p => p.E9Number)
+            .IsUnique();
+
         //modelBuilder.Entity<User>().HasData(
         //    new User
         //    {
