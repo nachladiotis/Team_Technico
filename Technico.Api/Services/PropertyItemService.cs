@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Technico.Api.Validations;
 using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
@@ -6,12 +7,17 @@ using TechnicoRMP.Shared.Dtos;
 
 namespace Technico.Api.Services;
 
-public class PropertyItemService(DataStore dataStore) : IPropertyItemService
+public class PropertyItemService(DataStore dataStore, IPropertyItemValidation validation) : IPropertyItemService
 {
     private readonly DataStore _dataStore = dataStore;
+    private readonly IPropertyItemValidation _validation;
 
     public Result<CreatePropertyItemResponse> Create(CreatePropertyItemRequest createPropertyItemRequest)
     {
+        if (!validation.PropertyItemValidator(createPropertyItemRequest))
+        {
+            return null;
+        }
         var response = new Result<CreatePropertyItemResponse>()
         {
             Status = -1

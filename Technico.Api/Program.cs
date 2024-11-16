@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Technico.Api.Logger;
 using Technico.Api.Services;
+using Technico.Api.Validations;
 using TechnicoRMP.Database.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPropertyItemService, PropertyItemService>();
 builder.Services.AddScoped<IPropertyRepairService, PropertyRepairService>();
+builder.Services.AddScoped<IPropertyItemValidation, PropertyItemValidation>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Logging.AddProvider(new DbLoggerProvider(builder.Services.BuildServiceProvider()

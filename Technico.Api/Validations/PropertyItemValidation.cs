@@ -1,14 +1,15 @@
 ﻿using TechnicoRMP.Models;
+using TechnicoRMP.Shared.Dtos;
 
 namespace Technico.Api.Validations
 {
     public class PropertyItemValidation: IPropertyItemValidation
     {
-        public bool PropertyItemValidator(PropertyItem propertyItem)
+        public bool PropertyItemValidator(CreatePropertyItemRequest createPropertyItemRequest)
         {
-            if (propertyItem == null)
+            if (createPropertyItemRequest == null)
                 return false;
-            if (propertyItem.YearOfConstruction == null || propertyItem.EnPropertyType == null)
+            if (createPropertyItemRequest.E9Number == null)
                 return false;
             return true;
         }
