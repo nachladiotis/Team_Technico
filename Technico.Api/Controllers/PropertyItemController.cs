@@ -122,5 +122,17 @@ namespace Technico.Api.Controllers
                 });
             }
         }
+
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetPropertyItemByUserId(int userId)
+        {
+            var response = await _propertyItemService.GetPropertyItemByUserId(userId);
+            return Ok(new Result<PropertyItemsByUserDto>
+            {
+                Status = response.Status,
+                Message = response.Message,
+                Value = response.Value
+            }); 
+        }
     }
 }
