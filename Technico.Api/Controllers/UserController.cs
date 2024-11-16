@@ -8,20 +8,12 @@ namespace Technico.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class UserController(IUserService service, ILogger<UserController> logger) : ControllerBase
     {
-        private static List<User> users = new List<User>();
+        private readonly IUserService _service = service;
 
-        private readonly ILogger<UserController> _logger;
-
-        private IUserService _service;
-
-        public UserController(IUserService service)
-        {
-            _service = service;
-        }
-
-        //Read all users
+        private readonly ILogger<UserController> _logger = logger;
+         
         [HttpGet]
         public async Task<ActionResult<List<UserDto>>> Get()
         {
@@ -29,15 +21,6 @@ namespace Technico.Api.Controllers
             return Ok(response);
         }
 
-
-        //[HttpGet, Route("withpropertyitems")]
-        //public ActionResult<List<UserWithProperyItemsDTO>> GetWithPropertyItems()
-        //{
-        //    var response = _service.GetAllUsersWithPropertyItems();
-        //    return Ok(response);
-        //}
-
-        //Read User with ID
         [HttpGet, Route("{id}")]
         public async Task<ActionResult<UserDto>> GetUserDetails(int id)
         {
@@ -46,7 +29,6 @@ namespace Technico.Api.Controllers
         }
 
 
-        //Partial Update
         [HttpPut, Route("{id}")]
         public async Task<ActionResult<UserDto>> PutAsync([FromBody] UpdateUserRequest userDTO)
         {
@@ -57,16 +39,16 @@ namespace Technico.Api.Controllers
             }
             catch (BadRequestException ex)
             {
+                _logger.LogError(ex,ex.Message);
                 return BadRequest(ex.Message);
             }
             catch (NotFoundException ex)
             {
+                _logger.LogInformation(ex, ex.Message);
                 return BadRequest(ex.Message);
             }
         }
 
-
-        //Complete update
         [HttpPatch]
         public async Task<ActionResult<UpdateUserRequest>> Patch([FromBody] UpdateUserRequest userDTO)
         {
@@ -77,15 +59,16 @@ namespace Technico.Api.Controllers
             }
             catch (BadHttpRequestException ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return BadRequest(ex.Message);
             }
             catch (NotFoundException ex)
             {
+                _logger.LogInformation(ex, ex.Message);
                 return BadRequest(ex.Message);
             }
         }
 
-        //Hard Delete
         [HttpDelete, Route("{id}")]
         public async Task<ActionResult<bool>> DeleteAsync([FromRoute] int id)
         {
@@ -95,13 +78,12 @@ namespace Technico.Api.Controllers
             else return NotFound(response);
         }
 
-        //Soft Delete
         [HttpPost, Route("SoftDelete/{id}")]
         public async Task<ActionResult<bool>> SoftDeleteAsync([FromRoute] int id)
         {
             try
             {
-                bool response = await _service.SoftDeleteUser(id);  
+                bool response = await _service.SoftDeleteUser(id);
                 if (response)
                     return Ok(response);
                 else
@@ -109,6 +91,7 @@ namespace Technico.Api.Controllers
             }
             catch (NotFoundException ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound(new { message = ex.Message });
             }
         }
