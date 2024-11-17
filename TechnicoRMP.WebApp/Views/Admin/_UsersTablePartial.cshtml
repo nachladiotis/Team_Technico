@@ -1,0 +1,36 @@
+﻿<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th style="width: 50px;">ID</th>
+            <th style="width: 150px;">Name</th>
+            <th style="width: 150px;">Surname</th>
+            <th style="width: 150px;">VAT Number</th>
+            <th style="width: 200px;">Address</th>
+            <th style="width: 350px;">Phone Number</th>
+            <th style="width: 200px;">Email</th>
+            <th style="width: 80px;">Active</th>
+            <th style="width: 800px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.Name</td>
+                <td>@user.Surname</td>
+                <td>@user.VatNumber</td>
+                <td>@user.Address</td>
+                <td>@user.PhoneNumber</td>
+                <td>@user.Email</td>
+                <td>@(user.IsActive ? "Yes" : "No")</td>
+                <td>
+                    <div class="d-flex justify-content-start gap-2">
+                        <a href="/Users/PropertyItems/@user.Id" class="btn btn-primary btn-sm">View Properties</a>
+                        <a href="/Users/RepairHistory/@user.Id" class="btn btn-secondary btn-sm">View Repairs</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

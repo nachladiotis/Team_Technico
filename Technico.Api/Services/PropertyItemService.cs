@@ -16,7 +16,7 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
     {
         if (!validation.PropertyItemValidator(createPropertyItemRequest))
         {
-            return null;
+            return null!;
         }
         var response = new Result<CreatePropertyItemResponse>()
         {
@@ -31,10 +31,13 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
                 YearOfConstruction = createPropertyItemRequest.YearOfConstruction,
                 EnPropertyType = createPropertyItemRequest.EnPropertyType,
 
+              
                 IsActive = true,
             };
+
             _dataStore.Add(propertyItem);
             _dataStore.SaveChanges();
+
             response.Message = "ΕΠΙΤΥΧΕΣ";
             response.Status = 0;
             response.Value = CreatePropertyItemResponseService.CreateFromEntity(propertyItem);

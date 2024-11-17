@@ -17,6 +17,7 @@ builder.Services.AddScoped<IPropertyItemService, PropertyItemService>();
 builder.Services.AddScoped<IPropertyRepairService, PropertyRepairService>();
 builder.Services.AddScoped<IPropertyItemValidation, PropertyItemValidation>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ILogsService, LogsService>();
 
 builder.Logging.AddProvider(new DbLoggerProvider(builder.Services.BuildServiceProvider()
     .GetRequiredService<DataStore>()));

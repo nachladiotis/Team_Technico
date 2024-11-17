@@ -24,11 +24,11 @@ namespace TechnicoRMP.Database.Migrations
 
             modelBuilder.Entity("TechnicoRMP.Models.Logs.LogEntry", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ExceptionName")
                         .HasColumnType("nvarchar(max)");
@@ -67,7 +67,7 @@ namespace TechnicoRMP.Database.Migrations
 
                     b.Property<string>("E9Number")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("EnPropertyType")
                         .HasColumnType("int");

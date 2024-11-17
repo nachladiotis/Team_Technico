@@ -12,7 +12,6 @@ namespace Technico.Api.Controllers
     {
         private readonly IAuthService _authService = authService;
 
-       
         [HttpPost("register")]
         public async Task<IActionResult> Register(CreateUserRequest createUserRequest)
         {
