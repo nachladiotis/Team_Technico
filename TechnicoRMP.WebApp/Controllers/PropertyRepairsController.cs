@@ -1,22 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Azure;
+﻿using System.Text;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration.UserSecrets;
+using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Newtonsoft.Json;
-using Technico.Api.Services;
-using TechnicoRMP.Database.DataAccess;
-using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.WebApp.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using TechnicoRMP.Models;
 
 namespace TechnicoRMP.WebApp.Controllers
 {

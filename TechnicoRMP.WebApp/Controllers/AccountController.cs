@@ -40,6 +40,14 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
 
         var client = _httpClientFactory.CreateClient("ApiClient");
         var uri = new Uri($"{client.BaseAddress}/Auth/register");
+
+        if(model.Password != model.ConfirmPassword)
+        {
+            ModelState.AddModelError("Password", "Passwords doesnt match");
+           
+            return View(model);
+        }
+
         var dto = new CreateUserRequest
          { Email = model.Email,
           Name = model.Name,
@@ -52,7 +60,9 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
 
         var response = await client.PostAsJsonAsync(uri, dto);
 
-        if (response.IsSuccessStatusCode)
+        var result = await response.Content.ReadFromJsonAsync<Result>();
+
+        if (response.IsSuccessStatusCode && result?.Status == 1)
         {
             return RedirectToAction("Login", "Account"); 
         }
@@ -96,7 +106,7 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
             {
                 var options = new CookieOptions
                 {
-                    Expires = DateTime.Now.AddSeconds(result.Value!.SesionExpirationInDays),
+                    Expires = DateTime.Now.AddDays(result.Value!.SesionExpirationInDays),
                     HttpOnly = true,
                     Secure = true
                 };

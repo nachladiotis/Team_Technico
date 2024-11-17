@@ -10,5 +10,6 @@ public class CreatePropertyItemResponse : IDto
     public required int YearOfConstruction { get; set; }
     public EnPropertyType EnPropertyType { get; set; }
     public bool IsActive { get; set; } = true;
+    
 
 }

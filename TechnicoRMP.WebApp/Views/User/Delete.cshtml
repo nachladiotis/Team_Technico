@@ -36,7 +36,7 @@
     
     <form asp-action="Delete">
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-controller="User" asp-action="GetProfile" asp-route-id="@ActiveUser.User!.Id" >Back to profile </a>
     </form>
 </div>
 

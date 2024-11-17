@@ -1,0 +1,68 @@
+﻿@model List<LogEntryViewModel>
+
+@{
+    ViewData["Title"] = "Log Entries";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">Log Entries</h1>
+
+    <!-- Filter Form -->
+    <form method="get" class="mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="logLevel">Log Level</label>
+                <input type="text" id="logLevel" name="logLevel" class="form-control" value="@ViewData["LogLevel"]" />
+            </div>
+            <div class="col-md-4">
+                <label for="exceptionName">Exception Name</label>
+                <input type="text" id="exceptionName" name="exceptionName" class="form-control" value="@ViewData["ExceptionName"]" />
+            </div>
+            <!-- Adjust the "Filter" button to match the layout -->
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </div>
+    </form>
+
+
+    <!-- Log Entries Table with Scrollable Grid -->
+    <div class="table-responsive mb-4" style="max-height: 600px; overflow-y: auto; border: 1px solid #ddd;">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Log Level</th>
+                    <th>Message</th>
+                    <th>Service Name</th>
+                    <th>Exception Name</th>
+                    <th>Stack Trace</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var log in Model)
+                {
+                    <tr>
+                        <td>@log.Id</td>
+                        <td>@log.LogDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@log.LogLevel</td>
+                        <td>@log.Message</td>
+                        <td>@log.ServiceName</td>
+                        <td>@log.ExceptionName</td>
+                        <td style="max-width: 300px; word-wrap: break-word; overflow-x: auto; white-space: pre-wrap;">
+                            @if (!string.IsNullOrEmpty(log.StackTrace))
+                            {
+                                <pre>@log.StackTrace</pre>
+                            }
+                            else
+                            {
+                                <span>N/A</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

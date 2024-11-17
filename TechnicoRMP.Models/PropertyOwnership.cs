@@ -8,5 +8,4 @@ public class PropertyOwnership
     public User? PropertyOwner { get; set; }
     public PropertyItem? PropertyItem { get; set; }
 
-
 }

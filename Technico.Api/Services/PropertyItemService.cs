@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Technico.Api.Validations;
 using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
@@ -6,12 +7,17 @@ using TechnicoRMP.Shared.Dtos;
 
 namespace Technico.Api.Services;
 
-public class PropertyItemService(DataStore dataStore) : IPropertyItemService
+public class PropertyItemService(DataStore dataStore, IPropertyItemValidation validation) : IPropertyItemService
 {
     private readonly DataStore _dataStore = dataStore;
+    private readonly IPropertyItemValidation _validation;
 
     public Result<CreatePropertyItemResponse> Create(CreatePropertyItemRequest createPropertyItemRequest)
     {
+        if (!validation.PropertyItemValidator(createPropertyItemRequest))
+        {
+            return null!;
+        }
         var response = new Result<CreatePropertyItemResponse>()
         {
             Status = -1
@@ -27,7 +33,15 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
                 IsActive = true,
                 
             };
+
             _dataStore.Add(propertyItem);
+            _dataStore.SaveChanges();
+            var proprtyOwnership = new PropertyOwnership
+            {
+                PropertyItemId = propertyItem.Id,
+                PropertyOwnerId = createPropertyItemRequest.UserId,
+            };
+            _dataStore.Add(proprtyOwnership);
             _dataStore.SaveChanges();
             response.Message = "ΕΠΙΤΥΧΕΣ";
             response.Status = 0;
@@ -84,6 +98,47 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
             result.Status = 0;
             result.Message = "Item found successfully.";
             result.Value = CreatePropertyItemResponseService.CreateFromEntity(propertyItem);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            result.Status = -1;
+            result.Message = $"An error occurred: {ex.Message}";
+            return result;
+        }
+    }
+
+    public async Task<Result<PropertyItemsByUserDto>> GetPropertyItemByUserId(int userId)
+    {
+        var result = new Result<PropertyItemsByUserDto>
+        {
+            Status = -1,
+            Message = "An error occurred while retrieving the item."
+        };
+
+        try
+        {
+            if (userId <= 0)
+            {
+                result.Message = "Invalid ID provided.";
+                return result;
+            }
+            var propertyItem = await _dataStore
+            .PropertyOwnerships
+            .Include(s => s.PropertyOwner)
+            .Include(s => s.PropertyItem)
+            .Where(s => s.PropertyOwnerId == userId).ToListAsync();
+
+            if (propertyItem == null)
+            {
+                result.Message = "Item not found.";
+                return result;
+            }
+
+            result.Status = 0;
+            result.Message = "Item found successfully.";
+            result.Value = CreatePropertyItemResponseService.Create(propertyItem);
 
             return result;
         }
