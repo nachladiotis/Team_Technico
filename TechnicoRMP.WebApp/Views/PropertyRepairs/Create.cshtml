@@ -11,8 +11,19 @@
 
 <form asp-action="Create" method="post">
     <div class="row">
-        <!-- Left Side of the Form -->
+        <!-- Αριστερή Στήλη -->
         <div class="col-md-6">
+            <!-- User ID (Admin μόνο) -->
+            @if (ActiveUser.User.TypeOfUser == EnRoleType.Admin)
+            {
+                <div class="form-group">
+                    <label asp-for="UserId" class="control-label">User ID</label>
+                    <!-- Χειροκίνητο πεδίο για το User ID -->
+                    <input asp-for="UserId" class="form-control" type="text" placeholder="Enter User ID" required />
+                    <span asp-validation-for="UserId" class="text-danger"></span>
+                </div>
+            }
+
             <!-- Date -->
             <div class="form-group">
                 <label asp-for="Date" class="control-label">Repair Date</label>
@@ -34,14 +45,38 @@
             </div>
         </div>
 
-        <!-- Right Side of the Form -->
+        <!-- Δεξιά Στήλη -->
         <div class="col-md-6">
-
-            <!-- Address -->
+            <!-- Address (Χειροκίνητο πεδίο για Admin και dropdown για User) -->
             <div class="form-group">
-                <label asp-for="Address" class="control-label">Address</label>
-                <input asp-for="Address" class="form-control" required />
-                <span asp-validation-for="Address" class="text-danger"></span>
+                <label asp-for="Address" class="control-label">Select Property / Enter Address</label>
+                @if (ActiveUser.User.TypeOfUser == EnRoleType.User)
+                {
+                    <!-- Dropdown για τις διευθύνσεις, μόνο για User -->
+                    @if (ViewBag.PropertyItems != null && ((List<TechnicoRMP.WebApp.Models.PropertyItemViewModel>)ViewBag.PropertyItems).Any())
+                    {
+                        <select asp-for="Address" class="form-control">
+                            <option value="">-- Select Property --</option>
+                            @foreach (var item in (List<TechnicoRMP.WebApp.Models.PropertyItemViewModel>)ViewBag.PropertyItems)
+                            {
+                                <option value="@item.Address">@item.Address (@item.E9Number)</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            You don't have any properties to select from.
+                        </div>
+                    }
+                }
+                else if (ActiveUser.User.TypeOfUser == EnRoleType.Admin)
+                {
+                    <!-- Χειροκίνητο πεδίο για την Address, μόνο για Admin -->
+                    <input asp-for="Address" class="form-control" type="text" placeholder="Enter Address" required />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                }
             </div>
 
             <!-- Cost -->
@@ -54,22 +89,35 @@
             <!-- Repair Status -->
             <input asp-for="RepairStatus" type="hidden" value="Pending" />
 
-            <!-- Is Active Checkbox -->
-            <input class="form-check-input" type = "hidden" asp-for="IsActive" value="true" />
-                    
-            </div>
-            <input type="hidden" asp-for="UserId" value="@ActiveUser.User.Id" />
-            <!-- Submit Button -->
-            <div class="form-group">
-                <input type="submit" value="Create Repair" class="btn btn-primary" />
-            </div>
+            <!-- Is Active -->
+            <input class="form-check-input" type="hidden" asp-for="IsActive" value="true" />
         </div>
-    <div>
-        <a asp-action="GetAll">Back to List</a>
-    </div>
+
+        <!-- Submit Button -->
+        <div class="form-group">
+            <input type="submit" value="Create Repair" class="btn btn-primary" />
+        </div>
     </div>
 </form>
 
+<!-- Back to Repairs Page -->
+<div>
+    @if (ActiveUser.User.TypeOfUser == EnRoleType.Admin)
+    {
+        @if (Model != null && Model.UserId > 0)
+        {
+            <a asp-controller="Repair" asp-action="GetRepairsByUserId" asp-route-id="@Model.UserId" class="btn btn-secondary">
+                Back to Repairs Page
+            </a>
+        }
+    }
+    else if (ActiveUser.User.TypeOfUser == EnRoleType.User)
+    {
+        <a asp-controller="Repair" asp-action="GetRepairsByUserId" asp-route-id="@ActiveUser.User.Id" class="btn btn-secondary">
+            Back to Repairs Page
+        </a>
+    }
+</div>
 
 @section Scripts {
     @{

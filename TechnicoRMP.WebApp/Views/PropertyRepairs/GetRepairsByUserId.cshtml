@@ -2,68 +2,71 @@
 @model List<PropertyRepairViewModel>
 
 @{
-    ViewData["Title"] = "My Repairs";
+    if (ActiveUser.User.TypeOfUser is EnRoleType.User)
+    {
+        ViewData["Title"] = "My Repairs";
+    }
 }
 
-<p>
-    <a asp-action="Create" class="btn btn-primary btn-lg">
-        <i class="bi bi-plus-circle"></i> Create New Repair
-    </a>
-</p>
-
-<div class="container mt-4">
-    <h2 class="text-center mb-6">My Repairs</h2>
-
+<!-- Κεντράρισμα του πίνακα -->
+<div class="d-flex justify-content-center">
     @if (Model != null && Model.Any())
     {
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered">
-                <thead class="thead-dark">
-                    <tr>
-                        <th style="width: 10%;">Actions</th>
-                        <th>Repair ID</th>
-                        <th>Date</th>
-                        <th>Type of Repair</th>
-                        <th>Address</th>
-                        <th>Status</th>
-                        <th>Cost</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 50px;">Repair ID</th>
+                            <th style="width: 150px;">Date</th>
+                            <th style="width: 150px;">Type of Repair</th>
+                            <th style="width: 200px;">Address</th>
+                            <th style="width: 100px;">Status</th>
+                            <th style="width: 100px;">Cost</th>
+                            <th style="width: 200px;">Actions</th> <!-- Adjusted column width -->
+                        </tr>
+                    </thead>
+                    <tbody>
                     @foreach (var repair in Model)
                     {
-                        <tr>
-                           <td>
-                               <div class="btn-group" role="group">
-                                <a asp-action="Edit" asp-route-id="@repair.Id" class="btn btn-primary btn-sm">Edit</a>
+                                <tr>
+                                    <td>@repair.Id</td>
+                                    <td>@repair.Date</td>
+                                    <td>@repair.TypeOfRepair</td>
+                                    <td>@repair.Address</td>
+                                    <td>@repair.RepairStatus</td>
+                                    <td>@repair.Cost</td>
+                                    <td>
+                                        <div class="d-flex justify-content-start gap-2">
+                                            <a asp-action="Edit" asp-route-id="@repair.Id" class="btn btn-primary btn-sm">Edit</a>
 
-                                <!-- Delete Button -->
-                              <button type="button" class="btn btn-danger btn-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteModal"
-                                        data-id="@repair.Id"
-                                        data-repair="@repair.TypeOfRepair">Delete</button>
-                               </div>
-                           </td>
-                            <td>@repair.Id</td>
-                            <td>@repair.Date</td>
-                            <td>@repair.TypeOfRepair</td>
-                            <td>@repair.Address</td>
-                            <td>@repair.RepairStatus</td>
-                            <td>@repair.Cost</td>
-                        </tr>
+                                            <!-- Delete Button -->
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal"
+                                                    data-id="@repair.Id"
+                                                    data-repair="@repair.TypeOfRepair">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
                     }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+                    <div class="d-flex justify-content-center mt-4">
+            <p>
+                <a asp-action="Create" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle"></i> Create New Repair
+                </a>
+            </p>
         </div>
+            </div>
     }
     else
     {
-        <p>No repairs found for this user.</p>
+            <p>No repairs found for this user.</p>
     }
 </div>
 
-<!-- Modal for Deletion -->
+
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -73,10 +76,9 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to delete this repair?</p>
-                <p id="repairType"></p> <!-- Display the repair type -->
+                <p id="repairType"></p> 
             </div>
             <div class="modal-footer">
-                <!-- Adjust the form to target the correct route including repairId in the URL -->
                 <form action="@Url.Action("SoftDelete", "PropertyRepairs", new { repairId = "__repairId__" })" method="post">
                     <input type="hidden" id="repairId" name="repairId" />
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -88,24 +90,24 @@
 </div>
 
 @section Scripts {
-    <script>
-        // Update the modal with repair details when shown
-        $('#deleteModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var repairId = button.data('id'); // Extract info from data-* attributes
+        <script>
+            // Update the modal with repair details when shown
+            $('#deleteModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var repairId = button.data('id'); // Extract info from data-* attributes
 
-            // Update the modal's hidden input with the repairId
-                    var modal = $(this);
-            modal.find('.modal-footer #repairId').val(repairId);
+                // Update the modal's hidden input with the repairId
+                var modal = $(this);
+                modal.find('.modal-footer #repairId').val(repairId);
 
-            // Update the form's action URL to include the repairId
-            var formAction = '@Url.Action("SoftDelete", "PropertyRepairs", new { repairId = "__repairId__" })';
-            formAction = formAction.replace("__repairId__", repairId);
+                // Update the form's action URL to include the repairId
+                var formAction = '@Url.Action("SoftDelete", "PropertyRepairs", new { repairId = "__repairId__" })';
+                formAction = formAction.replace("__repairId__", repairId);
                 modal.find('form').attr('action', formAction);
 
-                    // Optional: Display the repair type in the modal body
-                    var repairType = button.data('repair');
-                    modal.find('.modal-body #repairType').text('Repair Type: ' + repairType);
-                });
-    </script>
+                // Optional: Display the repair type in the modal body
+                var repairType = button.data('repair');
+                modal.find('.modal-body #repairType').text('Repair Type: ' + repairType);
+            });
+        </script>
 }

@@ -54,7 +54,7 @@ public class CreatePropertyItemResponseService
         return new PropertyItemsByUserDto
         {
             PropertyItems = tmp,
-            USerDto = userDto
+            UserDto = userDto
         };
     }
 
@@ -62,7 +62,7 @@ public class CreatePropertyItemResponseService
 
 public sealed class PropertyItemsByUserDto : IDto
 {
-    public UserDto? USerDto { get; set; }
+    public UserDto? UserDto { get; set; }
 
     public List<PropertyItemsDto> PropertyItems { get; set; } = [];
 }
