@@ -69,6 +69,45 @@ namespace TechnicoRMP.WebApp.Controllers
             }
         }
 
+
+        // GET : PropertyRepairs/user/id
+        [HttpGet("Repair/GetRepairsByUserId/{id}")]
+        public async Task<IActionResult> GetRepairsByUserId(long id)
+        {
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            var uri = new Uri($"{client.BaseAddress}/Repair/user/{id}");
+
+            var response = await client.GetAsync(uri);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<List<PropertyRepairResponseDTO>>();
+
+                if (result == null || result.Count == 0)
+                {
+                    return View(new List<PropertyRepairViewModel>());
+                }
+
+                List<PropertyRepairViewModel> list = new List<PropertyRepairViewModel>();
+                foreach (var property in result)
+                {
+                    var listitem = new PropertyRepairViewModel
+                    {
+                        Address = property.Address,
+                        Cost = property.Cost,
+                        RepairStatus = property.RepairStatus,
+                        TypeOfRepair = property.TypeOfRepair,
+                        Id = property.Id,
+                        Date = property.Date
+                    };
+                    list.Add(listitem);
+                }
+                return View(list);
+            }
+            else
+            {
+                return View(new List<PropertyRepairViewModel>());
+            }
+        }
         // GET: PropertyRepairs/GetById/1
         [HttpGet]
         public async Task<IActionResult> GetById(long? id)
@@ -229,14 +268,16 @@ namespace TechnicoRMP.WebApp.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SoftDelete(int id)
+
+
+        [HttpPost("deactivate/{repairId}")]
+        public async Task<IActionResult> SoftDelete(int repairId)
         {
             var client = _httpClientFactory.CreateClient("ApiClient");
 
-            var uri = new Uri($"{client.BaseAddress}/Repair/deactivate/{id}");
+            var uri = new Uri($"{client.BaseAddress}/Repair/deactivate/{repairId}");
 
-            var response = await client.PostAsync(uri, null);
+            var response = await client.PutAsync(uri, null);
 
             if (response.IsSuccessStatusCode)
             {
@@ -246,7 +287,7 @@ namespace TechnicoRMP.WebApp.Controllers
             {
                 TempData["errorMessage"] = "Error deleting repair.";
             }
-            return RedirectToAction("GetAll");
+            return RedirectToAction("GetRepairsByUserId", new { id = ActiveUser.User!.Id });
         }
 
     }

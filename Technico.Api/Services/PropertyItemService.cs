@@ -24,8 +24,8 @@ public class PropertyItemService(DataStore dataStore) : IPropertyItemService
                 Address = createPropertyItemRequest.Address,
                 YearOfConstruction = createPropertyItemRequest.YearOfConstruction,
                 EnPropertyType = createPropertyItemRequest.EnPropertyType,
-
                 IsActive = true,
+                
             };
             _dataStore.Add(propertyItem);
             _dataStore.SaveChanges();

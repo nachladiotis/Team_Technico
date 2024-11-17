@@ -15,5 +15,6 @@ public class User
     public EnRoleType TypeOfUser { get; set; } = EnRoleType.User;
     public List<PropertyOwnership> PropertyOwnerships { get; set; } = [];
     public bool IsActive { get; set; } = true;
+    public List<PropertyRepair>? PropertyRepairs { get; set; } = new List<PropertyRepair>();
 
 }

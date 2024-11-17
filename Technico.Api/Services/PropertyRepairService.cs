@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
@@ -120,60 +121,121 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
             return result;
         }
     }
-    public async Task<Result<PropertyRepair>> SoftDeleteRepairForUser(int userId, int repairId)
+    public async Task<Result<List<PropertyRepairResponseDTO>>> GetByUserId(long userId)
     {
-        var result = new Result<PropertyRepair>
+        var result = new Result<List<PropertyRepairResponseDTO>>
         {
-            Status = -1
+            Status = -1,
+            Message = "An error occurred while retrieving repairs."
         };
 
         try
         {
-            if (userId <= 0 || repairId <= 0)
+            if (userId <= 0)
+            {
+                result.Message = "Invalid User Id provided.";
+                return result;
+            }
+
+            var userExists = await _dataStore.Users
+                .AnyAsync(u => u.Id == userId );
+
+            if (!userExists)
+            {
+                result.Message = "User not found.";
+                return result;
+            }
+
+            var repairs = await _dataStore.PropertyRepairs
+                .Where(r => r.UserId == userId && r.IsActive)
+                .ToListAsync();
+
+            if (!repairs.Any())
+            {
+                result.Message = "No repairs found for the specified user.";
+                return result;
+            }
+
+            var repairDtos = repairs.Select(CreatePropertyRepairResponseService.CreateFromEntity).ToList();
+
+            result.Status = 0;
+            result.Message = "Repairs retrieved successfully.";
+            result.Value = repairDtos;
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            result.Status = -1;
+            result.Message = $"An error occurred: {ex.Message}";
+            return result;
+        }
+    }
+
+
+   
+    public async Task<Result<PropertyRepair>> SoftDeleteRepairForUser(int repairId)
+    {
+        var result = new Result<PropertyRepair>
+        {
+            Status = -1,
+            Message = "An error occurred while attempting to deactivate the repair."
+        };
+
+        try
+        {
+            // Ελέγχουμε αν τα userId και repairId είναι έγκυρα
+            if (repairId <= 0)
             {
                 result.Message = "The user ID and repair ID must be greater than zero.";
                 return result;
             }
 
+            // Βρίσκουμε την επισκευή που αντιστοιχεί στο userId και repairId και είναι ενεργή
             var repair = await _dataStore.PropertyRepairs
-                .FirstOrDefaultAsync(p => p.Id == repairId && p.IsActive && p.UserId == userId);
+                .FirstOrDefaultAsync(p => p.Id == repairId && p.IsActive );
 
+            // Ελέγχουμε αν βρέθηκε η επισκευή
             if (repair == null)
             {
                 result.Message = "Repair not found, or it does not belong to the user, or it is already inactive.";
                 return result;
             }
 
+            // Ελέγχουμε αν η επισκευή είναι ήδη ανενεργή
             if (!repair.IsActive)
             {
                 result.Message = "The repair is already inactive.";
                 return result;
             }
 
+            // Ενημερώνουμε την επισκευή και την κάνουμε ανενεργή (soft delete)
             repair.IsActive = false;
 
+            // Ενημέρωση της επισκευής στη βάση δεδομένων
             _dataStore.PropertyRepairs.Update(repair);
             await _dataStore.SaveChangesAsync();
 
             result.Status = 0;
-            result.Message = "Repair was successfully deleted.";
+            result.Message = "Repair was successfully deactivated.";
             result.Value = repair;
 
             return result;
         }
         catch (Exception ex)
         {
-            // Διαχείριση εξαιρέσεων
             result.Status = 500;
             result.Message = $"An error occurred during the operation: {ex.Message}";
             return result;
         }
     }
+
+   
     public async Task<Result> Update(UpdatePropertyRepair updatePropertyRepair)
     {
         var response = new Result
         {
-            Status = -1
+            Status = -1 
         };
 
         try
@@ -193,53 +255,35 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
                 return response;
             }
 
-            if (updatePropertyRepair.RepairerId.HasValue && updatePropertyRepair.RepairerId.Value != repair.UserId)
-            {
-                response.Message = "Repairer ID cannot be updated.";
-                return response;
-            }
-
-            if (updatePropertyRepair.Id != repair.Id)
-            {
-                response.Message = "Repair ID cannot be changed.";
-                return response;
-            }
-
             bool isUpdated = false;
 
-            if (!string.IsNullOrEmpty(updatePropertyRepair.Address))
+            if (!string.IsNullOrEmpty(updatePropertyRepair.Address) && updatePropertyRepair.Address != repair.Address)
             {
-                if (updatePropertyRepair.Address == "string")
-                {
-                    response.Message = "Address cannot be updated to 'string'.";
-                    return response;
-                }
-
                 repair.Address = updatePropertyRepair.Address;
                 isUpdated = true;
             }
 
-            if (updatePropertyRepair.TypeOfRepair.HasValue)
+            if (updatePropertyRepair.TypeOfRepair.HasValue && updatePropertyRepair.TypeOfRepair != repair.TypeOfRepair)
             {
                 repair.TypeOfRepair = updatePropertyRepair.TypeOfRepair.Value;
                 isUpdated = true;
             }
 
-            if (updatePropertyRepair.Cost.HasValue)
+            if (updatePropertyRepair.Cost.HasValue && updatePropertyRepair.Cost != repair.Cost)
             {
                 repair.Cost = updatePropertyRepair.Cost.Value;
                 isUpdated = true;
             }
 
-            if (updatePropertyRepair.IsActive.HasValue)
+            if (updatePropertyRepair.RepairStatus.HasValue && updatePropertyRepair.RepairStatus != repair.RepairStatus)
             {
-                repair.IsActive = updatePropertyRepair.IsActive.Value;
+                repair.RepairStatus = updatePropertyRepair.RepairStatus.Value;
                 isUpdated = true;
             }
 
-            if (updatePropertyRepair.RepairStatus.HasValue)
+            if (updatePropertyRepair.IsActive.HasValue && updatePropertyRepair.IsActive != repair.IsActive)
             {
-                repair.RepairStatus = updatePropertyRepair.RepairStatus.Value;
+                repair.IsActive = updatePropertyRepair.IsActive.Value;
                 isUpdated = true;
             }
 
