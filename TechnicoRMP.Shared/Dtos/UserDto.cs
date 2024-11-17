@@ -16,7 +16,7 @@ public class UserDto : IDto
     public EnRoleType TypeOfUser { get; set; } = EnRoleType.User;
     public bool IsActive { get; set; } 
 
-    public bool IsActive { get; set; }
+   
 }
 
 /// <summary>

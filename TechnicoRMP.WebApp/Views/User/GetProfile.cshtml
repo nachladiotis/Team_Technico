@@ -15,8 +15,7 @@
     <p><strong>Email:</strong> @Model.Email</p>
 </div>
 
-<a href="@Url.Action("Edit", "User", new { id = Model.Id })" class="btn btn-primary">
-    Edit Profile</a>
+<a href="@Url.Action("Edit", "User", new { id = Model.Id })" class="btn btn-primary">Edit Profile</a>
 
 <a href="@Url.Action("Delete", "User", new { id = Model.Id })" class="btn btn-danger">Delete Profile</a>
 
@@ -24,21 +23,21 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        const userId = '@userId'; 
+        const userId = '@userId';
 
         $('#viewProfileButton').on('click', function () {
             $.ajax({
-                url: `/User/GetProfileJson/${userId}`, 
+                url: `/User/GetProfileJson/${userId}`,
                 type: 'GET',
                 success: function (data) {
                     $('#profileDetails').html(`
-                        <p><strong>Name:</strong> ${data.Name || 'N/A'}</p>
-                        <p><strong>Surname:</strong> ${data.Surname || 'N/A'}</p>
-                        <p><strong>VatNumber:</strong> ${data.VatNumber || 'N/A'}</p>
-                        <p><strong>Address:</strong> ${data.Address || 'N/A'}</p>
-                        <p><strong>PhoneNumber:</strong> ${data.PhoneNumber || 'N/A'}</p>
-                        <p><strong>Email:</strong> ${data.Email || 'N/A'}</p>
-                    `);
+                            <p><strong>Name:</strong> ${data.Name || 'N/A'}</p>
+                            <p><strong>Surname:</strong> ${data.Surname || 'N/A'}</p>
+                            <p><strong>VatNumber:</strong> ${data.VatNumber || 'N/A'}</p>
+                            <p><strong>Address:</strong> ${data.Address || 'N/A'}</p>
+                            <p><strong>PhoneNumber:</strong> ${data.PhoneNumber || 'N/A'}</p>
+                            <p><strong>Email:</strong> ${data.Email || 'N/A'}</p>
+                        `);
                 },
                 error: function () {
                     $('#profileDetails').html('<p style="color: red;">Unable to load profile data.</p>');
