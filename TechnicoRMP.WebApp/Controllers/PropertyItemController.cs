@@ -83,8 +83,9 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
             try
             {
                 string data = JsonConvert.SerializeObject(model);
+                var client = _httpClientFactory.CreateClient("ApiClient");
                 StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress + "/propertyItem/Create", content);
+                HttpResponseMessage response = await client.PostAsync(client.BaseAddress + "/propertyItem/Create", content);
                 if (response.IsSuccessStatusCode)
                 {
                     TempData["successMessage"] = "Item Created.";
