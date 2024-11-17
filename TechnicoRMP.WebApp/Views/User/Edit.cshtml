@@ -4,12 +4,31 @@
     ViewData["Title"] = "Edit";
 }
 
+<div class="user-details">
+    <p class="user-info">@Model.Name @Model.Surname</p>
+</div>
 
-<p>@Model.Name</p>
-<p>@Model.Surname</p>
+<style>
+    .user-details {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        border: 3px outset black;
+        background-color: #d4f4ea;
+        font-family: Arial, sans-serif;
+    }
 
+    .user-info {
+        font-size: 1rem;
+        margin: 0.5rem 0;
+    }
+</style>
 
-<h1>Edit Page</h1>
+<br />
+
+<h1>Edit Profile</h1>
 <hr />
 <div class="row">
     <div class="col-md-12">
@@ -50,14 +69,16 @@
                 <input asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-             @* <div class="form-group form-check">
-                 <label class="form-check-label">
-                     <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
-                 </label>
-             </div> *@
+            @* <div class="form-group form-check">
+            <label class="form-check-label">
+            <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
+            </label>
+            </div> *@
+            <br>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
+            <br>
         </form>
     </div>
 </div>
@@ -65,7 +86,7 @@
 <div>
     <a href="@Url.Action("GetProfile", "User", new { id = Model.Id })" class="btn btn-primary">
         Bact to Profile
-    </a>    
+    </a>
     <a href="@Url.Action("Delete", "User", new { id = Model.Id })" class="btn btn-danger">Delete Profile</a>
 </div>
 
