@@ -5,13 +5,15 @@
 }
 
 <h1>Property Items for User: @Model.FirstOrDefault()?.UserId</h1>
-
+   <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="PropertyItem" asp-action="CreateByUserId" asp-route-id="@ActiveUser.User!.Id">Create Item</a>
+                            </li>
 @if (Model != null && Model.Any())
 {
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
+             
                 <th>@Html.DisplayNameFor(model => model.FirstOrDefault().E9Number)</th>
                 <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Address)</th>
                 <th>@Html.DisplayNameFor(model => model.FirstOrDefault().YearOfConstruction)</th>
@@ -24,7 +26,7 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@Html.DisplayFor(model => item.Id)</td>
+                 
                     <td>@Html.DisplayFor(model => item.E9Number)</td>
                     <td>@Html.DisplayFor(model => item.Address)</td>
                     <td>@Html.DisplayFor(model => item.YearOfConstruction)</td>

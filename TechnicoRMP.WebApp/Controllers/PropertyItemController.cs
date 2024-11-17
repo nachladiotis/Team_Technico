@@ -106,6 +106,34 @@ namespace TechnicoRMP.WebApp.Controllers
             return View();
         }
 
+
+        [HttpGet]
+        public IActionResult CreateByUserId()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult>CreateByUserId(PropertyItemViewModel model)//PropertyItem/CreateByUserId/2
+        {
+            try
+            {
+                string data = JsonConvert.SerializeObject(model);
+                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/propertyItem/CreateByUserId/" + model.UserId);
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["successMessage"] = "Item Created.";
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            return View();
+        }
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {

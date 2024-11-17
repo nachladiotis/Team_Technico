@@ -9,7 +9,5 @@ public class PropertyItem
     public EnPropertyType EnPropertyType { get; set; }
     public List<PropertyOwnership> PropertyOwnerships { get; set; } = [];
     public bool IsActive { get; set; } = true;
-   // public required long UserId { get; set; }
-
-
+  
 }
