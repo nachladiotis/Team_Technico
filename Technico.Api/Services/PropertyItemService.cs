@@ -209,7 +209,6 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
         return response;
     }
 
-
     public async Task<Result<CreatePropertyItemResponse>> CreatePropertyItemByUserId(CreatePropertyItemRequest createPropertyItemRequest)
     {
         var response = new Result<CreatePropertyItemResponse>()
@@ -239,13 +238,13 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
                 response.Message = "User with this ID not found.";
                 return response;
             }
-            
+
             var propertyItemToStore = new PropertyItem
             {
                 Address = createPropertyItemRequest.Address,
                 E9Number = createPropertyItemRequest.E9Number,
                 EnPropertyType = createPropertyItemRequest.EnPropertyType,
-                YearOfConstruction = createPropertyItemRequest.YearOfConstruction,           
+                YearOfConstruction = createPropertyItemRequest.YearOfConstruction,
                 IsActive = true
             };
 
@@ -267,7 +266,7 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
 
             response.Status = 0;
             response.Message = "Item added successfully.";
-          
+
             response.Value = CreatePropertyItemResponseService.CreateFromEntity(propertyItemToStore);
         }
         catch (Exception ex)
@@ -277,4 +276,5 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
         }
         return response;
     }
+
 }

@@ -102,7 +102,6 @@ namespace Technico.Api.Controllers
                         Message = response.Message
                     });
                 }
-
                 return Ok(new Result
                 {
                     Status = response.Status,
@@ -119,8 +118,6 @@ namespace Technico.Api.Controllers
             }
         }
     
-
-
     [HttpGet("{id}")]
         public async Task<ActionResult<Result<CreatePropertyItemResponse>>> GetPropertyItemById(int id)
         {
