@@ -55,7 +55,7 @@ public class UserController(IHttpClientFactory httpClientFactory) : Controller
                         Address = user.Address,
                         PhoneNumber = user.PhoneNumber,
                         Email = user.Email,
-                        Password = user.Password 
+                        Password = user.Password
                     };
                     return View(viewmodel);
                 }
@@ -85,10 +85,8 @@ public class UserController(IHttpClientFactory httpClientFactory) : Controller
         return View(new UserProfileViewModelUpdate());
     }
 
-
-
     [HttpGet]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> DeleteUser(int id)
     {
         try
         {
@@ -118,20 +116,20 @@ public class UserController(IHttpClientFactory httpClientFactory) : Controller
         }
     }
 
-    [HttpPost, ActionName("Delete")]
+    [HttpGet]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         try
         {
             var client = _httpClientFactory.CreateClient("ApiClient");
             HttpResponseMessage response = await client.PostAsync(
-                $"{client.BaseAddress}/User/SoftDelete/{id}",  
-                null);  
+                $"{client.BaseAddress}/User/SoftDelete/{id}",
+                null);
 
             if (response.IsSuccessStatusCode)
             {
                 TempData["SuccessMessage"] = "User was successfully deactivated.";
-                return RedirectToAction("Logout","Account");
+                return RedirectToAction("Logout", "Account");
             }
             else
             {
@@ -143,7 +141,13 @@ public class UserController(IHttpClientFactory httpClientFactory) : Controller
         {
             TempData["ErrorMessage"] = "An unexpected error occurred while deactivating the user.";
         }
-        return RedirectToAction("Get{");
+        return RedirectToAction("GetProfile");
     }
 
 }
+
+
+
+
+
+

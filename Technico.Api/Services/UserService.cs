@@ -12,7 +12,7 @@ public class UserService : IUserService
 {
     private readonly DataStore _dataStore;
     private static List<User> Users = new List<User>();
-    private readonly ILogger<UserService> _logger;
+    private readonly ILogger<IUserService> _logger;
 
     public UserService(DataStore context)
     {
