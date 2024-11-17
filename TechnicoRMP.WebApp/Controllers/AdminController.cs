@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.WebApp.Models;
 
@@ -48,8 +49,6 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
         return PartialView("_UsersTablePartial", filteredUsers);
     }
 
-   
-
     [HttpGet]
     public async Task<IActionResult> Logs(string? logLevel, string? exceptionName)
     {
@@ -80,6 +79,88 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
 
         return View(logEntries);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Repairs(DateTime? startDate, DateTime? endDate)
+    {
+        var client = _httpClientFactory.CreateClient("ApiClient");
+        var uri = new Uri($"{client.BaseAddress}/Repair?startDate={startDate?.ToString("yyyy-MM-dd")}&endDate={endDate?.ToString("yyyy-MM-dd")}");
+
+        var response = await client.GetAsync(uri);
+
+        var res = await response.Content.ReadFromJsonAsync<List<PropertyRepairResponseDTO>>();
+
+        if (res == null)
+        {
+            return View(new List<PropertyRepairViewModel>());
+        }
+
+        var listOfVms = res.Select(repair => new PropertyRepairViewModel
+        {
+            Address = repair.Address,
+            Cost = repair.Cost,
+            Date = repair.Date,
+            Id = repair.Id,
+            IsActive = repair.IsActive,
+            RepairStatus = repair.RepairStatus,
+            TypeOfRepair = repair.TypeOfRepair,
+            UserId = repair.UserId
+        }).ToList();
+
+        return View(listOfVms);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> PropertyItems()
+    {
+        var client = _httpClientFactory.CreateClient("ApiClient");
+        var uri = new Uri($"{client.BaseAddress}/PropertyItems");
+
+        var response = await client.GetAsync(uri);
+
+        var res = await response.Content.ReadFromJsonAsync<List<PropertyItemsDto>>();
+
+        if (res == null)
+        {
+            return View(new List<PropertyItemsDto>());
+        }
+
+        var listOfVms = res.Select(propertyItem => new PropertyItemsDto
+        {
+            Address = propertyItem.Address,
+            E9Number = propertyItem.E9Number,
+            EnPropertyType = propertyItem.EnPropertyType,
+            Id = propertyItem.Id,
+            IsActive = propertyItem.IsActive,
+            YearOfConstruction = propertyItem.YearOfConstruction,
+        }).ToList();
+
+        return View(listOfVms);
+    }
+
+    [HttpDelete("DeleteRepair/{id}")]
+    public async Task<IActionResult> DeleteRepair(long id)
+    {
+        if (ActiveUser.UserRole is not EnRoleType.Admin)
+        {
+            return Problem();
+        }
+
+        var client = _httpClientFactory.CreateClient("ApiClient");
+        var apiUrl = new Uri($"{client.BaseAddress}/Repair/{id}");
+
+        var response = await client.DeleteAsync(apiUrl);
+
+        if (response.IsSuccessStatusCode)
+        {
+            return Ok(); 
+        }
+        else
+        {
+            return StatusCode((int)response.StatusCode, "Failed to delete the repair.");
+        }
+    }
+
 }
 
 

@@ -83,6 +83,19 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
         }
         return response;
     }
+
+    public async Task<bool> Delete(int repairId)
+    {
+        var repair = await _dataStore.PropertyRepairs.FirstOrDefaultAsync(s => s.Id == repairId);
+
+        if (repair is null)
+            return false;
+
+        _dataStore.PropertyRepairs.Remove(repair);
+        var changes = await _dataStore.SaveChangesAsync();
+        return changes > 0 ;
+    }
+
     public async Task<List<PropertyRepairResponseDTO>> GetAll()
     {
        var repairs = await _dataStore.PropertyRepairs
@@ -92,6 +105,36 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
 
         return repairs;
     }
+
+    public async Task<List<PropertyRepairResponseDTO>> GetByDateRange(DateTime? startDate, DateTime? endDate)
+    {
+        var repairs = _dataStore.PropertyRepairs.AsQueryable();
+
+       
+        if (startDate.HasValue)
+        {
+            repairs = repairs.Where(r => r.Date >= startDate.Value);
+        }
+        if (endDate.HasValue)
+        {
+            repairs = repairs.Where(r => r.Date <= endDate.Value);
+        }
+
+        var result = await repairs.Select(r => new PropertyRepairResponseDTO
+        {
+            Id = r.Id,
+            Date = r.Date,
+            TypeOfRepair = r.TypeOfRepair,
+            Address = r.Address,
+            RepairStatus = r.RepairStatus,
+            Cost = r.Cost,
+            UserId = r.UserId,
+            IsActive = r.IsActive
+        }).ToListAsync();
+
+        return result;
+    }
+
     public async Task<Result<PropertyRepairResponseDTO>> GetById(long id)
     {
         var result = new Result<PropertyRepairResponseDTO>

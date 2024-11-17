@@ -9,8 +9,6 @@ public class PropertyRepairViewModel
     public string Address { get; set; }
     public EnRepairStatus RepairStatus { get; set; }
     public double Cost { get; set; }
-
     public long UserId { get; set; }
     public bool IsActive { get; set; }
-   
 }

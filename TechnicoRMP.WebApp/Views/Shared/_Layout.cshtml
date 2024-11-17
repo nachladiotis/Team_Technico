@@ -63,14 +63,13 @@
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
 
-                        @if (user is not null)
+                        @if(userType is EnRoleType.User)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark"
                                    asp-area=""
                                    asp-controller="PropertyItem"
-                                   asp-action="GetPropertyItemByUserId"
-                                   >
+                                   asp-action="GetPropertyItemByUserId">
                                     Property Items
                                 </a>
                             </li>
@@ -85,6 +84,15 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="UsersManagment">Users Managment</a>
                             </li>
+                            
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="PropertyItems">Property Items Managment</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Repairs">Repairs Managment</a>
+                            </li>
+
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Logs">Logs History</a>
                             </li>

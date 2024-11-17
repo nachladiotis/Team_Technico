@@ -4,7 +4,6 @@
 <h1>Edit Repair</h1>
 <hr />
 
-<!-- Display error or success messages -->
 @{
     var errorMessage = TempData["errorMessage"] as string;
     var successMessage = TempData["successMessage"] as string;
@@ -95,9 +94,6 @@
     </div>
 </form>
 
-<div>
-    <a asp-action="GetAll" class="btn btn-secondary">Back to List</a>
-</div>
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

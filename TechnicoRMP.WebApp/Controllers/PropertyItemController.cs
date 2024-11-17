@@ -77,27 +77,27 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         return View();
     }
 
-        [HttpGet]
-        public async Task<IActionResult> Create(CreatePropertyItemViewmodel model)
+    [HttpGet]
+    public async Task<IActionResult> Create(CreatePropertyItemViewmodel model)
+    {
+        try
         {
-            try
+            string data = JsonConvert.SerializeObject(model);
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PostAsync(client.BaseAddress + "/propertyItem/Create", content);
+            if (response.IsSuccessStatusCode)
             {
-                string data = JsonConvert.SerializeObject(model);
-                var client = _httpClientFactory.CreateClient("ApiClient");
-                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync(client.BaseAddress + "/propertyItem/Create", content);
-                if (response.IsSuccessStatusCode)
-                {
-                    TempData["successMessage"] = "Item Created.";
-                    return RedirectToAction("Index");
-                }
+                TempData["successMessage"] = "Item Created.";
+                return RedirectToAction("Index");
             }
-            catch (Exception ex)
-            {
-                throw;
-            }
-            return View();
         }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        return View();
+    }
 
     //[HttpPost]
     //public async Task<IActionResult> CreateNew(CreatePropertyItemViewmodel model)
@@ -210,7 +210,7 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         try
         {
             var client = _httpClientFactory.CreateClient("ApiClient");
-            HttpResponseMessage response = client.GetAsync(client.BaseAddress + "/propertyItem/GetPropertyItemById/" + id).Result;
+            HttpResponseMessage response = await client.GetAsync(client.BaseAddress + "/propertyItem/GetPropertyItemById/" + id);
             if (response.IsSuccessStatusCode)
             {
                 string data = await response.Content.ReadAsStringAsync();

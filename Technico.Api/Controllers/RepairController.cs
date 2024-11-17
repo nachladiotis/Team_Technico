@@ -10,17 +10,11 @@ namespace Technico.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class RepairController : ControllerBase
+public class RepairController(IPropertyRepairService propertyRepairService, DataStore datastore) : ControllerBase
 {
 
-    private readonly DataStore _datastore;
-    private readonly IPropertyRepairService _propertyRepairService;
-
-    public RepairController(IPropertyRepairService propertyRepairService, DataStore datastore)
-    {
-        _propertyRepairService = propertyRepairService;
-        _datastore = datastore;
-    }
+    private readonly DataStore _datastore = datastore;
+    private readonly IPropertyRepairService _propertyRepairService = propertyRepairService;
 
     [HttpPost]
     public async Task<ActionResult<PropertyRepairResponseDTO>> Create([FromBody] CreatePropertyRepairRequest createPropertyRepairRequest)
@@ -46,16 +40,15 @@ public class RepairController : ControllerBase
         }
     }
 
-
     [HttpGet]
-    public async Task<ActionResult<List<PropertyRepairResponseDTO>>> GetAllRepairs()
+    public async Task<ActionResult<List<PropertyRepairResponseDTO>>> GetAllRepairs(DateTime? startDate, DateTime? endDate)
     {
-        var repairsResult = await _propertyRepairService.GetAll();
+        var repairsResult = await _propertyRepairService.GetByDateRange(startDate, endDate);
         return Ok(repairsResult);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Result<PropertyRepairResponseDTO>>> GetRepairById([FromRoute]int id)
+    public async Task<ActionResult<Result<PropertyRepairResponseDTO>>> GetRepairById([FromRoute] int id)
     {
         try
         {
@@ -144,6 +137,14 @@ public class RepairController : ControllerBase
         }
     }
 
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var result = await _propertyRepairService.Delete(id);
+        if (result)
+            return NoContent();
+        return Problem();
+    }
 
 
     [HttpPut("deactivate/{repairId}")]
