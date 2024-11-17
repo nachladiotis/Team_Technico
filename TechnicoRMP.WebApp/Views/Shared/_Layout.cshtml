@@ -26,39 +26,45 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link href="~/css/main.css" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TechnicoRMP.WebApp.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a href="/" data-headlessui-state="">
+                <a href="/" class="navbar-brand">
                     <div class="logo-container">
-                        <img src="@Url.Content("~/assets/img/technico.png")" alt="Technico Logo">
+                        <img src="@Url.Content("~/assets/img/technico.png")" alt="Technico Logo" style="width: 150px;">
                     </div>
                 </a>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                         @if (loginVisiblity)
+
+                        @if (loginVisiblity)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
                             </li>
                         }
+
                         @if (registerVisiblity)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
                             </li>
                         }
+
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        @if(user is not null)
+
+                        @if (user is not null)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="PropertyItem" asp-action="Index">Property Items</a>
@@ -67,7 +73,8 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Repairs Page</a>
                             </li>
                         }
-                        @if(userType is EnRoleType.Admin)
+
+                        @if (userType is EnRoleType.Admin)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="UsersManagment">Users Managment</a>
@@ -77,25 +84,24 @@
                             </li>
                         }
                     </ul>
-                    <ul class="navbar-nav ms-auto">
-                       
-                        @if (user is not null)
-                        {
-                            <li class="nav-item d-flex align-items-center">
+
+                    @if (user is not null)
+                    {
+                        <ul class="navbar-nav ms-auto d-flex align-items-center">
+                            <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="GetProfile" asp-route-id="@ActiveUser.User!.Id">
                                     <img src="~/assets/img/userIcon.png" alt="User Avatar" class="rounded-circle" style="width: 28px; height: 28px;">
                                 </a>
                             </li>
-                            <li class="nav-item d-flex align-items-center">
+                            <li class="nav-item">
                                 <form asp-area="" asp-controller="Account" asp-action="Logout" method="get" class="form-inline mb-0">
                                     <button type="submit" class="btn btn-link p-0" style="border: none; background: none; cursor: pointer;">
                                         <img src="~/assets/img/logoutIcon.png" alt="Logout Icon" class="rounded-circle" style="width: 28px; height: 28px; object-fit: cover;">
                                     </button>
                                 </form>
                             </li>
-
-                        }
-                    </ul>
+                        </ul>
+                    }
                 </div>
             </div>
         </nav>
