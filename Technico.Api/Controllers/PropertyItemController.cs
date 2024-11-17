@@ -87,8 +87,41 @@ namespace Technico.Api.Controllers
             };
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreatePropertyItemByUserId(CreatePropertyItemRequest createPropertyItemRequest)
+        {
+            try
+            {
+                var response = await _propertyItemService.CreatePropertyItemByUserId(createPropertyItemRequest);
 
-        [HttpGet("{id}")]
+                if (response.Status < 0)
+                {
+                    return BadRequest(new Result
+                    {
+                        Status = response.Status,
+                        Message = response.Message
+                    });
+                }
+
+                return Ok(new Result
+                {
+                    Status = response.Status,
+                    Message = response.Message,
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Result
+                {
+                    Status = 500,
+                    Message = $"Internal server error: {ex.Message}"
+                });
+            }
+        }
+    
+
+
+    [HttpGet("{id}")]
         public async Task<ActionResult<Result<CreatePropertyItemResponse>>> GetPropertyItemById(int id)
         {
             try

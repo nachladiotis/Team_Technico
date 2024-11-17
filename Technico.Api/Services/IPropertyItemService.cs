@@ -7,6 +7,7 @@ namespace Technico.Api.Services;
 public interface IPropertyItemService
 {
     Result<CreatePropertyItemResponse> Create(CreatePropertyItemRequest createPropertyItemRequest);
+    Task<Result<CreatePropertyItemResponse>> CreatePropertyItemByUserId(CreatePropertyItemRequest request);
     List<PropertyItem> ReadPropertyItems();
     public Task<Result<CreatePropertyItemResponse>> GetById(int id);
     public Task<Result<PropertyItemsByUserDto>> GetPropertyItemByUserId(int userId);

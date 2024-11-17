@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using Technico.Api.Validations;
 using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;
@@ -205,6 +206,75 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
         _dataStore.SaveChanges();
         response.Status = 0;
         response.Message = "ΕΠΙΤΥΧΕΣ";
+        return response;
+    }
+
+
+    public async Task<Result<CreatePropertyItemResponse>> CreatePropertyItemByUserId(CreatePropertyItemRequest createPropertyItemRequest)
+    {
+        var response = new Result<CreatePropertyItemResponse>()
+        {
+            Status = -1
+        };
+
+        try
+        {
+            if (createPropertyItemRequest.UserId <= 0)
+            {
+                response.Message = "Repairer ID is required and must be greater than 0.";
+                return response;
+            }
+
+            if (string.IsNullOrWhiteSpace(createPropertyItemRequest.Address))
+            {
+                response.Message = "Address is required and must be a valid address.";
+                return response;
+            }
+
+            var propertyOwner = await _dataStore.Users
+                .FirstOrDefaultAsync(p => p.Id == createPropertyItemRequest.UserId);
+
+            if (propertyOwner == null)
+            {
+                response.Message = "User with this ID not found.";
+                return response;
+            }
+            
+            var propertyItemToStore = new PropertyItem
+            {
+                Address = createPropertyItemRequest.Address,
+                E9Number = createPropertyItemRequest.E9Number,
+                EnPropertyType = createPropertyItemRequest.EnPropertyType,
+                YearOfConstruction = createPropertyItemRequest.YearOfConstruction,           
+                IsActive = true
+            };
+
+            await _dataStore.AddAsync(propertyItemToStore);
+            await _dataStore.SaveChangesAsync();
+
+            // Create the ownership entry
+            var propertyOwnership = new PropertyOwnership
+            {
+                PropertyOwnerId = createPropertyItemRequest.UserId,
+            };
+
+            // Add ownership to the property item
+            propertyItemToStore.PropertyOwnerships.Add(propertyOwnership);
+
+            // Now, you can save both the property item and the ownership relation
+            await _dataStore.AddAsync(propertyOwnership);
+            await _dataStore.SaveChangesAsync();
+
+            response.Status = 0;
+            response.Message = "Item added successfully.";
+          
+            response.Value = CreatePropertyItemResponseService.CreateFromEntity(propertyItemToStore);
+        }
+        catch (Exception ex)
+        {
+            response.Status = -1;
+            response.Message = $"An error occurred while adding the item: {ex.Message}";
+        }
         return response;
     }
 }

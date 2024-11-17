@@ -77,6 +77,26 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         return View();
     }
 
+        [HttpGet]
+        public async Task<IActionResult> CreateNew(CreatePropertyItemViewmodel model)
+        {
+            try
+            {
+                string data = JsonConvert.SerializeObject(model);
+                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress + "/propertyItem/Create", content);
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["successMessage"] = "Item Created.";
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            return View();
+        }
     [HttpPost]
     public async Task<IActionResult> Create(PropertyItemViewModel model)
     {
@@ -99,27 +119,55 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         return View();
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Edit(int id)
-    {
-        try
+
+        [HttpGet]
+        public IActionResult CreateByUserId()
         {
-            var client = _httpClientFactory.CreateClient("ApiClient");
-            HttpResponseMessage response = await client.GetAsync(client.BaseAddress + "/PropertyItem/GetPropertyItemById/" + id);
-            if (response.IsSuccessStatusCode)
-            {
-                string data = await response.Content.ReadAsStringAsync();
-                var item = JsonConvert.DeserializeObject<Result<CreatePropertyItemResponse>>(data);
-                var viewmodel = new PropertyItemViewModel
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult>CreateByUserId(PropertyItemViewModel model)
+        {
+                var request = new CreatePropertyItemRequest
                 {
-                    Id = item.Value.Id,
-                    Address = item.Value.Address,
-                    E9Number = item.Value.E9Number,
-                    EnPropertyType = item.Value.EnPropertyType,
-                    IsActive = item.Value.IsActive,
-                    YearOfConstruction = item.Value.YearOfConstruction
-                };
-                return View(viewmodel);
+                    Address = model.Address,
+                    E9Number = model.E9Number,
+                    EnPropertyType = model.EnPropertyType,
+                    IsActive = model.IsActive,
+                    UserId = model.UserId,
+                    YearOfConstruction = model.YearOfConstruction
+                };              
+                var uri = new Uri(_client.BaseAddress + "/propertyItem/CreatePropertyItemByUserId/");
+                HttpResponseMessage response = await _client.PostAsJsonAsync(uri, request);
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["successMessage"] = "Item Created.";
+                    return RedirectToAction("Index");
+                }
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            try
+            {
+                HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/PropertyItem/GetPropertyItemById/" + id);
+                if (response.IsSuccessStatusCode)
+                {
+                    string data = await response.Content.ReadAsStringAsync();
+                    var item = JsonConvert.DeserializeObject<Result<CreatePropertyItemResponse>>(data);
+                    var viewmodel = new PropertyItemViewModel
+                    {
+                        Id = item.Value.Id,
+                        Address = item.Value.Address,
+                        E9Number = item.Value.E9Number,
+                        EnPropertyType = item.Value.EnPropertyType,
+                        IsActive = item.Value.IsActive,
+                        YearOfConstruction = item.Value.YearOfConstruction
+                    };
+                    return View(viewmodel);
 
             }
             return View(new PropertyItemViewModel
