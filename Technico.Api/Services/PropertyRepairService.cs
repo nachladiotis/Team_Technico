@@ -47,7 +47,18 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
                 return response;
             }
 
-           
+                var propertyItem = await _dataStore.PropertyItems
+               .Include(p => p.PropertyOwnerships) 
+               .FirstOrDefaultAsync(p =>
+                   p.Address == createPropertyRepairRequest.Address &&
+                   p.PropertyOwnerships.Any(o => o.PropertyOwnerId == createPropertyRepairRequest.UserId));
+
+
+            if (propertyItem == null)
+            {
+                response.Message = "No property found with the given address for this user.";
+                return response;
+            }
 
             var propertyRepairToStore = new PropertyRepair
             {

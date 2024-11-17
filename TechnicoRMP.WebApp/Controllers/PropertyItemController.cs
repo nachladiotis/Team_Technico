@@ -10,22 +10,17 @@ using TechnicoRMP.WebApp.Models;
 
 namespace TechnicoRMP.WebApp.Controllers
 {
-    public class PropertyItemController : Controller
+    public class PropertyItemController(IHttpClientFactory httpClientFactory) : Controller
     {
-        Uri baseAdsress = new Uri("https://localhost:7038/api");
-        private readonly HttpClient _client;
-
-        public PropertyItemController()
-        {
-            _client = new HttpClient();
-            _client.BaseAddress = baseAdsress;
-        }
+        private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
         public async Task<IActionResult> Index(string searchString)
         {
 
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            var uri = new Uri($"{client.BaseAddress}/propertyItem/GetPropertyItems");
             List<PropertyItemViewModel> ItemList = new List<PropertyItemViewModel>();
-            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/propertyItem/GetPropertyItems");
+            HttpResponseMessage response = await client.GetAsync(uri);
 
             if (response.IsSuccessStatusCode)
             {
@@ -43,12 +38,13 @@ namespace TechnicoRMP.WebApp.Controllers
         }
 
 
-        [HttpGet("PropertyItem/GetPropertyItemByUserId/{UserId}")]
-        public async Task<IActionResult> GetPropertyItemByUserId(int UserId) //PropertyItem/GetPropertyItemByUserId/1
+        [HttpGet("PropertyItem/GetPropertyItemByUserId/")]
+        public async Task<IActionResult> GetPropertyItemByUserId() //PropertyItem/GetPropertyItemByUserId/1
         {
-
+            var UserId = ActiveUser.User!.Id;
+            var client = _httpClientFactory.CreateClient("ApiClient");
             List<PropertyItemViewModel> ItemList = new List<PropertyItemViewModel>();
-            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/propertyItem/GetPropertyItemByUserId/" + UserId);
+            HttpResponseMessage response = await client.GetAsync(client.BaseAddress + "/propertyItem/GetPropertyItemByUserId/" + UserId);
 
             if (response.IsSuccessStatusCode)
             {
@@ -58,7 +54,7 @@ namespace TechnicoRMP.WebApp.Controllers
                 {
                     return View(ItemList);
                 }
-                var userId = ownerItemList.Value.USerDto.Id;
+                var userId = ownerItemList.Value.UserDto.Id;
                 foreach (var item in ownerItemList.Value.PropertyItems)
                 {
                     var viewmodel = new PropertyItemViewModel
@@ -69,8 +65,7 @@ namespace TechnicoRMP.WebApp.Controllers
                         EnPropertyType = item.EnPropertyType,
                         IsActive = item.IsActive,
                         YearOfConstruction = item.YearOfConstruction,
-                        UserId = userId
-
+                        UserId = ownerItemList.Value.UserDto.Id
                     };
                 ItemList.Add(viewmodel);
                 }
@@ -90,9 +85,10 @@ namespace TechnicoRMP.WebApp.Controllers
         {
             try
             {
+                var client = _httpClientFactory.CreateClient("ApiClient");
                 string data = JsonConvert.SerializeObject(model);
                 StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress + "/propertyItem/Create", content);
+                HttpResponseMessage response = await client.PostAsync(client.BaseAddress + "/propertyItem/Create", content);
                 if (response.IsSuccessStatusCode)
                 {
                     TempData["successMessage"] = "Item Created.";
@@ -111,7 +107,8 @@ namespace TechnicoRMP.WebApp.Controllers
         {
             try
             {
-                HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/PropertyItem/GetPropertyItemById/" + id);
+                var client = _httpClientFactory.CreateClient("ApiClient");
+                HttpResponseMessage response = await client.GetAsync(client.BaseAddress + "/PropertyItem/GetPropertyItemById/" + id);
                 if (response.IsSuccessStatusCode)
                 {
                     string data = await response.Content.ReadAsStringAsync();
@@ -143,9 +140,10 @@ namespace TechnicoRMP.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(PropertyItemViewModel model)
         {
+            var client = _httpClientFactory.CreateClient("ApiClient");
             string data = JsonConvert.SerializeObject(model);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _client.PutAsync(_client.BaseAddress + "/propertyItem/Update", content);
+            HttpResponseMessage response = await client.PutAsync(client.BaseAddress + "/propertyItem/Update", content);
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
@@ -158,7 +156,8 @@ namespace TechnicoRMP.WebApp.Controllers
         {
             try
             {
-                HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/propertyItem/GetPropertyItemById/" + id).Result;
+                var client = _httpClientFactory.CreateClient("ApiClient");
+                HttpResponseMessage response = client.GetAsync(client.BaseAddress + "/propertyItem/GetPropertyItemById/" + id).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     string data = await response.Content.ReadAsStringAsync();
@@ -190,7 +189,8 @@ namespace TechnicoRMP.WebApp.Controllers
         {
             try
             {
-                HttpResponseMessage response = _client.DeleteAsync(_client.BaseAddress + "/propertyItem/Delete/" + id).Result;
+                var client = _httpClientFactory.CreateClient("ApiClient");
+                HttpResponseMessage response = client.DeleteAsync(client.BaseAddress + "/propertyItem/Delete/" + id).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction("Index");
