@@ -5,6 +5,7 @@ using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.WebApp.Models;
 using TechnicoRMP.Models;
+using System.Diagnostics;
 
 namespace TechnicoRMP.WebApp.Controllers
 {
@@ -134,14 +135,42 @@ namespace TechnicoRMP.WebApp.Controllers
 
         // GET: PropertyRepairs/Create
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var propertyItems = new List<PropertyItemViewModel>();
+
+            // Ανάκτηση του userId
+            var userId = ActiveUser.User.Id;
+
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            var requestUri = new Uri($"{client.BaseAddress}/PropertyItem/GetPropertyItemByUserId/{userId}");
+
+            HttpResponseMessage response = await client.GetAsync(requestUri);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+                var apiResult = JsonConvert.DeserializeObject<Result<PropertyItemsByUserDto>>(data);
+
+                if (apiResult?.Status == 0 && apiResult.Value?.PropertyItems != null)
+                {
+                    propertyItems = apiResult.Value.PropertyItems.Select(item => new PropertyItemViewModel
+                    {
+                        Id = item.Id,
+                        Address = item.Address,
+                        E9Number = item.E9Number
+                    }).ToList();
+                }
+            }
+
+            // Προσθήκη στο ViewBag για να είναι διαθέσιμο στο View
+            ViewBag.PropertyItems = propertyItems;
+
             return View();
         }
 
         // POST: PropertyRepairs/Create
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PropertyRepairViewModel viewModel)
         {
             if (ModelState.IsValid)
@@ -153,7 +182,7 @@ namespace TechnicoRMP.WebApp.Controllers
                 {
                     Date = viewModel.Date,
                     TypeOfRepair = viewModel.TypeOfRepair,
-                    Address = viewModel.Address,
+                    Address = viewModel.Address, // Παραμένει από το dropdown
                     RepairStatus = EnRepairStatus.Pending,
                     Cost = 0,
                     UserId = ActiveUser.User.Id
@@ -168,7 +197,7 @@ namespace TechnicoRMP.WebApp.Controllers
                     if (apiResult?.Status == 0)
                     {
                         TempData["successMessage"] = "Item Created.";
-                        return RedirectToAction("GetAll");
+                        return RedirectToAction("GetRepairsByUserId", new { id = ActiveUser.User.Id });
                     }
                     else
                     {
