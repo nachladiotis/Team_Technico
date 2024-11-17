@@ -12,7 +12,7 @@ namespace TechnicoRMP.WebApp.Controllers
 {
     public class PropertyItemController : Controller
     {
-        Uri baseAdsress = new Uri("https://localhost:44322/api");
+        Uri baseAdsress = new Uri("https://localhost:7038/api");
         private readonly HttpClient _client;
 
         public PropertyItemController()
@@ -85,7 +85,7 @@ namespace TechnicoRMP.WebApp.Controllers
             return View();
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> Create(CreatePropertyItemViewmodel model)
         {
             try

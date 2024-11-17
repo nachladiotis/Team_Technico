@@ -4,57 +4,65 @@
     ViewData["Title"] = "GetPropertyItemByUserId";
 }
 
-<h1>Index</h1>
+<h1>User Item</h1>
+
 <div class="container-fluid">
-    <div class="col">
-        <form asp-controller="PropertyItem" asp-action="Index" method="get">
-            <div class="row">
-                <div class="col-sm-3"> <input type="text" name="searchString" class="form-control" /> </div>
-                <div class="col-sm-1"> <input type="submit" value="Search" class="btn btn-primary" /> </div>
-            </div>
-        </form>
-        <br>
+    <div class="row mb-4">
+        <!-- Search Form -->
+        <div class="col-md-8 offset-md-2">
+            <form asp-controller="PropertyItem" asp-action="Index" method="get">
+                <div class="input-group">
+                    <input type="text" name="searchString" class="form-control" placeholder="Search for property items..." />
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
+
+    <!-- Create New Property Item Link -->
+    <p>
+        <a href="@Url.Action("CreateByUserId")" class="btn btn-success">Create new Item</a>
+    </p>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model[0].E9Number)</th>
+                        <th>@Html.DisplayNameFor(model => model[0].Address)</th>
+                        <th>@Html.DisplayNameFor(model => model[0].YearOfConstruction)</th>
+                        <th>@Html.DisplayNameFor(model => model[0].EnPropertyType)</th>
+                        <th>@Html.DisplayNameFor(model => model[0].IsActive)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(model => item.E9Number)</td>
+                            <td>@Html.DisplayFor(model => item.Address)</td>
+                            <td>@Html.DisplayFor(model => item.YearOfConstruction)</td>
+                            <td>@Html.DisplayFor(model => item.EnPropertyType)</td>
+                            <td>@Html.DisplayFor(model => item.IsActive)</td>
+                            <td>
+                                <a href="@Url.Action("Edit", "PropertyItem", new { id = item.Id })" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="@Url.Action("Delete", "PropertyItem", new { id = item.Id })" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">No property items found for the specified user.</div>
+    }
 </div>
-<p>
-    <a asp-action="CreateByUserId">Create new Item</a>
-</p>
-@if (Model != null && Model.Any())
-{
-    <table class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                <th>@Html.DisplayNameFor(model => model[0].E9Number)</th>
-                <th>@Html.DisplayNameFor(model => model[0].Address)</th>
-                <th>@Html.DisplayNameFor(model => model[0].YearOfConstruction)</th>
-                <th>@Html.DisplayNameFor(model => model[0].EnPropertyType)</th>
-                <th>@Html.DisplayNameFor(model => model[0].IsActive)</th>
-                <th>@Html.DisplayNameFor(model => model[0].UserId)</th>
-                <th>Actions</th> <!-- Extra column for actions (Edit/Delete) -->
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@Html.DisplayFor(model => item.E9Number)</td>
-                    <td>@Html.DisplayFor(model => item.Address)</td>
-                    <td>@Html.DisplayFor(model => item.YearOfConstruction)</td>
-                    <td>@Html.DisplayFor(model => item.EnPropertyType)</td>
-                    <td>@Html.DisplayFor(model => item.IsActive)</td>
-                    <td>@Html.DisplayFor(model => item.UserId)</td>
-                    <td>
-                        <a href="@Url.Action("Edit", "PropertyItem", new { id = item.Id })" class="btn btn-primary btn-sm">Edit</a> 
-                        <a href="@Url.Action("Delete", "PropertyItem", new { id = item.Id })" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p class="alert alert-warning">No property items found for the specified user.</p>
-}
 
 
