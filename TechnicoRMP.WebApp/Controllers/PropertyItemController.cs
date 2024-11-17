@@ -53,9 +53,13 @@ namespace TechnicoRMP.WebApp.Controllers
             if (response.IsSuccessStatusCode)
             {
                 string data = await response.Content.ReadAsStringAsync();
-               var ownwerItemList = JsonConvert.DeserializeObject<Result<PropertyItemsByUserDto>>(data);
-                var userId = ownwerItemList.Value.USerDto.Id;
-                foreach (var item in ownwerItemList.Value.PropertyItems)
+                var ownerItemList = JsonConvert.DeserializeObject<Result<PropertyItemsByUserDto>>(data);
+                if(ownerItemList.Status == -1)
+                {
+                    return View(ItemList);
+                }
+                var userId = ownerItemList.Value.USerDto.Id;
+                foreach (var item in ownerItemList.Value.PropertyItems)
                 {
                     var viewmodel = new PropertyItemViewModel
                     {
