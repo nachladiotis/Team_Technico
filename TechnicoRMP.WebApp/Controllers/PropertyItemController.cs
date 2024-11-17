@@ -77,30 +77,26 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         return View();
     }
 
-    [HttpGet]
-    public async Task<IActionResult> CreateNew(CreatePropertyItemViewmodel model)
-    {
-        var request = new CreatePropertyItemRequest
+        [HttpGet]
+        public async Task<IActionResult> Create(CreatePropertyItemViewmodel model)
         {
-            Address = model.Address,
-            E9Number = model.E9Number,
-            UserId = model.UserId,
-            EnPropertyType = model.EnPropertyType,
-            IsActive = model.IsActive,
-            YearOfConstruction = model.YearOfConstruction
-        };
-
-        var client = _httpClientFactory.CreateClient("ApiClient");
-        HttpResponseMessage response = await client.PostAsJsonAsync(client.BaseAddress + "/propertyItem/Create", request);
-        if (response.IsSuccessStatusCode)
-        {
-            TempData["successMessage"] = "Item Created.";
-            return RedirectToAction("Index");
+            try
+            {
+                string data = JsonConvert.SerializeObject(model);
+                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress + "/propertyItem/Create", content);
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["successMessage"] = "Item Created.";
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            return View();
         }
-
-
-        return View();
-    }
 
     //[HttpPost]
     //public async Task<IActionResult> CreateNew(CreatePropertyItemViewmodel model)
