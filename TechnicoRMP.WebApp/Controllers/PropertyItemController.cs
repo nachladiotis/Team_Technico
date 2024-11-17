@@ -12,7 +12,7 @@ namespace TechnicoRMP.WebApp.Controllers
 {
     public class PropertyItemController : Controller
     {
-        Uri baseAdsress = new Uri("https://localhost:7038/api");
+        Uri baseAdsress = new Uri("https://localhost:44322/api");
         private readonly HttpClient _client;
 
         public PropertyItemController()
@@ -85,8 +85,8 @@ namespace TechnicoRMP.WebApp.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(PropertyItemViewModel model)
+        [HttpGet]
+        public async Task<IActionResult> CreateNew(CreatePropertyItemViewmodel model)
         {
             try
             {
@@ -114,23 +114,24 @@ namespace TechnicoRMP.WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult>CreateByUserId(PropertyItemViewModel model)//PropertyItem/CreateByUserId/2
+        public async Task<IActionResult>CreateByUserId(PropertyItemViewModel model)
         {
-            try
-            {
-                string data = JsonConvert.SerializeObject(model);
-                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/propertyItem/CreateByUserId/" + model.UserId);
+                var request = new CreatePropertyItemRequest
+                {
+                    Address = model.Address,
+                    E9Number = model.E9Number,
+                    EnPropertyType = model.EnPropertyType,
+                    IsActive = model.IsActive,
+                    UserId = model.UserId,
+                    YearOfConstruction = model.YearOfConstruction
+                };              
+                var uri = new Uri(_client.BaseAddress + "/propertyItem/CreatePropertyItemByUserId/");
+                HttpResponseMessage response = await _client.PostAsJsonAsync(uri, request);
                 if (response.IsSuccessStatusCode)
                 {
                     TempData["successMessage"] = "Item Created.";
                     return RedirectToAction("Index");
                 }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
             return View();
         }
 

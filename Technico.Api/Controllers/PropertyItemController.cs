@@ -87,7 +87,6 @@ namespace Technico.Api.Controllers
             };
         }
 
-        //[HttpPost, Route("{id}")]
         [HttpPost]
         public async Task<IActionResult> CreatePropertyItemByUserId(CreatePropertyItemRequest createPropertyItemRequest)
         {

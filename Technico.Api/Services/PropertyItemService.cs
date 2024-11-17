@@ -254,8 +254,6 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
             var propertyOwnership = new PropertyOwnership
             {
                 PropertyOwnerId = createPropertyItemRequest.UserId,
-             
-
             };
 
             // Add ownership to the property item
