@@ -67,7 +67,7 @@
                         @if (user is not null)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="PropertyItem" asp-action="Index">Property Items</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="PropertyItem" asp-action="GetPropertyItemByUserId"asp-route-id="@ActiveUser.User!.Id">Property Items</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Repairs Page</a>

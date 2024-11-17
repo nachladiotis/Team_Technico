@@ -30,14 +30,18 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
                 Address = createPropertyItemRequest.Address,
                 YearOfConstruction = createPropertyItemRequest.YearOfConstruction,
                 EnPropertyType = createPropertyItemRequest.EnPropertyType,
-
-              
                 IsActive = true,
             };
 
             _dataStore.Add(propertyItem);
             _dataStore.SaveChanges();
-
+            var proprtyOwnership = new PropertyOwnership
+            {
+                PropertyItemId = propertyItem.Id,
+                PropertyOwnerId = createPropertyItemRequest.UserId,
+            };
+            _dataStore.Add(proprtyOwnership);
+            _dataStore.SaveChanges();
             response.Message = "ΕΠΙΤΥΧΕΣ";
             response.Status = 0;
             response.Value = CreatePropertyItemResponseService.CreateFromEntity(propertyItem);
@@ -93,6 +97,47 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
             result.Status = 0;
             result.Message = "Item found successfully.";
             result.Value = CreatePropertyItemResponseService.CreateFromEntity(propertyItem);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            result.Status = -1;
+            result.Message = $"An error occurred: {ex.Message}";
+            return result;
+        }
+    }
+
+    public async Task<Result<PropertyItemsByUserDto>> GetPropertyItemByUserId(int userId)
+    {
+        var result = new Result<PropertyItemsByUserDto>
+        {
+            Status = -1,
+            Message = "An error occurred while retrieving the item."
+        };
+
+        try
+        {
+            if (userId <= 0)
+            {
+                result.Message = "Invalid ID provided.";
+                return result;
+            }
+            var propertyItem = await _dataStore
+            .PropertyOwnerships
+            .Include(s => s.PropertyOwner)
+            .Include(s => s.PropertyItem)
+            .Where(s => s.PropertyOwnerId == userId).ToListAsync();
+
+            if (propertyItem == null)
+            {
+                result.Message = "Item not found.";
+                return result;
+            }
+
+            result.Status = 0;
+            result.Message = "Item found successfully.";
+            result.Value = CreatePropertyItemResponseService.Create(propertyItem);
 
             return result;
         }

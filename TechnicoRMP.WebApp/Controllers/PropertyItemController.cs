@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
+using System.Net.Http;
 using System.Text;
+using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.WebApp.Models;
@@ -40,6 +43,42 @@ namespace TechnicoRMP.WebApp.Controllers
         }
 
 
+        [HttpGet("PropertyItem/GetPropertyItemByUserId/{UserId}")]
+        public async Task<IActionResult> GetPropertyItemByUserId(int UserId) //PropertyItem/GetPropertyItemByUserId/1
+        {
+
+            List<PropertyItemViewModel> ItemList = new List<PropertyItemViewModel>();
+            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/propertyItem/GetPropertyItemByUserId/" + UserId);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                var ownerItemList = JsonConvert.DeserializeObject<Result<PropertyItemsByUserDto>>(data);
+                if(ownerItemList.Status == -1)
+                {
+                    return View(ItemList);
+                }
+                var userId = ownerItemList.Value.USerDto.Id;
+                foreach (var item in ownerItemList.Value.PropertyItems)
+                {
+                    var viewmodel = new PropertyItemViewModel
+                    {
+                        Id = item.Id,
+                        Address = item.Address,
+                        E9Number = item.E9Number,
+                        EnPropertyType = item.EnPropertyType,
+                        IsActive = item.IsActive,
+                        YearOfConstruction = item.YearOfConstruction,
+                        UserId = userId
+
+                    };
+                ItemList.Add(viewmodel);
+                }
+                return View(ItemList);
+            }
+            return View(ItemList);
+        }
+
         [HttpGet]
         public IActionResult Create()
         {
@@ -72,7 +111,7 @@ namespace TechnicoRMP.WebApp.Controllers
         {
             try
             {
-                HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/PropertyItem/GetPropertyItemById/" + id).Result;
+                HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/PropertyItem/GetPropertyItemById/" + id);
                 if (response.IsSuccessStatusCode)
                 {
                     string data = await response.Content.ReadAsStringAsync();
@@ -163,8 +202,6 @@ namespace TechnicoRMP.WebApp.Controllers
             }
             return View();
         }
-
-
 
     }
 }

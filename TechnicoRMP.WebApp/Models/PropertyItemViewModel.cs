@@ -14,5 +14,6 @@ namespace TechnicoRMP.WebApp.Models
         [DisplayName("Item Type")]
         public EnPropertyType EnPropertyType { get; set; }
         public bool IsActive { get; set; } = true;
+        public long UserId { get; set; }
     }
 }

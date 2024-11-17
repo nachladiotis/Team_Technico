@@ -14,12 +14,13 @@ public class CreatePropertyItemResponseService
             EnPropertyType = propertyItem.EnPropertyType,
             IsActive = propertyItem.IsActive,
             YearOfConstruction = propertyItem.YearOfConstruction,
+         
         };
     }
 
-    public static PropertyItmesByUserDto Create(List<PropertyOwnership> propertyOwnerships) 
+    public static PropertyItemsByUserDto Create(List<PropertyOwnership> propertyOwnerships)
     {
-        List< PropertyItemsDto > tmp = new List< PropertyItemsDto >();
+        List<PropertyItemsDto> tmp = new List<PropertyItemsDto>();
         var owndership = propertyOwnerships.First();
         var userDto = new UserDto
         {
@@ -32,9 +33,9 @@ public class CreatePropertyItemResponseService
             TypeOfUser = owndership.PropertyOwner.TypeOfUser,
             VatNumber = owndership.PropertyOwner.VatNumber
         };
-        foreach (var propertyOwnership in propertyOwnerships) 
+        foreach (var propertyOwnership in propertyOwnerships)
         {
-            if(propertyOwnership.PropertyItem is null)
+            if (propertyOwnership.PropertyItem is null)
             {
                 continue;
             }
@@ -46,11 +47,11 @@ public class CreatePropertyItemResponseService
                 EnPropertyType = propertyOwnership.PropertyItem.EnPropertyType,
                 IsActive = propertyOwnership.PropertyItem.IsActive,
                 Id = propertyOwnership.PropertyItem.Id,
-                YearOfConstruction  = propertyOwnership.PropertyItem.YearOfConstruction,
+                YearOfConstruction = propertyOwnership.PropertyItem.YearOfConstruction,
             });
         }
 
-        return new PropertyItmesByUserDto
+        return new PropertyItemsByUserDto
         {
             PropertyItems = tmp,
             USerDto = userDto
@@ -59,7 +60,7 @@ public class CreatePropertyItemResponseService
 
 }
 
-public sealed class PropertyItmesByUserDto : IDto
+public sealed class PropertyItemsByUserDto : IDto
 {
     public UserDto? USerDto { get; set; }
 
@@ -75,3 +76,6 @@ public sealed class PropertyItemsDto : IDto
     public EnPropertyType EnPropertyType { get; set; }
     public bool IsActive { get; set; }
 }
+
+
+

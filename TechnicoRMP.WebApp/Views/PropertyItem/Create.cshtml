@@ -8,8 +8,13 @@
 <hr />
 <div class="row">
     <div class="col-md-8">
-        <form asp-action="Create">
+        <form asp-action="Create" asp-route-id="@ActiveUser.User!.Id">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <input asp-for="UserId" class="form-control" />
+                <span asp-validation-for="UserId" value = "@ActiveUser.User.Id"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="E9Number" class="control-label"></label>
                 <input asp-for="E9Number" class="form-control" />
