@@ -1,8 +1,6 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using TechnicoRMP.Shared.Dtos;
-using TechnicoRMP.WebApp.Models;
 
 namespace TechnicoRMP.WebApp.Controllers
 {

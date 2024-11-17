@@ -2,7 +2,6 @@
 using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Technico.Api.Services;
 

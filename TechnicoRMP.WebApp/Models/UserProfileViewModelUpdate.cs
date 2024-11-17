@@ -1,6 +1,4 @@
-﻿using TechnicoRMP.Models;
-
-namespace TechnicoRMP.WebApp.Models
+﻿namespace TechnicoRMP.WebApp.Models
 {
     public class UserProfileViewModelUpdate
     {

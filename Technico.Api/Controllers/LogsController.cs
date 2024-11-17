@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Technico.Api.Services;
 using TechnicoRMP.Shared.Dtos;
 

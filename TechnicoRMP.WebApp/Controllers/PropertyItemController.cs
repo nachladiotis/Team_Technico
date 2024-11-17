@@ -1,207 +1,203 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
-using System.Net.Http;
 using System.Text;
-using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.WebApp.Models;
 
-namespace TechnicoRMP.WebApp.Controllers
+namespace TechnicoRMP.WebApp.Controllers;
+
+public class PropertyItemController(IHttpClientFactory httpClientFactory) : Controller
 {
-    public class PropertyItemController : Controller
+    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+ 
+    public async Task<IActionResult> Index(string searchString)
     {
-        Uri baseAdsress = new Uri("https://localhost:7038/api");
-        private readonly HttpClient _client;
+        var client = _httpClientFactory.CreateClient("ApiClient");
+        var uri = new Uri($"{client.BaseAddress}/propertyItem/GetPropertyItems");
+        List<PropertyItemViewModel> ItemList = new List<PropertyItemViewModel>();
+        HttpResponseMessage response = await client.GetAsync(uri);
 
-        public PropertyItemController()
+        if (response.IsSuccessStatusCode)
         {
-            _client = new HttpClient();
-            _client.BaseAddress = baseAdsress;
-        }
-
-        public async Task<IActionResult> Index(string searchString)
-        {
-
-            List<PropertyItemViewModel> ItemList = new List<PropertyItemViewModel>();
-            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/propertyItem/GetPropertyItems");
-
-            if (response.IsSuccessStatusCode)
+            string data = response.Content.ReadAsStringAsync().Result;
+            ItemList = JsonConvert.DeserializeObject<List<PropertyItemViewModel>>(data)!;
+            // Filter down if necessary
+            if (!String.IsNullOrEmpty(searchString))
             {
-                string data = response.Content.ReadAsStringAsync().Result;
-                ItemList = JsonConvert.DeserializeObject<List<PropertyItemViewModel>>(data);
-                // Filter down if necessary
-                if (!String.IsNullOrEmpty(searchString))
+                ItemList = ItemList.Where(p => p.E9Number == searchString).ToList();
+            }
+            // Pass your list out to your view
+            return View(ItemList.ToList());
+        }
+        return View(ItemList);
+    }
+
+
+    [HttpGet("PropertyItem/GetPropertyItemByUserId/")]
+    public async Task<IActionResult> GetPropertyItemByUserId()
+    {
+        var UserId = ActiveUser.User!.Id;
+        var client = _httpClientFactory.CreateClient("ApiClient");
+        List<PropertyItemViewModel> ItemList = new List<PropertyItemViewModel>();
+        HttpResponseMessage response = await client.GetAsync(client.BaseAddress + "/propertyItem/GetPropertyItemByUserId/" + UserId);
+
+        if (response.IsSuccessStatusCode)
+        {
+            string data = await response.Content.ReadAsStringAsync();
+            var ownerItemList = JsonConvert.DeserializeObject<Result<PropertyItemsByUserDto>>(data);
+            if(ownerItemList.Status == -1)
+            {
+                return View(ItemList);
+            }
+            var userId = ownerItemList.Value.USerDto.Id;
+            foreach (var item in ownerItemList.Value.PropertyItems)
+            {
+                var viewmodel = new PropertyItemViewModel
                 {
-                    ItemList = ItemList.Where(p => p.E9Number == searchString).ToList();
-                }
-                // Pass your list out to your view
-                return View(ItemList.ToList());
+                    Id = item.Id,
+                    Address = item.Address,
+                    E9Number = item.E9Number,
+                    EnPropertyType = item.EnPropertyType,
+                    IsActive = item.IsActive,
+                    YearOfConstruction = item.YearOfConstruction,
+                    UserId = userId
+
+                };
+            ItemList.Add(viewmodel);
             }
             return View(ItemList);
         }
+        return View(ItemList);
+    }
 
+    [HttpGet]
+    public IActionResult Create()
+    {
+        return View();
+    }
 
-        [HttpGet("PropertyItem/GetPropertyItemByUserId/{UserId}")]
-        public async Task<IActionResult> GetPropertyItemByUserId(int UserId) //PropertyItem/GetPropertyItemByUserId/1
+    [HttpPost]
+    public async Task<IActionResult> Create(PropertyItemViewModel model)
+    {
+        try
         {
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            string data = JsonConvert.SerializeObject(model);
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PostAsync(client.BaseAddress + "/propertyItem/Create", content);
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["successMessage"] = "Item Created.";
+                return RedirectToAction("Index");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        return View();
+    }
 
-            List<PropertyItemViewModel> ItemList = new List<PropertyItemViewModel>();
-            HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/propertyItem/GetPropertyItemByUserId/" + UserId);
-
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        try
+        {
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            HttpResponseMessage response = await client.GetAsync(client.BaseAddress + "/PropertyItem/GetPropertyItemById/" + id);
             if (response.IsSuccessStatusCode)
             {
                 string data = await response.Content.ReadAsStringAsync();
-                var ownerItemList = JsonConvert.DeserializeObject<Result<PropertyItemsByUserDto>>(data);
-                if(ownerItemList.Status == -1)
+                var item = JsonConvert.DeserializeObject<Result<CreatePropertyItemResponse>>(data);
+                var viewmodel = new PropertyItemViewModel
                 {
-                    return View(ItemList);
-                }
-                var userId = ownerItemList.Value.USerDto.Id;
-                foreach (var item in ownerItemList.Value.PropertyItems)
-                {
-                    var viewmodel = new PropertyItemViewModel
-                    {
-                        Id = item.Id,
-                        Address = item.Address,
-                        E9Number = item.E9Number,
-                        EnPropertyType = item.EnPropertyType,
-                        IsActive = item.IsActive,
-                        YearOfConstruction = item.YearOfConstruction,
-                        UserId = userId
+                    Id = item.Value.Id,
+                    Address = item.Value.Address,
+                    E9Number = item.Value.E9Number,
+                    EnPropertyType = item.Value.EnPropertyType,
+                    IsActive = item.Value.IsActive,
+                    YearOfConstruction = item.Value.YearOfConstruction
+                };
+                return View(viewmodel);
 
-                    };
-                ItemList.Add(viewmodel);
-                }
-                return View(ItemList);
             }
-            return View(ItemList);
+            return View(new PropertyItemViewModel
+            {
+                Id = id
+            });
         }
-
-        [HttpGet]
-        public IActionResult Create()
+        catch (Exception)
         {
             return View();
         }
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(PropertyItemViewModel model)
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(PropertyItemViewModel model)
+    {
+        var client = _httpClientFactory.CreateClient("ApiClient");
+        string data = JsonConvert.SerializeObject(model);
+        StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await client.PutAsync(client.BaseAddress + "/propertyItem/Update", content);
+        if (response.IsSuccessStatusCode)
         {
-            try
+            return RedirectToAction("Index");
+        }
+        return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            HttpResponseMessage response = client.GetAsync(client.BaseAddress + "/propertyItem/GetPropertyItemById/" + id).Result;
+            if (response.IsSuccessStatusCode)
             {
-                string data = JsonConvert.SerializeObject(model);
-                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _client.PostAsync(_client.BaseAddress + "/propertyItem/Create", content);
-                if (response.IsSuccessStatusCode)
+                string data = await response.Content.ReadAsStringAsync();
+                var item = JsonConvert.DeserializeObject<Result<CreatePropertyItemResponse>>(data);
+                var viewmodel = new PropertyItemViewModel
                 {
-                    TempData["successMessage"] = "Item Created.";
-                    return RedirectToAction("Index");
-                }
+                    Id = item.Value.Id,
+                    Address = item.Value.Address,
+                    E9Number = item.Value.E9Number,
+                    EnPropertyType = item.Value.EnPropertyType,
+                    IsActive = item.Value.IsActive,
+                    YearOfConstruction = item.Value.YearOfConstruction
+                };
+                return View(viewmodel);
             }
-            catch (Exception ex)
+            return View(new PropertyItemViewModel
             {
-                throw;
-            }
+                Id = id
+            });
+        }
+        catch (Exception ex)
+        {
             return View();
         }
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+    [HttpPost, ActionName("Delete")]
+    public IActionResult DeleteConfirmed(int id)
+    {
+        try
         {
-            try
-            {
-                HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/PropertyItem/GetPropertyItemById/" + id);
-                if (response.IsSuccessStatusCode)
-                {
-                    string data = await response.Content.ReadAsStringAsync();
-                    var item = JsonConvert.DeserializeObject<Result<CreatePropertyItemResponse>>(data);
-                    var viewmodel = new PropertyItemViewModel
-                    {
-                        Id = item.Value.Id,
-                        Address = item.Value.Address,
-                        E9Number = item.Value.E9Number,
-                        EnPropertyType = item.Value.EnPropertyType,
-                        IsActive = item.Value.IsActive,
-                        YearOfConstruction = item.Value.YearOfConstruction
-                    };
-                    return View(viewmodel);
-
-                }
-                return View(new PropertyItemViewModel
-                {
-                    Id = id
-                });
-            }
-            catch (Exception)
-            {
-                return View();
-            }
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> Edit(PropertyItemViewModel model)
-        {
-            string data = JsonConvert.SerializeObject(model);
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _client.PutAsync(_client.BaseAddress + "/propertyItem/Update", content);
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            HttpResponseMessage response = client.DeleteAsync(client.BaseAddress + "/propertyItem/Delete/" + id).Result;
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
             }
+        }
+        catch (Exception ex)
+        {
             return View();
         }
-
-        [HttpGet]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                HttpResponseMessage response = _client.GetAsync(_client.BaseAddress + "/propertyItem/GetPropertyItemById/" + id).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    string data = await response.Content.ReadAsStringAsync();
-                    var item = JsonConvert.DeserializeObject<Result<CreatePropertyItemResponse>>(data);
-                    var viewmodel = new PropertyItemViewModel
-                    {
-                        Id = item.Value.Id,
-                        Address = item.Value.Address,
-                        E9Number = item.Value.E9Number,
-                        EnPropertyType = item.Value.EnPropertyType,
-                        IsActive = item.Value.IsActive,
-                        YearOfConstruction = item.Value.YearOfConstruction
-                    };
-                    return View(viewmodel);
-                }
-                return View(new PropertyItemViewModel
-                {
-                    Id = id
-                });
-            }
-            catch (Exception ex)
-            {
-                return View();
-            }
-        }
-
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            try
-            {
-                HttpResponseMessage response = _client.DeleteAsync(_client.BaseAddress + "/propertyItem/Delete/" + id).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("Index");
-                }
-            }
-            catch (Exception ex)
-            {
-                return View();
-            }
-            return View();
-        }
-
+        return View();
     }
+
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TechnicoRMP.Database.DataAccess;
-using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 
 namespace Technico.Api.Services;

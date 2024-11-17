@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Technico.Api.Services;
-using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 

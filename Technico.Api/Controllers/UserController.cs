@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Technico.Api.Services;
-using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.Shared.Exceptions;
 

@@ -4,7 +4,6 @@ using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
-using Technico.Api;
 using Microsoft.EntityFrameworkCore;
 
 namespace Technico.Api.Controllers;

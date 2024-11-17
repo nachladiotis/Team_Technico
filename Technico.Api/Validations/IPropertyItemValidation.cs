@@ -1,5 +1,4 @@
-﻿using TechnicoRMP.Models;
-using TechnicoRMP.Shared.Dtos;
+﻿using TechnicoRMP.Shared.Dtos;
 
 namespace Technico.Api.Validations
 {

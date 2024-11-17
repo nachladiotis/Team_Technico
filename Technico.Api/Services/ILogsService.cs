@@ -1,5 +1,4 @@
-﻿using TechnicoRMP.Shared.Common;
-using TechnicoRMP.Shared.Dtos;
+﻿using TechnicoRMP.Shared.Dtos;
 
 namespace Technico.Api.Services;
 

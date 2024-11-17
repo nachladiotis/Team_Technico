@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using TechnicoRMP.Models;
+﻿using TechnicoRMP.Models;
 
 namespace TechnicoRMP.WebApp.Models
 {

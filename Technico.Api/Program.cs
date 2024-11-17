@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Technico.Api.Logger;
 using Technico.Api.Services;
 using Technico.Api.Validations;

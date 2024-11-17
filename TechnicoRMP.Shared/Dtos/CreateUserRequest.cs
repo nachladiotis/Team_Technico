@@ -1,6 +1,4 @@
-﻿using TechnicoRMP.Models;
-
-namespace TechnicoRMP.Shared.Dtos;
+﻿namespace TechnicoRMP.Shared.Dtos;
 
 public class CreateUserRequest : IDto
 {
