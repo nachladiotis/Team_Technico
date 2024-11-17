@@ -86,7 +86,7 @@ namespace TechnicoRMP.WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateNew(CreatePropertyItemViewmodel model)
+        public async Task<IActionResult> Create(CreatePropertyItemViewmodel model)
         {
             try
             {
