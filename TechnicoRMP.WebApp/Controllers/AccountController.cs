@@ -22,7 +22,8 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
     {
         ActiveUser.SetUser(null);
         var cookie = Request.Cookies.Keys.FirstOrDefault(s=> s.Contains("LoggedInUser"));
-        Response.Cookies.Delete(cookie!);
+        if(cookie is not  null)
+            Response.Cookies.Delete(cookie!);
         return RedirectToAction("Index", "Home");
     }
 
