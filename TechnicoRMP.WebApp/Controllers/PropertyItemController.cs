@@ -50,7 +50,7 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
             {
                 return View(ItemList);
             }
-            var userId = ownerItemList.Value.USerDto.Id;
+            var userId = ownerItemList.Value.UserDto.Id;
             foreach (var item in ownerItemList.Value.PropertyItems)
             {
                 var viewmodel = new PropertyItemViewModel
