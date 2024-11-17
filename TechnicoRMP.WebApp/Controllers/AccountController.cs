@@ -36,6 +36,14 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
 
         var client = _httpClientFactory.CreateClient("ApiClient");
         var uri = new Uri($"{client.BaseAddress}/Auth/register");
+
+        if(model.Password != model.ConfirmPassword)
+        {
+            ModelState.AddModelError("Password", "Passwords doesnt match");
+           
+            return View(model);
+        }
+
         var dto = new CreateUserRequest
          { Email = model.Email,
           Name = model.Name,
