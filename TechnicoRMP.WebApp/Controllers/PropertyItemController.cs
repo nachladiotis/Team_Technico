@@ -114,22 +114,23 @@ namespace TechnicoRMP.WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult>CreateByUserId(PropertyItemViewModel model)//PropertyItem/CreateByUserId/2
+        public async Task<IActionResult> CreateByUserId(PropertyItemViewModel model)
         {
-            try
+            var request = new CreatePropertyItemRequest
             {
-                string data = JsonConvert.SerializeObject(model);
-                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _client.GetAsync(_client.BaseAddress + "/propertyItem/CreateByUserId/" + model.UserId);
-                if (response.IsSuccessStatusCode)
-                {
-                    TempData["successMessage"] = "Item Created.";
-                    return RedirectToAction("Index");
-                }
-            }
-            catch (Exception ex)
+                Address = model.Address,
+                E9Number = model.E9Number,
+                EnPropertyType = model.EnPropertyType,
+                IsActive = model.IsActive,
+                UserId = model.UserId,
+                YearOfConstruction = model.YearOfConstruction
+            };
+            var uri = new Uri(_client.BaseAddress + "/propertyItem/CreatePropertyItemByUserId/");
+            HttpResponseMessage response = await _client.PostAsJsonAsync(uri, request);
+            if (response.IsSuccessStatusCode)
             {
-                throw;
+                TempData["successMessage"] = "Item Created.";
+                return RedirectToAction("CreateByUserId");
             }
             return View();
         }

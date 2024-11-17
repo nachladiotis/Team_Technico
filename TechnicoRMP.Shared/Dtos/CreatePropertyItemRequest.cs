@@ -9,5 +9,5 @@ public class CreatePropertyItemRequest : IDto
     public required int YearOfConstruction { get; set; }
     public EnPropertyType EnPropertyType { get; set; }
     public bool IsActive { get; set; } = true;
-    public required int UserId { get; set; }
+    public required long UserId { get; set; }
 }
