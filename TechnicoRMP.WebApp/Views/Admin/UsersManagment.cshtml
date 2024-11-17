@@ -1,0 +1,44 @@
+﻿@model List<UserViewmodel>
+
+@{
+    ViewData["Title"] = "Users Management";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Users Management</h1>
+
+    <!-- Search Form -->
+    <div class="mb-4">
+        <label for="searchVatNumber" class="form-label">Search by VAT Number:</label>
+        <input type="text" id="searchVatNumber" class="form-control" placeholder="Enter VAT Number" />
+    </div>
+
+    <!-- Users Table with Scrollable Grid -->
+    <div id="usersTable" class="table-responsive" style="max-height: 600px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        @await Html.PartialAsync("_UsersTablePartial", Model)
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const allUsers = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model))
+
+        document.getElementById("searchVatNumber").addEventListener("input", function () {
+            const vatNumber = this.value;
+
+            fetch('@Url.Action("FilterUsers", "Admin")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                body: JSON.stringify({ vatNumber: vatNumber, allUsers: allUsers })
+            })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("usersTable").innerHTML = html;
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+}

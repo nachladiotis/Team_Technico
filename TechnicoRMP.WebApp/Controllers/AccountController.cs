@@ -22,7 +22,11 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
     {
         ActiveUser.SetUser(null);
         var cookie = Request.Cookies.Keys.FirstOrDefault(s=> s.Contains("LoggedInUser"));
-        Response.Cookies.Delete(cookie!);
+        if (!string.IsNullOrEmpty(cookie))
+        {
+            Response.Cookies.Delete(cookie);
+        }
+        
         return RedirectToAction("Index", "Home");
     }
 
@@ -41,6 +45,14 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
 
         var client = _httpClientFactory.CreateClient("ApiClient");
         var uri = new Uri($"{client.BaseAddress}/Auth/register");
+
+        if(model.Password != model.ConfirmPassword)
+        {
+            ModelState.AddModelError("Password", "Passwords doesnt match");
+           
+            return View(model);
+        }
+
         var dto = new CreateUserRequest
          { Email = model.Email,
           Name = model.Name,
@@ -103,7 +115,6 @@ public class AccountController(IHttpClientFactory httpClientFactory) : Controlle
                         HttpOnly = true,
                         Secure = true
                     };
-
                     var loggedInUser = JsonSerializer.Serialize<UserDto>(result.Value!.UserDto);
 
                     Response.Cookies.Append("LoggedInUser", loggedInUser, options);

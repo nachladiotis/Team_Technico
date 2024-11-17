@@ -1,9 +1,7 @@
-﻿namespace TechnicoRMP.Models;
+﻿namespace TechnicoRMP.Shared.Dtos;
 
-
-public class User
+public sealed class GetUsersInfoDto : IDto
 {
-   
     public long Id { get; set; }
     public required string Name { get; set; }
     public required string VatNumber { get; set; }
@@ -11,10 +9,8 @@ public class User
     public string? Address { get; set; }
     public string? PhoneNumber { get; set; }
     public required string Email { get; set; }
-    public required string Password { get; set; }
-    public EnRoleType TypeOfUser { get; set; } = EnRoleType.User;
-    public List<PropertyOwnership> PropertyOwnerships { get; set; } = [];
     public bool IsActive { get; set; } = true;
-    public List<PropertyRepair>? PropertyRepairs { get; set; } = new List<PropertyRepair>();
-
+    public List<PropertyItemsDto> PropertyItems { get; set; } = [];
+    public List<PropertyRepairResponseDTO> Repairs { get; set; } = [];
 }
+

@@ -5,6 +5,7 @@ using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 using Technico.Api;
+using Microsoft.EntityFrameworkCore;
 
 namespace Technico.Api.Controllers;
 
@@ -90,6 +91,33 @@ public class RepairController : ControllerBase
         }
     }
 
+
+    [HttpGet("user/{userId}")]
+    public async Task<IActionResult> GetRepairsByUserId(long userId)
+    {
+        if (userId <= 0)
+        {
+            return BadRequest(new { Message = "Invalid UserId provided." });
+        }
+
+        var userExists = await _datastore.Users
+            .AnyAsync(u => u.Id == userId);
+
+        if (!userExists)
+        {
+            return NotFound(new { Message = "User not found." });
+        }
+
+        var result = await _propertyRepairService.GetByUserId(userId);
+
+        if (result.Status == -1)
+        {
+            return BadRequest(new { Message = result.Message });
+        }
+
+        return Ok(result.Value);
+    }
+
     [HttpPatch("{id}")]
     public async Task<ActionResult<Result>> Update(int id, [FromBody] UpdatePropertyRepair updatePropertyRepair)
     {
@@ -117,16 +145,18 @@ public class RepairController : ControllerBase
         }
     }
 
+
+
     [HttpPut("deactivate/{repairId}")]
-    public async Task<ActionResult<Result<PropertyRepair>>> SoftDeleteRepairForUser(int userId, int repairId)
+    public async Task<ActionResult<Result<PropertyRepair>>> SoftDeleteRepairForUser(int repairId)
     {
         try
         {
-            var result = await _propertyRepairService.SoftDeleteRepairForUser(userId, repairId);
+            var result = await _propertyRepairService.SoftDeleteRepairForUser(repairId);
 
             if (result.Status == 0)
             {
-                return NoContent();
+                return Ok();
             }
 
             return NotFound(result);

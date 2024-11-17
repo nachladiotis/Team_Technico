@@ -1,9 +1,11 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Newtonsoft.Json;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.WebApp.Models;
+using TechnicoRMP.Models;
 
 namespace TechnicoRMP.WebApp.Controllers
 {
@@ -56,6 +58,45 @@ namespace TechnicoRMP.WebApp.Controllers
             }
         }
 
+
+        // GET : PropertyRepairs/user/id
+        [HttpGet("Repair/GetRepairsByUserId/{id}")]
+        public async Task<IActionResult> GetRepairsByUserId(long id)
+        {
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            var uri = new Uri($"{client.BaseAddress}/Repair/user/{id}");
+
+            var response = await client.GetAsync(uri);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<List<PropertyRepairResponseDTO>>();
+
+                if (result == null || result.Count == 0)
+                {
+                    return View(new List<PropertyRepairViewModel>());
+                }
+
+                List<PropertyRepairViewModel> list = new List<PropertyRepairViewModel>();
+                foreach (var property in result)
+                {
+                    var listitem = new PropertyRepairViewModel
+                    {
+                        Address = property.Address,
+                        Cost = property.Cost,
+                        RepairStatus = property.RepairStatus,
+                        TypeOfRepair = property.TypeOfRepair,
+                        Id = property.Id,
+                        Date = property.Date
+                    };
+                    list.Add(listitem);
+                }
+                return View(list);
+            }
+            else
+            {
+                return View(new List<PropertyRepairViewModel>());
+            }
+        }
         // GET: PropertyRepairs/GetById/1
         [HttpGet]
         public async Task<IActionResult> GetById(long? id)
@@ -101,23 +142,22 @@ namespace TechnicoRMP.WebApp.Controllers
 
         // POST: PropertyRepairs/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PropertyRepairViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 var client = _httpClientFactory.CreateClient("ApiClient");
-                var uri = new Uri($"{client.BaseAddress}/Repair/Create");
+                var uri = new Uri($"{client.BaseAddress}/Repair");
 
-                var Userid = 1;
                 var propertyRepair = new CreatePropertyRepairRequest
                 {
                     Date = viewModel.Date,
                     TypeOfRepair = viewModel.TypeOfRepair,
                     Address = viewModel.Address,
-                    RepairStatus = viewModel.RepairStatus,
-                    Cost = viewModel.Cost,
-                    UserId = Userid
+                    RepairStatus = EnRepairStatus.Pending,
+                    Cost = 0,
+                    UserId = ActiveUser.User.Id
                 };
 
                 var response = await client.PostAsJsonAsync(uri, propertyRepair);
@@ -142,7 +182,6 @@ namespace TechnicoRMP.WebApp.Controllers
                     ModelState.AddModelError("", $"API Error: {errorContent}");
                 }
             }
-
             return View(viewModel);
         }
 
@@ -177,12 +216,11 @@ namespace TechnicoRMP.WebApp.Controllers
                         Cost = item.Value.Cost,
                         RepairStatus = item.Value.RepairStatus,
                         IsActive = item.Value.IsActive,
-                        UserId = 1
+                        UserId = ActiveUser.User.Id
                     };
 
                     return View(viewModel);
                 }
-
                 return View(new PropertyRepairViewModel
                 {
                     Id = id
@@ -190,7 +228,6 @@ namespace TechnicoRMP.WebApp.Controllers
             }
             catch (Exception)
             {
-                // If an error occurs, return an empty view
                 return View();
             }
         }
@@ -220,25 +257,26 @@ namespace TechnicoRMP.WebApp.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SoftDelete(int id)
+
+
+        [HttpPost("deactivate/{repairId}")]
+        public async Task<IActionResult> SoftDelete(int repairId)
         {
             var client = _httpClientFactory.CreateClient("ApiClient");
 
-            var uri = new Uri($"{client.BaseAddress}/Repair/deactivate/{id}");
+            var uri = new Uri($"{client.BaseAddress}/Repair/deactivate/{repairId}");
 
-            var response = await client.PostAsync(uri, null);
+            var response = await client.PutAsync(uri, null);
 
             if (response.IsSuccessStatusCode)
             {
-                TempData["successMessage"] = "Repair deactivated successfully.";
+                TempData["successMessage"] = "Repair deleted successfully.";
             }
             else
             {
-                TempData["errorMessage"] = "Error deactivating repair.";
+                TempData["errorMessage"] = "Error deleting repair.";
             }
-
-            return RedirectToAction("GetAll");
+            return RedirectToAction("GetRepairsByUserId", new { id = ActiveUser.User!.Id });
         }
 
     }

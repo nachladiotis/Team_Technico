@@ -1,0 +1,42 @@
+﻿@model List<TechnicoRMP.WebApp.Models.PropertyItemViewModel>
+
+@{
+    ViewData["Title"] = "GetPropertyItemByUserId";
+}
+
+<h1>Property Items for User: @Model.FirstOrDefault()?.UserId</h1>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
+                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().E9Number)</th>
+                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Address)</th>
+                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().YearOfConstruction)</th>
+                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().EnPropertyType)</th>
+                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().IsActive)</th>
+                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().UserId)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(model => item.Id)</td>
+                    <td>@Html.DisplayFor(model => item.E9Number)</td>
+                    <td>@Html.DisplayFor(model => item.Address)</td>
+                    <td>@Html.DisplayFor(model => item.YearOfConstruction)</td>
+                    <td>@Html.DisplayFor(model => item.EnPropertyType)</td>
+                    <td>@Html.DisplayFor(model => item.IsActive)</td>
+                    <td>@Html.DisplayFor(model => item.UserId)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No property items found for the specified user.</p>
+}

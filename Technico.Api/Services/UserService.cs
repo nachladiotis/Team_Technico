@@ -173,6 +173,7 @@ public class UserService : IUserService
                 Email = user.Email,
                 Address = user.Address,
                 PhoneNumber = user.PhoneNumber,
+                IsActive = user.IsActive 
             }).ToList();
         }
         catch(Exception ex)

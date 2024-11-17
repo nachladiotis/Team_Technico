@@ -1,70 +1,73 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
+
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    @* <title>@ViewData["Title"] - Technico Web App</title> *@
-    <meta name="description" content="Your description here">
-    <meta name="keywords" content="Your keywords here">
-
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900&display=swap" rel="stylesheet">
-
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/css/main.css" rel="stylesheet">
 </head>
 
-<body>
-    <main>
+<body class="bg-light">
+
+    <div class="container py-5">
         <section class="privacy-policy">
-            <h1>Privacy Policy</h1>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">Privacy Policy</h1>
 
-            <p>At Technico, we value your privacy and are committed to protecting your personal information. This Privacy Policy outlines how we collect, use, and protect your personal data.</p>
+                    <p>At Technico, we value your privacy and are committed to protecting your personal information. This Privacy Policy outlines how we collect, use, and protect your personal data.</p>
 
-            <h2>Information We Collect</h2>
-            <p>We collect personal information that you provide to us when you use our services, such as:</p>
-            <ul>
-                <li>Name</li>
-                <li>Surname</li>
-                <li>Email Address</li>
-                <li>Phone Number</li>
-                <li>Address</li>
-            </ul>
-            <p>We may also collect non-personal information automatically when you visit our website, such as your IP address and browsing behavior.</p>
+                    <h2>Information We Collect</h2>
+                    <p>We collect personal information that you provide to us when you use our services, such as:</p>
+                    <ul>
+                        <li>Name</li>
+                        <li>Surname</li>
+                        <li>Email Address</li>
+                        <li>Phone Number</li>
+                        <li>Address</li>
+                    </ul>
+                    <p>We may also collect non-personal information automatically when you visit our website, such as your IP address and browsing behavior.</p>
 
-            <h2>How We Use Your Information</h2>
-            <p>The information we collect is used to provide and improve our services. Specifically, we may use your information to:</p>
-            <ul>
-                <li>Process your service requests</li>
-                <li>Communicate with you about your requests and updates</li>
-                <li>Improve our website and services based on user feedback</li>
-                <li>Send promotional offers, if you've opted in</li>
-            </ul>
+                    <h2>How We Use Your Information</h2>
+                    <p>The information we collect is used to provide and improve our services. Specifically, we may use your information to:</p>
+                    <ul>
+                        <li>Process your service requests</li>
+                        <li>Communicate with you about your requests and updates</li>
+                        <li>Improve our website and services based on user feedback</li>
+                        <li>Send promotional offers, if you've opted in</li>
+                    </ul>
 
-            <h2>Data Protection</h2>
-            <p>We take the security of your personal information seriously. We use encryption and other security measures to protect your data from unauthorized access. However, please be aware that no method of transmission over the Internet is completely secure, and we cannot guarantee absolute security.</p>
+                    <h2>Data Protection</h2>
+                    <p>We take the security of your personal information seriously. We use encryption and other security measures to protect your data from unauthorized access. However, please be aware that no method of transmission over the Internet is completely secure, and we cannot guarantee absolute security.</p>
 
-            <h2>Third-Party Services</h2>
-            <p>We may share your information with trusted third-party service providers to help us operate our business, such as payment processors or email marketing platforms. These third parties are obligated to maintain the confidentiality of your information.</p>
+                    <h2>Third-Party Services</h2>
+                    <p>We may share your information with trusted third-party service providers to help us operate our business, such as payment processors or email marketing platforms. These third parties are obligated to maintain the confidentiality of your information.</p>
 
-            <h2>Your Rights</h2>
-            <p>You have the right to access, update, or delete your personal information. If you wish to exercise these rights, please contact us at <strong>support@technico.com</strong>.</p>
+                    <h2>Your Rights</h2>
+                    <p>You have the right to access, update, or delete your personal information. If you wish to exercise these rights, please contact us at <strong>support@technico.com</strong>.</p>
 
-            <h2>Cookies</h2>
-            <p>Our website uses cookies to enhance your browsing experience. Cookies are small files stored on your device that help us track your preferences and usage of our site. You can control the use of cookies through your browser settings.</p>
+                    <h2>Cookies</h2>
+                    <p>Our website uses cookies to enhance your browsing experience. Cookies are small files stored on your device that help us track your preferences and usage of our site. You can control the use of cookies through your browser settings.</p>
 
-            <h2>Changes to This Privacy Policy</h2>
-            <p>We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. Any updates will be posted on this page with an updated revision date.</p>
+                    <h2>Changes to This Privacy Policy</h2>
+                    <p>We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. Any updates will be posted on this page with an updated revision date.</p>
 
-            <h2>Contact Us</h2>
-            <p>If you have any questions or concerns about this Privacy Policy, please contact us at <strong>support@technico.com</strong>.</p>
+                    <h2>Contact Us</h2>
+                    <p>If you have any questions or concerns about this Privacy Policy, please contact us at <strong>support@technico.com</strong>.</p>
+                </div>
+            </div>
         </section>
-    </main>
+    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - TechnicoRMP.WebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="border-top footer text-muted py-3">
+        <div class="container text-center">
+            &copy; 2024 - TechnicoRMP.WebApp - <a href="@Url.Action("Privacy", "Home")">Privacy</a>
         </div>
     </footer>
+
 </body>

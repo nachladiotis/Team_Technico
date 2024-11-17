@@ -5,6 +5,7 @@ namespace TechnicoRMP.Shared.Dtos;
 
 public class PropertyRepairResponseDTO : IDto
 {
+    public long Id { get; set; }
     public DateTime Date { get; set; }
 
     [JsonPropertyName("formatted_date")]
@@ -15,5 +16,5 @@ public class PropertyRepairResponseDTO : IDto
     public double Cost { get; set; }
     public long UserId { get; set; }
     public bool IsActive { get; set; }
-    public long Id { get; set; }
+    
 }

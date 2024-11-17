@@ -5,7 +5,6 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    @* <title>@ViewData["Title"] - Technico Web App</title> *@
     <meta name="description" content="Your description here">
     <meta name="keywords" content="Your keywords here">
 
@@ -18,100 +17,97 @@
 
 <body class="h-full">
     <div id="root" class="h-full">
-        <div class="relative white">
-            <div class="relative">
-                <div class="max-auto max">
-                    <div class="image-technico flex justify-center relative h-32 md:h-60 md justify-start">
-                        <img src="/assets/img/technico.png">
-                    </div>
-                    <div class="center-text-contain">
-                        <p>
-                            Our team at Technico is here to support you with a wide range of services in and around the London area.
-                            <br/>
-                            From fixing leaky faucets to setting up electrical systems, assembling furniture, or tiling your bathroom,
-                            Technico makes it easy to get quality assistance from trusted professionals. Whatever your project, big or
-                            small, you can count on us to get it done right.
-                        </p>
-                    </div>
-                </div>
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <img src="/assets/img/technico.png" alt="Technico Logo" class="img-fluid mb-4" style="max-width: 200px;">
+                <h1 class="display-4">Welcome to Technico</h1>
+                <p class="lead">
+                    Our team at Technico is here to support you with a wide range of services in and around the London area.
+                    From fixing leaky faucets to setting up electrical systems, assembling furniture, or tiling your bathroom,
+                    Technico makes it easy to get quality assistance from trusted professionals. Whatever your project, big or small,
+                    you can count on us to get it done right.
+                </p>
             </div>
-            <div class="container">
-                <div class="divimages">
-                    <h2>Painting</h2>
-                    <p>
-                        From a fresh coat to a complete color overhaul, our painting experts deliver high-quality 
-                        results with attention to detail and a commitment to excellence. Whether it’s reviving 
-                        walls, ceilings, or woodwork, we use premium paints and professional techniques to enhance 
-                        the look and longevity of every surface. Our team ensures a smooth, precise finish that 
-                        breathes new life into any space,indoors or out.
-                    </p>
-                    <div class="imagecenter flex relative">
-                        <img src="/assets/img/painting.jpg" alt="Painting services">
+
+            <!-- Services Section -->
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <!-- Service Item: Painting -->
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="/assets/img/painting.jpg" class="card-img-top" alt="Painting services">
+                        <div class="card-body">
+                            <h5 class="card-title">Painting</h5>
+                            <p class="card-text">
+                                From a fresh coat to a complete color overhaul, our painting experts deliver high-quality results with attention
+                                to detail and a commitment to excellence. Whether it’s reviving walls, ceilings, or woodwork, we use premium paints
+                                and professional techniques to enhance the look and longevity of every surface.
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <div class="divimages">
-                    <h2>Insulation</h2>
-                    <p>
-                        Whether it’s insulating walls, sealing floors, or protecting your roof,
-                        our insulation specialists will ensure a high-quality finish that boosts energy
-                        efficiency and comfort in your space. Our team is dedicated to providing reliable
-                        insulation solutions that keep your property well-protected and energy-efficient year-round.
-                        Trust us to keep your property powered safely and reliably.
-                    </p>
-                    <div class="imagecenter flex relative">
-                        <img src="/assets/img/insulation.jpg" alt="Insulation services">
+
+                <!-- Service Item: Insulation -->
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="/assets/img/insulation.jpg" class="card-img-top" alt="Insulation services">
+                        <div class="card-body">
+                            <h5 class="card-title">Insulation</h5>
+                            <p class="card-text">
+                                Whether it’s insulating walls, sealing floors, or protecting your roof, our insulation specialists will ensure a high-quality
+                                finish that boosts energy efficiency and comfort in your space. Trust us to keep your property powered safely and reliably.
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <div class="divimages">
-                    <h2>Frame</h2>
-                    <p>
-                        Our framing experts provide solid structural solutions that form the backbone of any construction project.
-                        From load-bearing walls to custom partitions, we bring precision and quality to each frame, ensuring safety
-                        and durability for years to come. Our team uses high-grade materials and advanced techniques to meet every
-                        project’s unique specifications, creating a reliable framework that supports and enhances your space.
-                    </p>
-                    <div class="imagecenter flex relative">
-                        <img src="/assets/img/frame.jpg" alt="Frame services">
+
+                <!-- Service Item: Frame -->
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="/assets/img/frame.jpg" class="card-img-top" alt="Frame services">
+                        <div class="card-body">
+                            <h5 class="card-title">Frame</h5>
+                            <p class="card-text">
+                                Our framing experts provide solid structural solutions that form the backbone of any construction project.
+                                From load-bearing walls to custom partitions, we ensure safety and durability for years to come.
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <div class="divimages">
-                    <h2>Plumbing</h2>
-                    <p>
-                        Our skilled plumbing team offers comprehensive solutions for 
-                        all your water and drainage needs. From fixing leaks and 
-                        installing new pipes to managing complex drainage systems, 
-                        we handle every aspect of plumbing with precision and care. 
-                        Using high-quality materials and the latest techniques, we 
-                        ensure that your plumbing system is efficient, reliable, and 
-                        built to last. Count on us to keep your home or business 
-                        free from plumbing issues.
-                    </p>
-                    <div class="imagecenter flex relative">
-                        <img src="/assets/img/plumbing.jpg" alt="Plumbing services">
+
+                <!-- Service Item: Plumbing -->
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="/assets/img/plumbing.jpg" class="card-img-top" alt="Plumbing services">
+                        <div class="card-body">
+                            <h5 class="card-title">Plumbing</h5>
+                            <p class="card-text">
+                                Our skilled plumbing team offers comprehensive solutions for all your water and drainage needs. From fixing leaks
+                                and installing new pipes to managing complex drainage systems, we ensure that your plumbing system is efficient and built to last.
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <div class="divimages">
-                    <h2>Electrical Work</h2>
-                    <p>
-                        Our certified electricians provide a full range of electrical services, 
-                        from installing new wiring and outlets to upgrading panels.
-                        Whether you’re renovating, upgrading for energy efficiency, or addressing an urgent 
-                        repair, we’re here to ensure safe, efficient solutions. With a focus on quality workmanship 
-                        and compliance with the highest safety standards, our team brings precision and expertise 
-                        to every electrical work. 
-                    </p>
-                    <div class="imagecenter flex relative">
-                        <img src="/assets/img/electrics.jpg" alt="Electrical Work services">
+
+                <!-- Service Item: Electrical Work -->
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="/assets/img/electrics.jpg" class="card-img-top" alt="Electrical Work services">
+                        <div class="card-body">
+                            <h5 class="card-title">Electrical Work</h5>
+                            <p class="card-text">
+                                Our certified electricians provide a full range of electrical services, from installing new wiring and outlets
+                                to upgrading panels. We focus on safety, efficiency, and quality workmanship to meet your electrical needs.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="bg-dark text-white text-center py-3">
         <div class="container">
-            &copy; 2024 - TechnicoRMP.WebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - TechnicoRMP.WebApp - <a href="/Home/Privacy" class="text-white">Privacy</a>
         </div>
     </footer>
 </body>
-
