@@ -82,7 +82,6 @@ namespace Technico.Api.Controllers
             };
         }
 
-      
         [HttpPost]
         public async Task<IActionResult> CreatePropertyItemByUserId([FromBody]CreatePropertyItemRequest createPropertyItemRequest)
         {

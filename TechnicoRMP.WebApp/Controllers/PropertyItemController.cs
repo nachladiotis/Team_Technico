@@ -41,7 +41,7 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         //var UserId = ActiveUser.User!.Id;
         var client = _httpClientFactory.CreateClient("ApiClient");
         List<PropertyItemViewModel> ItemList = new List<PropertyItemViewModel>();
-        HttpResponseMessage response = await client.GetAsync(client.BaseAddress + "/PpropertyItem/GetPropertyItemByUserId/" + id);
+        HttpResponseMessage response = await client.GetAsync(client.BaseAddress + "/PropertyItem/GetPropertyItemByUserId/" + id);
 
         if (response.IsSuccessStatusCode)
         {

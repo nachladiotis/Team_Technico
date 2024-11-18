@@ -3,6 +3,7 @@
 <div>
     <!-- Filter Form -->
     <form method="get" action="/Repairs" class="form-inline mb-3">
+
         <label for="startDate" class="mr-2">Start Date:</label>
         <input type="date" id="startDate" name="startDate" class="form-control mr-3"
                value="@ViewData["StartDate"]" />
@@ -14,8 +15,9 @@
         <!-- Buttons with top margin to add spacing -->
         <button type="submit" class="btn btn-primary mt-3 mr-3">Filter</button>
         <a href="/Repairs" class="btn btn-secondary mt-3 ml-3">Reset</a>
+       
     </form>
-
+    <a asp-controller="Admin" asp-action="CreateRepair" class="btn btn-success mt-3 mr-3">Create</a>
 
     <!-- Scrollable Table -->
     <div style="overflow-x: auto; max-height: 400px; border: 1px solid #ccc; padding: 10px;">

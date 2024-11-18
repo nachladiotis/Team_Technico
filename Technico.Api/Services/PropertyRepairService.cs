@@ -6,9 +6,10 @@ using TechnicoRMP.Shared.Dtos;
 
 namespace Technico.Api.Services;
 
-public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
+public class PropertyRepairService(DataStore dataStore, ILogger<PropertyRepairService> logger) : IPropertyRepairService
 {
     private readonly DataStore _dataStore = dataStore;
+    private readonly ILogger<PropertyRepairService> _logger = logger;
 
     public async Task<Result<PropertyRepairResponseDTO>> AddRepair(CreatePropertyRepairRequest createPropertyRepairRequest)
     {
@@ -61,7 +62,7 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
 
             var propertyRepairToStore = new PropertyRepair
             {
-                Date = DateTime.UtcNow,
+                Date = createPropertyRepairRequest.Date,
                 Address = createPropertyRepairRequest.Address,
                 TypeOfRepair = createPropertyRepairRequest.TypeOfRepair,
                 Cost = createPropertyRepairRequest.Cost,
@@ -78,6 +79,7 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             response.Status = -1;
             response.Message = $"An error occurred while adding the repair: {ex.Message}";
         }
@@ -169,6 +171,7 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             result.Status = -1;
             result.Message = $"An error occurred: {ex.Message}";
             return result;
@@ -219,6 +222,7 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             result.Status = -1;
             result.Message = $"An error occurred: {ex.Message}";
             return result;
@@ -237,35 +241,29 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
 
         try
         {
-            // Ελέγχουμε αν τα userId και repairId είναι έγκυρα
             if (repairId <= 0)
             {
                 result.Message = "The user ID and repair ID must be greater than zero.";
                 return result;
             }
 
-            // Βρίσκουμε την επισκευή που αντιστοιχεί στο userId και repairId και είναι ενεργή
             var repair = await _dataStore.PropertyRepairs
                 .FirstOrDefaultAsync(p => p.Id == repairId && p.IsActive );
 
-            // Ελέγχουμε αν βρέθηκε η επισκευή
             if (repair == null)
             {
                 result.Message = "Repair not found, or it does not belong to the user, or it is already inactive.";
                 return result;
             }
 
-            // Ελέγχουμε αν η επισκευή είναι ήδη ανενεργή
             if (!repair.IsActive)
             {
                 result.Message = "The repair is already inactive.";
                 return result;
             }
 
-            // Ενημερώνουμε την επισκευή και την κάνουμε ανενεργή (soft delete)
             repair.IsActive = false;
 
-            // Ενημέρωση της επισκευής στη βάση δεδομένων
             _dataStore.PropertyRepairs.Update(repair);
             await _dataStore.SaveChangesAsync();
 
@@ -277,6 +275,7 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             result.Status = 500;
             result.Message = $"An error occurred during the operation: {ex.Message}";
             return result;
@@ -355,6 +354,7 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             response.Status = 500;
             response.Message = $"An error occurred during the update: {ex.Message}";
             return response;

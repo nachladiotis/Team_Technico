@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.WebApp.Models;
@@ -111,6 +112,81 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> CreateRepair()
+    {
+        var client = _httpClientFactory.CreateClient("ApiClient");
+        var uri = new Uri($"{client.BaseAddress}/User");
+        var response = await client.GetAsync(uri);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return View("Error");
+        }
+
+        var users = await response.Content.ReadFromJsonAsync<List<UserDto>>();
+        var userViewModels = users?.Select(user => new UserViewmodel
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Surname = user.Surname
+        }).ToList();
+
+        ViewData["Users"] = userViewModels;
+
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateRepair([FromForm] CreatePropertyRepairRequest repairRequest)
+    {
+        var client = _httpClientFactory.CreateClient("ApiClient");
+        var uri = new Uri($"{client.BaseAddress}/User");
+        var response = await client.GetAsync(uri);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            ViewData["Users"] = new List<UserViewmodel>();
+            return View(repairRequest);
+        }
+
+        var users = await response.Content.ReadFromJsonAsync<List<UserDto>>();
+        var userViewModels = users?.Select(user => new UserViewmodel
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Surname = user.Surname
+        }).ToList();
+
+        ViewData["Users"] = userViewModels;
+
+        if (!ModelState.IsValid)
+        {
+            return View(repairRequest);
+        }
+
+        try
+        {
+            var apiResponse = await client.PostAsJsonAsync($"{client.BaseAddress}/Repair", repairRequest);
+
+            if (apiResponse.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Repairs");
+            }
+
+            var errorResponse = await apiResponse.Content.ReadAsStringAsync();
+            var jsonObject = JsonDocument.Parse(errorResponse);
+            var errorMessage = jsonObject.RootElement.GetProperty("message").GetString();
+            ViewData["ErrorMessage"] = errorMessage;
+            return View(repairRequest);
+        }
+        catch (Exception ex)
+        {
+            ViewData["ErrorMessage"] = $"Internal server error: {ex.Message}";
+            return View(repairRequest);
+        }
+    }
+
+    [HttpGet]
     public async Task<IActionResult> PropertyItems()
     {
         var client = _httpClientFactory.CreateClient("ApiClient");
@@ -153,7 +229,7 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
 
         if (response.IsSuccessStatusCode)
         {
-            return Ok(); 
+            return Ok();
         }
         else
         {
@@ -172,14 +248,14 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
             url = $"{client.BaseAddress}/PropertyItem/GetAll";
         else
             url = $"{client.BaseAddress}/PropertyItem/GetBy/{searchE9Number}";
-       
+
         var response = await client.GetAsync(url);
         if (!response.IsSuccessStatusCode)
             return View(new List<PropertyItemViewModel>());
 
         var items = await response.Content.ReadFromJsonAsync<IEnumerable<PropertyItemsDto>>();
 
-        if(items is null)
+        if (items is null)
         {
             return View(new List<PropertyItemViewModel>());
         }
@@ -194,7 +270,7 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
             YearOfConstruction = propertyItem.YearOfConstruction,
         }).ToList();
 
-        
+
 
         return View(listOfVms);
     }
@@ -202,13 +278,13 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
     [HttpDelete("/DeletePropertyItem/{id}")]
     public async Task<IActionResult> DeletePropertyItem(long id)
     {
-        if(ActiveUser.UserRole is not EnRoleType.Admin)
+        if (ActiveUser.UserRole is not EnRoleType.Admin)
             return BadRequest();
 
         var client = _httpClientFactory.CreateClient("ApiClient");
         var response = await client.DeleteAsync($"{client.BaseAddress}/PropertyItem/Delete/{id}");
 
-        if (!response.IsSuccessStatusCode) 
+        if (!response.IsSuccessStatusCode)
             return BadRequest("Failed to delete the item.");
         return Ok();
     }
