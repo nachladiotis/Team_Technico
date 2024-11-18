@@ -97,7 +97,7 @@ public class UserService : IUserService
     }
 
 
-    public Result<UserDto> Create(CreateUserRequest creatUserDto)
+    public async Task< Result<UserDto>> Create(CreateUserRequest creatUserDto)
     {
         var failResponse = new Result<UserDto>
         {
