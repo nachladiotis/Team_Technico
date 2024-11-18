@@ -11,4 +11,5 @@ public class CreatePropertyRepairRequest : IDto
     public EnRepairStatus RepairStatus { get; set; }
     public double Cost { get; set; }
     public long UserId { get; set; }
+    public string? Description { get; set; }
 }

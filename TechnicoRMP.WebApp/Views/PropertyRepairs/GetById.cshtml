@@ -19,6 +19,7 @@
                     <p><strong>Type of Repair:</strong> @repair.TypeOfRepair</p>
                     <p><strong>Address:</strong> @repair.Address</p>
                     <p><strong>Status:</strong> @repair.RepairStatus</p>
+                    <p><strong>Description:</strong> @(string.IsNullOrEmpty(repair.Description) ? "No description available" : repair.Description)</p>
                     <p><strong>Cost:</strong> @repair.Cost</p>
                 </div>
             }

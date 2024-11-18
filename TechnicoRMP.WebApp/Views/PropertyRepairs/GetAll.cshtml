@@ -26,6 +26,7 @@
                         <th>Type of Repair</th>
                         <th>Address</th>
                         <th>Status</th>
+                        <th>Description</th>
                         <th>Cost</th>
                     </tr>
                 </thead>
@@ -45,6 +46,7 @@
                             <td>@repair.TypeOfRepair</td>
                             <td>@repair.Address</td>
                             <td>@repair.RepairStatus</td>
+                            <td>@(string.IsNullOrEmpty(repair.Description) ? "No description available" : repair.Description)</td>
                             <td>@repair.Cost</td>
                         </tr>
                     }

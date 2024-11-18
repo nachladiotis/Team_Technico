@@ -16,5 +16,6 @@ public class PropertyRepairResponseDTO : IDto
     public double Cost { get; set; }
     public long UserId { get; set; }
     public bool IsActive { get; set; }
-    
+    public string? Description { get; set; }
+
 }
