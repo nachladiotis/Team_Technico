@@ -265,19 +265,13 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
                 RepairStatus = model.RepairStatus,
                 TypeOfRepair = model.TypeOfRepair
             };
-
-            //string data = JsonConvert.SerializeObject(request);
-
-            //TODO CREATE REQUEST AND SEND 
-
-            //StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
             var response = await client.PatchAsJsonAsync(uri, request);
 
             if (response.IsSuccessStatusCode)
             {
               
                 if(ActiveUser.UserRole is EnRoleType.User)
-                    return RedirectToAction("GetAll");
+                    return RedirectToAction("GetRepairsByUserId", new { id = ActiveUser.User!.Id });
                return RedirectToAction("Repairs","Admin");
             }
             else
