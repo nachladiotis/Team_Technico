@@ -122,7 +122,7 @@ public class UserService : IUserService
             return new Result<UserDto>
             {
                 Status = 0,
-                Message = "ΕΠΙΤΥΧΊΑ ΔΗΜΗΟΥΡΓΙΑΣ ΧΡΗΣΤΗ",
+                Message = "User Created Successfully",
                 Value = CreateUserResponseService.CreateFromEntity(user)
             };
         }
