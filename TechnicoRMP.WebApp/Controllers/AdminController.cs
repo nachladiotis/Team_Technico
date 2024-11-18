@@ -164,6 +164,7 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
     [HttpGet("PropertyItems")]
     public async Task<IActionResult> PropertyItems(string? searchE9Number)
     {
+
         var client = _httpClientFactory.CreateClient("ApiClient");
 
         string url;

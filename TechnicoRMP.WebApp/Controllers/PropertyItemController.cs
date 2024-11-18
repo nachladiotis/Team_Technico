@@ -35,13 +35,13 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
     }
 
 
-    [HttpGet("PropertyItem/GetPropertyItemByUserId/")]
-    public async Task<IActionResult> GetPropertyItemByUserId()
+    [HttpGet("PropertyItem/GetPropertyItemByUserId/{id}")]
+    public async Task<IActionResult> GetPropertyItemByUserId(int id)
     {
-        var UserId = ActiveUser.User!.Id;
+        //var UserId = ActiveUser.User!.Id;
         var client = _httpClientFactory.CreateClient("ApiClient");
         List<PropertyItemViewModel> ItemList = new List<PropertyItemViewModel>();
-        HttpResponseMessage response = await client.GetAsync(client.BaseAddress + "/propertyItem/GetPropertyItemByUserId/" + UserId);
+        HttpResponseMessage response = await client.GetAsync(client.BaseAddress + "/PpropertyItem/GetPropertyItemByUserId/" + id);
 
         if (response.IsSuccessStatusCode)
         {
@@ -72,6 +72,8 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         return View(ItemList);
     }
 
+
+
     [HttpGet]
     public IActionResult Create()
     {
@@ -90,7 +92,9 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
             if (response.IsSuccessStatusCode)
             {
                 TempData["successMessage"] = "Item Created.";
-                return RedirectToAction("Index");
+                if(ActiveUser.UserRole is EnRoleType.User)
+                    return RedirectToAction("Index");
+                return RedirectToAction("UsersManagment","Admin");
             }
         }
         catch (Exception ex)
@@ -99,32 +103,6 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         }
         return View();
     }
-
-    //[HttpPost]
-    //public async Task<IActionResult> CreateNew(CreatePropertyItemViewmodel model)
-    //{
-    //    try
-    //    {
-    //        var client = _httpClientFactory.CreateClient("ApiClient");
-
-    //        string data = JsonConvert.SerializeObject(model);
-
-    //        var 
-
-    //        var uri = new Uri(client.BaseAddress + "/propertyItem/Create");
-    //        HttpResponseMessage response = await client.PostAsync(uri, content);
-    //        if (response.IsSuccessStatusCode)
-    //        {
-    //            TempData["successMessage"] = "Item Created.";
-    //            return RedirectToAction("Index");
-    //        }
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        throw;
-    //    }
-    //    return View();
-    //}
 
 
     [HttpGet]
@@ -146,7 +124,7 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
             YearOfConstruction = model.YearOfConstruction
         };
         var client = _httpClientFactory.CreateClient("ApiClient");
-        var uri = new Uri(client.BaseAddress + "/propertyItem/CreatePropertyItemByUserId/");
+        var uri = new Uri(client.BaseAddress + "/PropertyItem/Create");
         HttpResponseMessage response = await client.PostAsJsonAsync(uri, request);
         if (response.IsSuccessStatusCode)
         {

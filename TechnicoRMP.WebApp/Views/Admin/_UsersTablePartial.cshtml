@@ -26,7 +26,7 @@
                 <td>@(user.IsActive ? "Yes" : "No")</td>
                 <td>
                     <div class="d-flex justify-content-start gap-2">
-                        <a href="/Users/PropertyItems/@user.Id" class="btn btn-primary btn-sm">View Properties</a>
+                        <a href="/PropertyItem/GetPropertyItemByUserId/@user.Id" class="btn btn-primary btn-sm">View Properties</a>
                         <a href="/Repair/GetRepairsByUserId/@user.Id" class="btn btn-secondary btn-sm">View Repairs</a>
                     </div>
                 </td>
