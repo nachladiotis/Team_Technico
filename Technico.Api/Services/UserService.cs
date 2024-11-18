@@ -121,8 +121,6 @@ public class UserService : IUserService
             _dataStore.SaveChanges();
             return new Result<UserDto>
             {
-                Status = 0,
-                Message = "User Created Successfully",
                 Value = CreateUserResponseService.CreateFromEntity(user)
             };
         }

@@ -20,7 +20,7 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUser(UserProfileViewModel model)
+    public async Task<IActionResult> CreateUser(UserProfileViewModelUpdate model)
     {
         try
         {
@@ -31,8 +31,6 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
             if (response.IsSuccessStatusCode)
             {
                 TempData["successMessage"] = "User Created.";
-                if (ActiveUser.UserRole is EnRoleType.User)
-                    return RedirectToAction("Index");
                 return RedirectToAction("UsersManagment", "Admin");
             }
         }

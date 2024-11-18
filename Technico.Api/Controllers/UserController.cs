@@ -14,12 +14,14 @@ namespace Technico.Api.Controllers
 
         private readonly ILogger<UserController> _logger = logger;
 
+
         [HttpPost]
+        [Route("Create")]
         public async Task<ActionResult<UserDto>> Create([FromBody] CreateUserRequest createUserRequest)
         {
             try
             {
-                var createUserResult =  _service.Create(createUserRequest);
+                var createUserResult =  await _service.Create(createUserRequest);
 
                 if (createUserResult.Status != 0)
                 {
