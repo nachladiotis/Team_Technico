@@ -31,7 +31,6 @@
                     <th style="width: 150px;">Year of Construction</th>
                     <th style="width: 150px;">Item Type</th>
                     <th style="width: 100px;">Is Active</th>
-                    <th style="width: 150px;">User ID</th>
                     <th style="width: 150px;">Actions</th>
                 </tr>
             </thead>
@@ -45,7 +44,6 @@
                         <td>@item.YearOfConstruction</td>
                         <td>@item.EnPropertyType</td>
                         <td>@(item.IsActive ? "Yes" : "No")</td>
-                        <td>@item.UserId</td>
                         <td>
                             <!-- Update Button -->
                             <a href="@Url.Action("Edit", "PropertyItem", new { id = item.Id })"
