@@ -191,7 +191,8 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
             IsActive = repair.IsActive,
             RepairStatus = repair.RepairStatus,
             TypeOfRepair = repair.TypeOfRepair,
-            UserId = repair.UserId
+            UserId = repair.UserId,
+            Description = repair.Description
         }).ToList();
 
         return View(listOfVms);

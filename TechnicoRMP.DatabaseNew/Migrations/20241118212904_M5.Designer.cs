@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TechnicoRMP.Database.DataAccess;
 
@@ -11,9 +12,11 @@ using TechnicoRMP.Database.DataAccess;
 namespace TechnicoRMP.Database.Migrations
 {
     [DbContext(typeof(DataStore))]
-    partial class DataStoreModelSnapshot : ModelSnapshot
+    [Migration("20241118212904_M5")]
+    partial class M5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -11,4 +11,6 @@ public class UpdatePropertyRepair : IDto
     public double? Cost { get; set; }
     public long? RepairerId { get; set; }
     public bool? IsActive { get; set; } = true;
+
+    public string? Description { get; set; }
 }

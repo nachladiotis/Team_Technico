@@ -16,6 +16,7 @@ public class CreatePropertyRepairResponseService
             IsActive = propertyRepair.IsActive,
             UserId = propertyRepair.UserId,
             TypeOfRepair = propertyRepair.TypeOfRepair,
+            Description = propertyRepair.Description,
         };
     }
 }

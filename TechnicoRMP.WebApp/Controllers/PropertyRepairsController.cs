@@ -41,7 +41,8 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
                     RepairStatus = property.RepairStatus,
                     TypeOfRepair = property.TypeOfRepair,
                     Id = property.Id,
-                    Date = property.Date
+                    Date = property.Date,
+                    Description= property.Description
                 };
                 list.Add(listitem);
             }
@@ -81,7 +82,8 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
                     RepairStatus = property.RepairStatus,
                     TypeOfRepair = property.TypeOfRepair,
                     Id = property.Id,
-                    Date = property.Date
+                    Date = property.Date,
+                    Description = property.Description
                 };
                 list.Add(listitem);
             }
@@ -116,7 +118,8 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
                 RepairStatus = data.RepairStatus,
                 TypeOfRepair = data.TypeOfRepair,
                 Id = data.Id,
-                Date = data.Date
+                Date = data.Date,
+                Description = data.Description
             };
             return View(new List<PropertyRepairViewModel> { repairbyid });
         }
@@ -175,7 +178,8 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
                 Address = viewModel.Address,
                 RepairStatus = EnRepairStatus.Pending,
                 Cost = 0,
-                UserId = ActiveUser.User.Id
+                UserId = ActiveUser.User.Id,
+                Description = viewModel.Description
             };
 
             var response = await client.PostAsJsonAsync(uri, propertyRepair);
@@ -231,7 +235,8 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
                     TypeOfRepair = item.Value.TypeOfRepair,
                     Cost = item.Value.Cost,
                     RepairStatus = item.Value.RepairStatus,
-                    IsActive = item.Value.IsActive,
+                    IsActive = true,
+                    Description = item.Value.Description
                 };
 
                 return View(viewModel);
@@ -252,6 +257,7 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
     {
         if (ModelState.IsValid)
         {
+            model.IsActive = true;
             var client = _httpClientFactory.CreateClient("ApiClient");
             var uri = new Uri($"{client.BaseAddress}/Repair/{model.Id}");
             string data = JsonConvert.SerializeObject(model);
@@ -260,10 +266,14 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
 
             if (response.IsSuccessStatusCode)
             {
-              
-                if(ActiveUser.UserRole is EnRoleType.User)
-                    return RedirectToAction("GetAll");
-               return RedirectToAction("Repairs","Admin");
+                if (ActiveUser.User.TypeOfUser == EnRoleType.Admin)
+                {
+                    return RedirectToAction("Repairs", "Admin");
+                }
+                else
+                {
+                    return RedirectToAction("GetRepairsByUserId", new { id = ActiveUser.User.Id });
+                }
             }
             else
             {

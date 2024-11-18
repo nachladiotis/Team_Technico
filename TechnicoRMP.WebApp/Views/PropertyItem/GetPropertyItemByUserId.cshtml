@@ -4,7 +4,7 @@
     ViewData["Title"] = "GetPropertyItemByUserId";
 }
 
-<h1>Index</h1>
+<h1>My Properties</h1>
 <div class="container-fluid">
     <div class="col">
         <form asp-controller="PropertyItem" asp-action="Index" method="get">
@@ -17,7 +17,9 @@
     </div>
 </div>
 <p>
-    <a asp-action="CreateByUserId">Create new Item</a>
+    <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("CreateByUserId", "YourController")'">
+        Add new Property
+    </button>
 </p>
 @if (Model != null && Model.Any())
 {
@@ -30,7 +32,7 @@
                 <th>@Html.DisplayNameFor(model => model[0].EnPropertyType)</th>
                 <th>@Html.DisplayNameFor(model => model[0].IsActive)</th>
                 <th>@Html.DisplayNameFor(model => model[0].UserId)</th>
-                <th>Actions</th> <!-- Extra column for actions (Edit/Delete) -->
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>

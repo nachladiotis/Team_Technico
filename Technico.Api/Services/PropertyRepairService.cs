@@ -67,7 +67,8 @@ public class PropertyRepairService(DataStore dataStore, ILogger<PropertyRepairSe
                 TypeOfRepair = createPropertyRepairRequest.TypeOfRepair,
                 Cost = createPropertyRepairRequest.Cost,
                 UserId = createPropertyRepairRequest.UserId,
-                IsActive = true
+                Description = createPropertyRepairRequest.Description,
+                IsActive = true,
             };
 
             await _dataStore.AddAsync(propertyRepairToStore);
@@ -131,6 +132,7 @@ public class PropertyRepairService(DataStore dataStore, ILogger<PropertyRepairSe
             RepairStatus = r.RepairStatus,
             Cost = r.Cost,
             UserId = r.UserId,
+            Description = r.Description,
             IsActive = r.IsActive
         }).ToListAsync();
 
@@ -336,6 +338,12 @@ public class PropertyRepairService(DataStore dataStore, ILogger<PropertyRepairSe
             if (updatePropertyRepair.IsActive.HasValue && updatePropertyRepair.IsActive != repair.IsActive)
             {
                 repair.IsActive = updatePropertyRepair.IsActive.Value;
+                isUpdated = true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(updatePropertyRepair.Description) && updatePropertyRepair.Description != repair.Description)
+            {
+                repair.Description = updatePropertyRepair.Description;
                 isUpdated = true;
             }
 

@@ -11,4 +11,6 @@ public class PropertyRepair
     public User? User { get; set; }
     public long UserId { get; set; } 
     public bool IsActive { get; set; } = true;
+    public string? Description { get; set; }
+
 }
