@@ -110,7 +110,6 @@ public class PropertyRepairService(DataStore dataStore) : IPropertyRepairService
     {
         var repairs = _dataStore.PropertyRepairs.AsQueryable();
 
-       
         if (startDate.HasValue)
         {
             repairs = repairs.Where(r => r.Date >= startDate.Value);

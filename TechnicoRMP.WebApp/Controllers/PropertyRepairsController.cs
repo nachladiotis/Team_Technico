@@ -257,6 +257,9 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
             var client = _httpClientFactory.CreateClient("ApiClient");
             var uri = new Uri($"{client.BaseAddress}/Repair/{model.Id}");
             string data = JsonConvert.SerializeObject(model);
+
+            //TODO CREATE REQUEST AND SEND 
+
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
             var response = await client.PatchAsync(uri, content);
 
