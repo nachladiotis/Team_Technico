@@ -254,12 +254,24 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
         {
             var client = _httpClientFactory.CreateClient("ApiClient");
             var uri = new Uri($"{client.BaseAddress}/Repair/{model.Id}");
-            string data = JsonConvert.SerializeObject(model);
+
+            var request = new UpdatePropertyRepair
+            {
+                Address = model.Address,
+                Cost = model.Cost,
+                Date = model.Date,
+                Id = model.Id,
+                IsActive = model.IsActive,
+                RepairStatus = model.RepairStatus,
+                TypeOfRepair = model.TypeOfRepair
+            };
+
+            //string data = JsonConvert.SerializeObject(request);
 
             //TODO CREATE REQUEST AND SEND 
 
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-            var response = await client.PatchAsync(uri, content);
+            //StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            var response = await client.PatchAsJsonAsync(uri, request);
 
             if (response.IsSuccessStatusCode)
             {

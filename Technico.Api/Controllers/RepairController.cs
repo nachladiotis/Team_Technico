@@ -113,10 +113,6 @@ public class RepairController(IPropertyRepairService propertyRepairService, Data
     {
         try
         {
-            if (updatePropertyRepair.Id != id)
-            {
-                return BadRequest("The ID in the URL does not match the ID in the body.");
-            }
             var result = await _propertyRepairService.Update(updatePropertyRepair);
 
             if (result.Status == 0)

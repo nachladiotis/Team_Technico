@@ -332,6 +332,12 @@ public class PropertyRepairService(DataStore dataStore, ILogger<PropertyRepairSe
                 isUpdated = true;
             }
 
+            if(repair.Date != updatePropertyRepair.Date)
+            {
+                repair.Date = updatePropertyRepair.Date;
+                isUpdated = true;
+            }
+
             if (updatePropertyRepair.IsActive.HasValue && updatePropertyRepair.IsActive != repair.IsActive)
             {
                 repair.IsActive = updatePropertyRepair.IsActive.Value;
