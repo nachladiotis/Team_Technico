@@ -40,6 +40,7 @@ namespace Technico.Api.Controllers
             }
         }
 
+
         [HttpGet]
         public async Task<ActionResult<List<UserDto>>> Get()
         {
@@ -53,7 +54,6 @@ namespace Technico.Api.Controllers
             var response = await _service.DisplayUser(id);
             return Ok(response);
         }
-
 
         [HttpPut, Route("{id}")]
         public async Task<ActionResult<UserDto>> PutAsync([FromBody] UpdateUserRequest userDTO)
@@ -120,8 +120,6 @@ namespace Technico.Api.Controllers
                 _logger.LogError(ex, ex.Message);
                 return NotFound(new { message = ex.Message });
             }
-        }
-
-        
+        }   
     }
 }

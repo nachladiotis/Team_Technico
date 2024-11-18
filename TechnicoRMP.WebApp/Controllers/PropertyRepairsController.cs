@@ -132,7 +132,6 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
     {
         var propertyItems = new List<PropertyItemViewModel>();
 
-        // Ανάκτηση του userId
         var userId = ActiveUser.User.Id;
 
         var client = _httpClientFactory.CreateClient("ApiClient");
@@ -155,7 +154,6 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
                 }).ToList();
             }
         }
-        // Προσθήκη στο ViewBag για να είναι διαθέσιμο στο View
         ViewBag.PropertyItems = propertyItems;
 
         return View();
@@ -174,7 +172,7 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
             {
                 Date = viewModel.Date,
                 TypeOfRepair = viewModel.TypeOfRepair,
-                Address = viewModel.Address, // Παραμένει από το dropdown
+                Address = viewModel.Address,
                 RepairStatus = EnRepairStatus.Pending,
                 Cost = 0,
                 UserId = ActiveUser.User.Id
@@ -279,8 +277,6 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
         return View(model);
     }
 
-
-
     [HttpPost("deactivate/{repairId}")]
     public async Task<IActionResult> SoftDelete(int repairId)
     {
@@ -316,11 +312,10 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
 
         if (response.IsSuccessStatusCode)
         {
-            return Ok(); // Return HTTP 200 on successful deletion
+            return Ok(); 
         }
         else
         {
-            // Log the error or handle accordingly
             return StatusCode((int)response.StatusCode, "Failed to delete the repair.");
         }
     }

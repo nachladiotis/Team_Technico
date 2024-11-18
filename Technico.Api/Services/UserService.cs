@@ -8,16 +8,12 @@ using TechnicoRMP.Database.DataAccess;
 
 namespace Technico.Api.Services;
 
-public class UserService : IUserService
+public class UserService(DataStore datastore, ILogger<AuthService> logger) : IUserService
 {
-    private readonly DataStore _dataStore;
+    private readonly DataStore _dataStore = datastore;
     private static List<User> Users = new List<User>();
-    private readonly ILogger<IUserService> _logger;
+    private readonly ILogger<AuthService> _logger = logger;
 
-    public UserService(DataStore context)
-    {
-        _dataStore = context;
-    }
 
     public async Task<UpdateUserRequest> UpdateUser(UpdateUserRequest updateUserRequest)
     {
@@ -124,8 +120,9 @@ public class UserService : IUserService
                 Value = CreateUserResponseService.CreateFromEntity(user)
             };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             return failResponse;
         }
 
@@ -171,12 +168,12 @@ public class UserService : IUserService
                 Email = user.Email,
                 Address = user.Address,
                 PhoneNumber = user.PhoneNumber,
-                IsActive = user.IsActive 
+                IsActive = user.IsActive
             }).ToList();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-
+            _logger.LogError(ex, ex.Message);
         }
 
         return [];

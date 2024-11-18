@@ -12,7 +12,6 @@ namespace Technico.Api.Controllers;
 [ApiController]
 public class RepairController(IPropertyRepairService propertyRepairService, DataStore datastore) : ControllerBase
 {
-
     private readonly DataStore _datastore = datastore;
     private readonly IPropertyRepairService _propertyRepairService = propertyRepairService;
 
@@ -83,7 +82,6 @@ public class RepairController(IPropertyRepairService propertyRepairService, Data
         }
     }
 
-
     [HttpGet("user/{userId}")]
     public async Task<IActionResult> GetRepairsByUserId(long userId)
     {
@@ -145,7 +143,6 @@ public class RepairController(IPropertyRepairService propertyRepairService, Data
             return NoContent();
         return Problem();
     }
-
 
     [HttpPut("deactivate/{repairId}")]
     public async Task<ActionResult<Result<PropertyRepair>>> SoftDeleteRepairForUser(int repairId)

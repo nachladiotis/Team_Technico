@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Technico.Api", "Technico.Ap
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechnicoRMP.Database", "TechnicoRMP.DatabaseNew\TechnicoRMP.Database.csproj", "{75B6A5BF-DCA4-41CD-8C21-386ACF832408}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechnicoRMP.WebApp", "TechnicoRMP.WebApp\TechnicoRMP.WebApp.csproj", "{B5B4F4A8-7A6A-4221-AA3E-1AFC578FE563}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechnicoRMP.WebApp", "TechnicoRMP.WebApp\TechnicoRMP.WebApp.csproj", "{B5B4F4A8-7A6A-4221-AA3E-1AFC578FE563}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

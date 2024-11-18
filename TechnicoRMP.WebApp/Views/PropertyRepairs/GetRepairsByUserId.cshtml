@@ -8,7 +8,6 @@
     }
 }
 
-<!-- Κεντράρισμα του πίνακα -->
 <div class="d-flex justify-content-center">
     @if (Model != null && Model.Any())
     {
@@ -22,7 +21,7 @@
                             <th style="width: 200px;">Address</th>
                             <th style="width: 100px;">Status</th>
                             <th style="width: 100px;">Cost</th>
-                            <th style="width: 200px;">Actions</th> <!-- Adjusted column width -->
+                            <th style="width: 200px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,7 +38,6 @@
                                         <div class="d-flex justify-content-start gap-2">
                                             <a asp-action="Edit" asp-route-id="@repair.Id" class="btn btn-primary btn-sm">Edit</a>
 
-                                            <!-- Delete Button -->
                                             <button type="button" class="btn btn-danger btn-sm"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#deleteModal"
@@ -91,21 +89,18 @@
 
 @section Scripts {
         <script>
-            // Update the modal with repair details when shown
+          
             $('#deleteModal').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget); // Button that triggered the modal
-                var repairId = button.data('id'); // Extract info from data-* attributes
+                var button = $(event.relatedTarget); 
+                var repairId = button.data('id'); 
 
-                // Update the modal's hidden input with the repairId
                 var modal = $(this);
                 modal.find('.modal-footer #repairId').val(repairId);
 
-                // Update the form's action URL to include the repairId
                 var formAction = '@Url.Action("SoftDelete", "PropertyRepairs", new { repairId = "__repairId__" })';
                 formAction = formAction.replace("__repairId__", repairId);
                 modal.find('form').attr('action', formAction);
 
-                // Optional: Display the repair type in the modal body
                 var repairType = button.data('repair');
                 modal.find('.modal-body #repairType').text('Repair Type: ' + repairType);
             });

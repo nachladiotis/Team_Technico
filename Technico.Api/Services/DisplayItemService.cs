@@ -14,7 +14,6 @@ public class DisplayItemService(DataStore datastore) : IDisplayService<string>
     {
         if (e9Number == string.Empty)
         {
-            Console.WriteLine("ΤΟ Ε9 ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
             return;
         }
 
@@ -24,7 +23,6 @@ public class DisplayItemService(DataStore datastore) : IDisplayService<string>
             .FirstOrDefault(s => s.E9Number == e9Number);
         if (propertyItem is null)
         {
-            Console.WriteLine("ΤΟ ΑΚΙΝΗΤΟ ΔΕΝ ΒΡΕΘΗΚΕ");
             return;
         }
         DisplayPropertyItem(propertyItem);
@@ -43,20 +41,13 @@ public class DisplayItemService(DataStore datastore) : IDisplayService<string>
 
     private static void DisplayPropertyItem(PropertyItem propertyItem)
     {
-        Console.WriteLine("ΣΤΟΙΧΕΙΑ ΑΚΙΝΗΤΟΥ:");
-        Console.WriteLine($"ΑΡΙΘΜΟΣ Ε9: {propertyItem.E9Number}");
-        Console.WriteLine($"ΔΙΕΥΘΥΝΣΗ: {propertyItem.Address}");
-        Console.WriteLine($"ΕΤΟΣ ΚΑΤΑΣΚΕΥΗΣ: {propertyItem.YearOfConstruction}");
         switch (propertyItem.EnPropertyType)
         {
             case EnPropertyType.DetachedHouse:
-                Console.WriteLine($"ΤΥΠΟΣ ΑΚΙΝΗΤΟΥ ΜΟΝΟΚΑΤΟΙΚΙΑ");
                 break;
             case EnPropertyType.Apartment:
-                Console.WriteLine($"ΤΥΠΟΣ ΑΚΙΝΗΤΟΥ ΔΙΑΜΕΡΙΣΜΑ");
                 break;
             case EnPropertyType.Maisonet:
-                Console.WriteLine($"ΤΥΠΟΣ ΑΚΙΝΗΤΟΥ ΜΕΖΟΝΕΤΑ");
                 break;
             default:
                 break;
@@ -68,11 +59,7 @@ public class DisplayItemService(DataStore datastore) : IDisplayService<string>
             {
                 continue;
             }
-            Console.WriteLine($"TO AKINHTO EXEI ΙΔΙΟΚΤΗΤH: {propertyOwner.Name} {propertyOwner.Surname}");
         }
-
-        var isAcrtiveText = propertyItem.IsActive is true ? "ΕΝΕΡΓΟ" : "ΑΝΕΝΕΡΓΟ";
-        Console.WriteLine(isAcrtiveText);
     }
 
 

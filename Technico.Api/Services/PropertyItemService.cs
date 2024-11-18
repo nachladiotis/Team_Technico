@@ -7,10 +7,11 @@ using TechnicoRMP.Shared.Dtos;
 
 namespace Technico.Api.Services;
 
-public class PropertyItemService(DataStore dataStore, IPropertyItemValidation validation) : IPropertyItemService
+public class PropertyItemService(DataStore dataStore, IPropertyItemValidation validation, ILogger<PropertyItemService> logger) : IPropertyItemService
 {
     private readonly DataStore _dataStore = dataStore;
     private readonly IPropertyItemValidation _validation;
+    private readonly ILogger<PropertyItemService> _logger = logger;
 
     public Result<CreatePropertyItemResponse> Create(CreatePropertyItemRequest createPropertyItemRequest)
     {
@@ -31,7 +32,6 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
                 YearOfConstruction = createPropertyItemRequest.YearOfConstruction,
                 EnPropertyType = createPropertyItemRequest.EnPropertyType,
                 IsActive = true,
-
             };
 
             _dataStore.Add(propertyItem);
@@ -50,11 +50,11 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             return response;
         }
 
     }
-
     public List<PropertyItem> ReadPropertyItems()
     {
         try
@@ -64,11 +64,10 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
         }
         catch (Exception ex)
         {
-
+            _logger.LogError(ex, ex.Message);
         }
         return [];
     }
-
     public async Task<Result<CreatePropertyItemResponse>> GetById(int id)
     {
         var result = new Result<CreatePropertyItemResponse>
@@ -103,6 +102,7 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             result.Status = -1;
             result.Message = $"An error occurred: {ex.Message}";
             return result;
@@ -144,30 +144,27 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             result.Status = -1;
             result.Message = $"An error occurred: {ex.Message}";
             return result;
         }
     }
-
     public bool Delete(int id)
     {
         if (id == 0)
         {
-            Console.WriteLine("ΤΟ Ε9 ΕΙΝΑΙ ΥΠΟΧΡΕΩΤΙΚΟ");
             return false;
         }
         var propertyItem = _dataStore.PropertyItems.FirstOrDefault(s => s.Id == id);
         if (propertyItem is null)
         {
-            Console.WriteLine("ΤΟ ΑΚΙΝΗΤΟ ΔΕΝ ΒΡΕΘΗΚΕ");
             return false;
         }
         _dataStore.PropertyItems.Remove(propertyItem);
         var deleted = _dataStore.SaveChanges();
         return deleted > 0;
     }
-
     public Result Update(UpdatePropertyItemRequest updatePropertyItemRequest)
     {
         var response = new Result()
@@ -178,7 +175,7 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
         var propertyItemFromDb = _dataStore.PropertyItems.FirstOrDefault(p => p.Id == updatePropertyItemRequest.Id);
         if (propertyItemFromDb is null)
         {
-            response.Message = "ΔΕΝ ΒΡΕΘΗΚΕ ΑΚΙΝΗΤΟ ΜΕ ΑΥΤΟ ΤΟ Ε9";
+            response.Message = "No property found with the given E9 number";
             return response;
         }
         if (updatePropertyItemRequest.E9Number is not null)
@@ -204,10 +201,9 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
 
         _dataStore.SaveChanges();
         response.Status = 0;
-        response.Message = "ΕΠΙΤΥΧΕΣ";
+        response.Message = "Property updated successfully.";
         return response;
     }
-
     public async Task<Result<CreatePropertyItemResponse>> CreatePropertyItemByUserId(CreatePropertyItemRequest createPropertyItemRequest)
     {
         var response = new Result<CreatePropertyItemResponse>()
@@ -268,12 +264,12 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             response.Status = -1;
             response.Message = $"An error occurred while adding the item: {ex.Message}";
         }
         return response;
     }
-
     public async Task<List<PropertyItemsDto>> GetByNumber(string? e9Number)
     {
 
