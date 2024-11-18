@@ -1,6 +1,14 @@
-﻿@model IEnumerable<TechnicoRMP.WebApp.Models.PropertyItemViewModel>
+﻿@using TechnicoRMP.Models;
+@model IEnumerable<TechnicoRMP.WebApp.Models.PropertyItemViewModel>
 
 <div>
+    <!-- Create Button -->
+    <a href="@Url.Action("CreateItem", "Admin")"
+       class="btn btn-success btn-sm mr-2 shadow-sm border-0 rounded-pill px-3 py-2">
+        Create
+    </a>
+
+
     <!-- Search Form -->
     <form method="get" action="/PropertyItems" class="form-inline mb-3">
         <label for="e9Number" class="mr-2">E9 Number:</label>

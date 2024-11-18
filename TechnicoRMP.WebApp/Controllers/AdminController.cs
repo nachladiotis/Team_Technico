@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Text;
 using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.WebApp.Models;
@@ -192,6 +194,8 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
             Id = propertyItem.Id,
             IsActive = propertyItem.IsActive,
             YearOfConstruction = propertyItem.YearOfConstruction,
+            
+
         }).ToList();
 
         
@@ -212,6 +216,38 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
             return BadRequest("Failed to delete the item.");
         return Ok();
     }
+
+
+    [HttpGet]
+    public IActionResult CreateItem()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateItem(CreatePropertyItemViewmodel model)
+    {
+        try
+        {
+            string data = JsonConvert.SerializeObject(model);
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PostAsync(client.BaseAddress + "/propertyItem/Create", content);
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["successMessage"] = "Item Created.";
+                if (ActiveUser.UserRole is EnRoleType.User)
+                    return RedirectToAction("Index");
+                return RedirectToAction("PropertyItems");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        return View();
+    }
+
 }
 
 

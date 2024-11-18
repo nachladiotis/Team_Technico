@@ -1,15 +1,20 @@
 ﻿@model TechnicoRMP.WebApp.Models.PropertyItemViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Create";
 }
 
-<h1>Edit Page</h1>
+<h1>Create New Item</h1>
 <hr />
 <div class="row">
-    <div class="col-md-12">
-        <form asp-action="Edit">
+    <div class="col-md-8">
+        <form asp-action="CreateItem">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <input asp-for="UserId" class="form-control" />
+                <span asp-validation-for="UserId" ></span>
+            </div>
             <div class="form-group">
                 <label asp-for="E9Number" class="control-label"></label>
                 <input asp-for="E9Number" class="form-control" />
@@ -22,18 +27,18 @@
             </div>
             <div class="form-group">
                 <label asp-for="YearOfConstruction" class="control-label"></label>
-                <input asp-for="YearOfConstruction" class="form-control" placeholder="Enter Year of Construction" />
+                <input asp-for="YearOfConstruction" class="form-control" />
                 <span asp-validation-for="YearOfConstruction" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="EnPropertyType" class="control-label"></label>
-                <select asp-for="EnPropertyType" class="form-control">
+                <label for="EnPropertyType" class="control-label">Select Type of Item</label>
+                <select class="form-control" name="EnPropertyType">
                     <option value="">Select Type of Item</option>
                     <option value="DetachedHouse">Detached House</option>
                     <option value="Maisonet">Maisonet</option>
                     <option value="Apartment">Apartment</option>
                 </select>
-                <span asp-validation-for="EnPropertyType" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
@@ -41,16 +46,18 @@
                 </label>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-@* <div>
-    <a asp-action="Index">Back to List</a>
-</div> *@
+<div>
+    <a asp-action="PropertyItems">Back to List</a>
+</div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
