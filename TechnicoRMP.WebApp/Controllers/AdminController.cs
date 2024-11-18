@@ -80,7 +80,7 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
         return View(logEntries);
     }
 
-    [HttpGet]
+    [HttpGet("Repairs")]
     public async Task<IActionResult> Repairs(DateTime? startDate, DateTime? endDate)
     {
         var client = _httpClientFactory.CreateClient("ApiClient");
