@@ -41,7 +41,7 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         //var UserId = ActiveUser.User!.Id;
         var client = _httpClientFactory.CreateClient("ApiClient");
         List<PropertyItemViewModel> ItemList = new List<PropertyItemViewModel>();
-        HttpResponseMessage response = await client.GetAsync(client.BaseAddress + "/PpropertyItem/GetPropertyItemByUserId/" + id);
+        HttpResponseMessage response = await client.GetAsync(client.BaseAddress + "/PropertyItem/GetPropertyItemByUserId/" + id);
 
         if (response.IsSuccessStatusCode)
         {
@@ -129,7 +129,7 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         if (response.IsSuccessStatusCode)
         {
             TempData["successMessage"] = "Item Created.";
-            return RedirectToAction("Index");
+            return RedirectToAction("GetPropertyItemByUserId", new { id = model.UserId });
         }
         return View();
     }
@@ -179,8 +179,11 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         if (response.IsSuccessStatusCode)
         {
             if(ActiveUser.UserRole == EnRoleType.Admin)
-                return RedirectToAction("PropertyItems","Admin");
-            return RedirectToAction("Index");
+            {
+                return RedirectToAction("PropertyItems", "Admin");
+            }
+
+            return RedirectToAction("GetPropertyItemByUserId", new { id = @ActiveUser.User!.Id });
         }
         return View();
     }
