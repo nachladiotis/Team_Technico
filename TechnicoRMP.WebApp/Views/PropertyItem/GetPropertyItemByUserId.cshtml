@@ -4,21 +4,21 @@
     ViewData["Title"] = "GetPropertyItemByUserId";
 }
 
-<h1>Index</h1>
+<h1>My Items</h1>
+
 <div class="container-fluid">
-    <div class="col">
-        <form asp-controller="PropertyItem" asp-action="Index" method="get">
-            <div class="row">
-                <div class="col-sm-3"> <input type="text" name="searchString" class="form-control" /> </div>
-                <div class="col-sm-1"> <input type="submit" value="Search" class="btn btn-primary" /> </div>
-            </div>
+    <div class="row justify-content-center">
+        <form asp-controller="PropertyItem" asp-action="Index" method="get" class="col-md-6">
         </form>
-        <br>
+    </div>
+
+    <div class="row justify-content-center mt-3">
+        <p>
+            <a asp-action="CreateByUserId" class="btn btn-success">Create new Item</a>
+        </p>
     </div>
 </div>
-<p>
-    <a asp-action="CreateByUserId">Create new Item</a>
-</p>
+
 @if (Model != null && Model.Any())
 {
     <table class="table table-striped table-bordered">
@@ -44,8 +44,8 @@
                     <td>@Html.DisplayFor(model => item.IsActive)</td>
                     <td>@Html.DisplayFor(model => item.UserId)</td>
                     <td>
-                        <a href="@Url.Action("Edit", "PropertyItem", new { id = item.Id })" class="btn btn-primary btn-sm">Edit</a> 
-                        <a href="@Url.Action("Delete", "PropertyItem", new { id = item.Id })" class="btn btn-danger btn-sm">Delete</a>
+                        <a href="@Url.Action("Edit", "PropertyItem", new { id = item.Id })" class="btn btn-primary btn-sm">Edit</a>
+                        <a href="@Url.Action("DeleteByUser", "PropertyItem", new { id = item.Id })" class="btn btn-danger btn-sm">Delete</a>
                     </td>
                 </tr>
             }

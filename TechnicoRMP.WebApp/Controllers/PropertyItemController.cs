@@ -188,8 +188,9 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         return View();
     }
 
+
     [HttpGet]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> DeleteByUser(int id)
     {
         try
         {
@@ -221,7 +222,7 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         }
     }
 
-    [HttpPost, ActionName("Delete")]
+    [HttpPost, ActionName("DeleteByUser")] //PropertyItem/Delete/19
     public IActionResult DeleteConfirmed(int id)
     {
         try
@@ -230,7 +231,7 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
             HttpResponseMessage response = client.DeleteAsync(client.BaseAddress + "/propertyItem/Delete/" + id).Result;
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("GetPropertyItemByUserId", new { id = @ActiveUser.User!.Id });
             }
         }
         catch (Exception ex)
