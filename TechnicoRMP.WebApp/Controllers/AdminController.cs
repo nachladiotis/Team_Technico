@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
 using Newtonsoft.Json;
 using System.Text;
 using TechnicoRMP.Models;
+using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.WebApp.Models;
 
@@ -10,6 +12,34 @@ namespace TechnicoRMP.WebApp.Controllers;
 public class AdminController(IHttpClientFactory httpClientFactory) : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+
+    [HttpGet]
+    public IActionResult CreateUser()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateUser(UserProfileViewModelUpdate model)
+    {
+        try
+        {
+            string data = JsonConvert.SerializeObject(model);
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PostAsync(client.BaseAddress + "/User/Create", content);
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["successMessage"] = "User Created.";
+                return RedirectToAction("UsersManagment", "Admin");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        return View();
+    }
 
     [HttpGet]
     public async Task<IActionResult> UsersManagment()

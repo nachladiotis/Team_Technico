@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Technico.Api.Services;
+using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.Shared.Exceptions;
 
@@ -12,7 +13,33 @@ namespace Technico.Api.Controllers
         private readonly IUserService _service = service;
 
         private readonly ILogger<UserController> _logger = logger;
-         
+
+
+        [HttpPost]
+        [Route("Create")]
+        public async Task<ActionResult<UserDto>> Create([FromBody] CreateUserRequest createUserRequest)
+        {
+            try
+            {
+                var createUserResult =  await _service.Create(createUserRequest);
+
+                if (createUserResult.Status != 0)
+                {
+                    return BadRequest(createUserResult);
+                }
+
+                return Ok(createUserResult);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Result<UserDto>
+                {
+                    Status = 500,
+                    Message = $"An error occurred: {ex.Message}"
+                });
+            }
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<UserDto>>> Get()
         {

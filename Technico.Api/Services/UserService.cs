@@ -97,7 +97,7 @@ public class UserService : IUserService
     }
 
 
-    public Result<UserDto> Create(CreateUserRequest creatUserDto)
+    public async Task< Result<UserDto>> Create(CreateUserRequest creatUserDto)
     {
         var failResponse = new Result<UserDto>
         {
@@ -121,8 +121,6 @@ public class UserService : IUserService
             _dataStore.SaveChanges();
             return new Result<UserDto>
             {
-                Status = 0,
-                Message = "ΕΠΙΤΥΧΊΑ ΔΗΜΗΟΥΡΓΙΑΣ ΧΡΗΣΤΗ",
                 Value = CreateUserResponseService.CreateFromEntity(user)
             };
         }
