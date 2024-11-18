@@ -41,6 +41,60 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
         return View();
     }
 
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        try
+        {
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            HttpResponseMessage response = await client.GetAsync($"{client.BaseAddress}/User/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                string data = await response.Content.ReadAsStringAsync();
+                var user = JsonConvert.DeserializeObject<CreateUserRequest>(data);
+                if (user != null)
+                {
+                    var viewmodel = new UserProfileViewModelUpdate
+                    {
+                        Id = user.Id,
+                        Name = user.Name,
+                        Surname = user.Surname,
+                        VatNumber = user.VatNumber,
+                        Address = user.Address,
+                        PhoneNumber = user.PhoneNumber,
+                        Email = user.Email,
+                        Password = user.Password
+                    };
+                    return View(viewmodel);
+                }
+            }
+            return View(new UserProfileViewModelUpdate
+            {
+                Id = id
+            });
+        }
+        catch (Exception)
+        {
+            return View();
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(UserProfileViewModelUpdate updatedUser)
+    {
+        string data = JsonConvert.SerializeObject(updatedUser);
+        var client = _httpClientFactory.CreateClient("ApiClient");
+        StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await client.PutAsync(client.BaseAddress + "/User/PutAsync", content);
+        if (response.IsSuccessStatusCode)
+        {
+            return RedirectToAction("UsersManagment", "Admin");
+        }
+        return View(new UserProfileViewModelUpdate());
+    }
+
+
     [HttpGet]
     public async Task<IActionResult> UsersManagment()
     {

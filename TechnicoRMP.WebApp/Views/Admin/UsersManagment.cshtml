@@ -13,8 +13,18 @@
         <a href="@Url.Action("CreateUser", "Admin")" class="btn btn-primary">Create a New Property Owner</a>
 <br />
 <br />
+        <label for="Edit" class="form-label">Update a User By Id:</label>
+        <input type="text" id="userId" class="form-control" placeholder="Π.χ. 1234">
+<br />
+        <button onclick="goToUserEdit()" class="btn btn-primary">Update a User</button>
+<br/>
+        <br />
+
         <label for="searchVatNumber" class="form-label">Search by VAT Number:</label>
         <input type="text" id="searchVatNumber" class="form-control" placeholder="Enter VAT Number" />
+<br />
+        <br />
+
     </div>
 
 
@@ -45,5 +55,12 @@
                 })
                 .catch(error => console.error('Error:', error));
         });
+    </script>
+    <script>
+        function goToUserEdit() {
+            var userId = document.getElementById("userId").value;
+            var url = "Edit/" + userId;
+            window.location.href = url;
+        }
     </script>
 }
