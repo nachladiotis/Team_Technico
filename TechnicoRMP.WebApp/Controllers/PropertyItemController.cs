@@ -80,7 +80,7 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         return View();
     }
 
-    [HttpGet]
+    [HttpPost]
     public async Task<IActionResult> Create(CreatePropertyItemViewmodel model)
     {
         try
