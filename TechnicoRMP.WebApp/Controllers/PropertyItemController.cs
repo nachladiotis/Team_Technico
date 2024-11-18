@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
+using TechnicoRMP.Models;
 using TechnicoRMP.Shared.Common;
 using TechnicoRMP.Shared.Dtos;
 using TechnicoRMP.WebApp.Models;
@@ -199,6 +200,8 @@ public class PropertyItemController(IHttpClientFactory httpClientFactory) : Cont
         HttpResponseMessage response = await client.PutAsync(client.BaseAddress + "/propertyItem/Update", content);
         if (response.IsSuccessStatusCode)
         {
+            if(ActiveUser.UserRole == EnRoleType.Admin)
+                return RedirectToAction("PropertyItems","Admin");
             return RedirectToAction("Index");
         }
         return View();

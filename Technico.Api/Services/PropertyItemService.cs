@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using Technico.Api.Validations;
 using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;
@@ -32,7 +31,7 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
                 YearOfConstruction = createPropertyItemRequest.YearOfConstruction,
                 EnPropertyType = createPropertyItemRequest.EnPropertyType,
                 IsActive = true,
-                
+
             };
 
             _dataStore.Add(propertyItem);
@@ -251,16 +250,14 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
             await _dataStore.AddAsync(propertyItemToStore);
             await _dataStore.SaveChangesAsync();
 
-            // Create the ownership entry
+            
             var propertyOwnership = new PropertyOwnership
             {
                 PropertyOwnerId = createPropertyItemRequest.UserId,
             };
 
-            // Add ownership to the property item
             propertyItemToStore.PropertyOwnerships.Add(propertyOwnership);
 
-            // Now, you can save both the property item and the ownership relation
             await _dataStore.AddAsync(propertyOwnership);
             await _dataStore.SaveChangesAsync();
 
@@ -277,4 +274,32 @@ public class PropertyItemService(DataStore dataStore, IPropertyItemValidation va
         return response;
     }
 
+    public async Task<List<PropertyItemsDto>> GetByNumber(string? e9Number)
+    {
+
+        List<PropertyItem> items;
+        if (string.IsNullOrEmpty(e9Number))
+        {
+            items = await _dataStore.PropertyItems.ToListAsync();
+        }
+        else
+        {
+            items = await _dataStore.PropertyItems
+               .Where(i => i.E9Number.Contains(e9Number))
+               .AsNoTracking()
+               .ToListAsync();
+        }
+
+        var dtos = items.Select(s => new PropertyItemsDto
+        {
+            Address = s.Address,
+            E9Number = s.E9Number,
+            EnPropertyType = s.EnPropertyType,
+            IsActive = s.IsActive,
+            YearOfConstruction = s.YearOfConstruction,
+            Id = s.Id
+        }).ToList();
+
+        return dtos;
+    }
 }

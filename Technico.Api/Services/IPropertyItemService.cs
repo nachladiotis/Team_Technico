@@ -9,6 +9,7 @@ public interface IPropertyItemService
     Result<CreatePropertyItemResponse> Create(CreatePropertyItemRequest createPropertyItemRequest);
     Task<Result<CreatePropertyItemResponse>> CreatePropertyItemByUserId(CreatePropertyItemRequest request);
     List<PropertyItem> ReadPropertyItems();
+    Task<List<PropertyItemsDto>> GetByNumber(string? e9Number);
     public Task<Result<CreatePropertyItemResponse>> GetById(int id);
     public Task<Result<PropertyItemsByUserDto>> GetPropertyItemByUserId(int userId);
     Result Update(UpdatePropertyItemRequest updatePropertyItemRequest);

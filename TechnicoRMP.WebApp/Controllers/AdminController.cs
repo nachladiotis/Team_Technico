@@ -161,6 +161,56 @@ public class AdminController(IHttpClientFactory httpClientFactory) : Controller
         }
     }
 
+    [HttpGet("PropertyItems")]
+    public async Task<IActionResult> PropertyItems(string? searchE9Number)
+    {
+        var client = _httpClientFactory.CreateClient("ApiClient");
+
+        string url;
+        if (string.IsNullOrEmpty(searchE9Number))
+            url = $"{client.BaseAddress}/PropertyItem/GetAll";
+        else
+            url = $"{client.BaseAddress}/PropertyItem/GetBy/{searchE9Number}";
+       
+        var response = await client.GetAsync(url);
+        if (!response.IsSuccessStatusCode)
+            return View(new List<PropertyItemViewModel>());
+
+        var items = await response.Content.ReadFromJsonAsync<IEnumerable<PropertyItemsDto>>();
+
+        if(items is null)
+        {
+            return View(new List<PropertyItemViewModel>());
+        }
+
+        var listOfVms = items.Select(propertyItem => new PropertyItemViewModel
+        {
+            Address = propertyItem.Address!,
+            E9Number = propertyItem.E9Number!,
+            EnPropertyType = propertyItem.EnPropertyType,
+            Id = propertyItem.Id,
+            IsActive = propertyItem.IsActive,
+            YearOfConstruction = propertyItem.YearOfConstruction,
+        }).ToList();
+
+        
+
+        return View(listOfVms);
+    }
+
+    [HttpDelete("/DeletePropertyItem/{id}")]
+    public async Task<IActionResult> DeletePropertyItem(long id)
+    {
+        if(ActiveUser.UserRole is not EnRoleType.Admin)
+            return BadRequest();
+
+        var client = _httpClientFactory.CreateClient("ApiClient");
+        var response = await client.DeleteAsync($"{client.BaseAddress}/PropertyItem/Delete/{id}");
+
+        if (!response.IsSuccessStatusCode) 
+            return BadRequest("Failed to delete the item.");
+        return Ok();
+    }
 }
 
 

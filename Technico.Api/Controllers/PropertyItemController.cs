@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Technico.Api.Services;
 using TechnicoRMP.Database.DataAccess;
 using TechnicoRMP.Models;
@@ -9,17 +10,11 @@ namespace Technico.Api.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class PropertyItemController : ControllerBase
+    public class PropertyItemController(IPropertyItemService propertyItemService) : ControllerBase
     {
         private readonly DataStore _datastore;
 
-        private IPropertyItemService _propertyItemService;
-        private IDisplayService<DisplayItemService> _displayItemService;
-
-        public PropertyItemController(IPropertyItemService propertyItemService)
-        {
-            _propertyItemService = propertyItemService;
-        }
+        private readonly IPropertyItemService _propertyItemService = propertyItemService;
 
         [HttpPost]
         public async Task<Result> Create(CreatePropertyItemRequest createPropertyItemRequest)
@@ -117,8 +112,8 @@ namespace Technico.Api.Controllers
                 });
             }
         }
-    
-    [HttpGet("{id}")]
+
+        [HttpGet("{id}")]
         public async Task<ActionResult<Result<CreatePropertyItemResponse>>> GetPropertyItemById(int id)
         {
             try
@@ -162,7 +157,21 @@ namespace Technico.Api.Controllers
                 Status = response.Status,
                 Message = response.Message,
                 Value = response.Value
-            }); 
+            });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var items = await _propertyItemService.GetByNumber(string.Empty);
+            return Ok(items);
+        }
+
+        [HttpGet("{e9Number}")]
+        public async Task<IActionResult> GetBy([FromRoute] string? e9Number)
+        {
+            var items = await _propertyItemService.GetByNumber(e9Number);
+            return Ok(items);
         }
     }
 }
