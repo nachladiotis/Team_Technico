@@ -5,31 +5,15 @@
 }
 
 <h1>My Properties</h1>
-<div class="container-fluid">
-    <div class="col">
-        <form asp-controller="PropertyItem" asp-action="Index" method="get">
-            <div class="row">
-                <div class="col-sm-3"> <input type="text" name="searchString" class="form-control" /> </div>
-                <div class="col-sm-1"> <input type="submit" value="Search" class="btn btn-primary" /> </div>
-            </div>
-        </form>
-    </div>
+
 
     <div class="row justify-content-center mt-3">
         <p>
             <a asp-action="CreateByUserId" class="btn btn-success">Create new Item</a>
         </p>
     </div>
-</div>
 
-        <br>
-    </div>
-</div>
-<p>
-    <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("CreateByUserId", "YourController")'">
-        Add new Property
-    </button>
-</p>
+
 @if (Model != null && Model.Any())
 {
     <table class="table table-striped table-bordered">
