@@ -269,7 +269,8 @@ public class PropertyRepairsController(IHttpClientFactory httpClientFactory) : C
                 Id = model.Id,
                 IsActive = model.IsActive,
                 RepairStatus = model.RepairStatus,
-                TypeOfRepair = model.TypeOfRepair
+                TypeOfRepair = model.TypeOfRepair,
+                Description = model.Description
             };
             var response = await client.PatchAsJsonAsync(uri, request);
 
